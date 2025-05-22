@@ -1,91 +1,85 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { X, Heart, ShoppingCart, Check } from "lucide-react";
 import {
-  X,
-  ChevronLeft,
-  ChevronRight,
-  ShoppingCart as CartIcon,
-} from "lucide-react";
-import {
-  fetchCart,
-  addToCart,
-  removeFromCart,
-  clearCart,
-} from "../../../store/cart-actions";
-import { Link } from "react-router-dom";
+  fetchWishlist,
+  removeFromWishlist,
+  clearWishlist,
+} from "../../../store/wishlist-actions";
+import { addToCart } from "../../../store/cart-actions";
 
-export default function ShoppingCart({ isOpen, setIsOpen }) {
+export default function WishlistModal({ isOpen, setIsOpen }) {
   const dispatch = useDispatch();
   const [animatingItemId, setAnimatingItemId] = useState(null);
 
-  // Get cart data from Redux store
-  const { items, totalQuantity, totalPrice, loading, error } = useSelector(
-    (state) => state.cart
+  // Get wishlist data from Redux store
+  const { items, totalItems, loading, error } = useSelector(
+    (state) => state.wishlist
   );
+
+  // Get cart items from Redux store to check if wishlist items are in cart
+  const cartItems = useSelector((state) => state.cart.items);
 
   // Get userId from localStorage
   const userId = localStorage.getItem("userId");
 
-  // Fetch cart data on component mount
+  // Fetch wishlist data on component mount
   useEffect(() => {
     if (userId) {
-      dispatch(fetchCart(userId));
+      dispatch(fetchWishlist(userId));
     }
   }, [dispatch, userId]);
 
-  const handleUpdateQuantity = (item, newQuantity) => {
-    if (newQuantity < 1) return;
-
-    const itemId = item.id;
-    const currentQuantity = item.quantity;
-
-    if (newQuantity > currentQuantity) {
-      // Add items
-      const quantityToAdd = newQuantity - currentQuantity;
-      // Create product data object from item
-      const productData = {
-        id: item.product_id,
-        title: item.title,
-        price: item.price,
-        images: item.image_link ? [item.image_link] : [],
-      };
-
-      dispatch(addToCart(userId, productData, quantityToAdd));
-    } else if (newQuantity < currentQuantity) {
-      if (newQuantity === 0) {
-        // If new quantity would be zero, remove the item completely
-        handleRemoveItem(itemId);
-      } else {
-        // Otherwise, just decrease the quantity by 1
-        console.log(
-          `Removing 1 from item ${itemId}, current quantity: ${currentQuantity}, new quantity: ${newQuantity}`
-        );
-        dispatch(removeFromCart(userId, itemId, 1)); // Only remove 1 at a time
-      }
-    }
-
-    // Add animation
-    setAnimatingItemId(itemId);
-    setTimeout(() => setAnimatingItemId(null), 300);
+  // Function to check if item is in cart
+  const isItemInCart = (productId) => {
+    return cartItems?.some((item) => item.product_id === productId);
   };
 
   const handleRemoveItem = (itemId) => {
-    dispatch(removeFromCart(userId, itemId, Number.MAX_SAFE_INTEGER)); // Remove all quantity
+    // Add animation
+    setAnimatingItemId(itemId);
+    setTimeout(() => {
+      dispatch(removeFromWishlist(userId, itemId));
+      setAnimatingItemId(null);
+    }, 300);
   };
 
-  const handleClearCart = () => {
-    dispatch(clearCart(userId));
+  const handleClearWishlist = () => {
+    dispatch(clearWishlist(userId));
+  };
+
+  const handleAddToCart = (item) => {
+    // Don't add if already in cart
+    if (isItemInCart(item.product_id)) {
+      return;
+    }
+
+    // Create product data object from item
+    const productData = {
+      id: item.product_id,
+      title: item.title,
+      price: item.price,
+      category: item.category,
+      images: item.image_link ? [item.image_link] : [],
+    };
+
+    // Dispatch add to cart action
+    dispatch(addToCart(userId, productData, 1));
+
+    // Add animation
+    setAnimatingItemId(item.id);
+    setTimeout(() => setAnimatingItemId(null), 300);
   };
 
   // Handle clicking outside to close
   useEffect(() => {
     const handleClickOutside = (e) => {
-      const cartElement = document.getElementById("shopping-cart-modal");
+      const wishlistElement = document.getElementById("wishlist-modal");
       if (
         isOpen &&
-        cartElement &&
-        !cartElement.contains(e.target) &&
-        !e.target.closest("[data-cart-trigger]")
+        wishlistElement &&
+        !wishlistElement.contains(e.target) &&
+        !e.target.closest("[data-wishlist-trigger]")
       ) {
         setIsOpen(false);
       }
@@ -130,19 +124,19 @@ export default function ShoppingCart({ isOpen, setIsOpen }) {
         aria-hidden="true"
       />
 
-      {/* Shopping Cart Modal */}
+      {/* Wishlist Modal */}
       <div
-        id="shopping-cart-modal"
+        id="wishlist-modal"
         className={`fixed top-0 right-0 bottom-0 w-full sm:w-1/4 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         } flex flex-col`}
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold">Shopping cart</h2>
+          <h2 className="text-lg font-semibold">Wishlist</h2>
           <button
             onClick={() => setIsOpen(false)}
             className="text-gray-500 hover:text-gray-700 transition-colors"
-            aria-label="Close cart"
+            aria-label="Close wishlist"
           >
             <X size={20} />
           </button>
@@ -152,16 +146,16 @@ export default function ShoppingCart({ isOpen, setIsOpen }) {
           {loading ? (
             <div className="text-center py-16 text-gray-500">
               <div className="animate-spin mb-2 mx-auto">
-                <CartIcon size={24} />
+                <Heart size={24} />
               </div>
-              Loading your cart...
+              Loading your wishlist...
             </div>
           ) : error ? (
             <div className="text-center py-16 text-red-500">
               {error}.{" "}
               <button
                 className="text-blue-500 underline"
-                onClick={() => dispatch(fetchCart(userId))}
+                onClick={() => dispatch(fetchWishlist(userId))}
               >
                 Try again
               </button>
@@ -169,8 +163,8 @@ export default function ShoppingCart({ isOpen, setIsOpen }) {
           ) : (
             <>
               <p className="text-sm text-gray-600 mb-4">
-                You have {totalQuantity} item{totalQuantity !== 1 ? "s" : ""} in
-                your cart
+                You have {totalItems} item{totalItems !== 1 ? "s" : ""} in your
+                wishlist
               </p>
 
               <div className="space-y-3">
@@ -195,38 +189,36 @@ export default function ShoppingCart({ isOpen, setIsOpen }) {
                         <p className="font-medium">{item.title}</p>
                         <p className="text-gray-700">${item.price}</p>
                         <p className="text-xs text-gray-500">{item.category}</p>
+                        {item.brand && (
+                          <p className="text-xs text-gray-500">{item.brand}</p>
+                        )}
                       </div>
 
-                      <div className="flex items-center">
+                      <div className="flex flex-col space-y-2">
                         <button
                           onClick={() => handleRemoveItem(item.id)}
-                          className="text-gray-400 hover:text-gray-600 mr-2 transition-colors"
-                          aria-label="Remove item"
+                          className="text-gray-400 hover:text-gray-600 transition-colors"
+                          aria-label="Remove from wishlist"
                         >
                           <X size={16} />
                         </button>
 
-                        <div className="flex items-center border border-gray-300 rounded">
+                        {/* Cart button that shows different states */}
+                        {isItemInCart(item.product_id) ? (
+                          <div className="flex items-center text-green-500 text-xs font-medium">
+                            <Check size={14} className="mr-1" />
+                            <span>Added to cart</span>
+                          </div>
+                        ) : (
                           <button
-                            onClick={() =>
-                              handleUpdateQuantity(item, item.quantity - 1)
-                            }
-                            className="px-2 py-1 text-orange-500 transition-colors hover:bg-gray-100"
-                            aria-label="Decrease quantity"
+                            onClick={() => handleAddToCart(item)}
+                            className="flex items-center text-blue-500 hover:text-blue-700 transition-colors text-xs"
+                            aria-label="Add to cart"
                           >
-                            <ChevronLeft size={16} />
+                            <ShoppingCart size={14} className="mr-1" />
+                            <span>Add to cart</span>
                           </button>
-                          <span className="px-2 text-sm">{item.quantity}</span>
-                          <button
-                            onClick={() =>
-                              handleUpdateQuantity(item, item.quantity + 1)
-                            }
-                            className="px-2 py-1 text-orange-500 transition-colors hover:bg-gray-100"
-                            aria-label="Increase quantity"
-                          >
-                            <ChevronRight size={16} />
-                          </button>
-                        </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -234,7 +226,7 @@ export default function ShoppingCart({ isOpen, setIsOpen }) {
 
               {(!items || items.length === 0) && (
                 <div className="text-center py-16 text-gray-500">
-                  Your cart is empty
+                  Your wishlist is empty
                 </div>
               )}
             </>
@@ -243,25 +235,13 @@ export default function ShoppingCart({ isOpen, setIsOpen }) {
 
         {items && items.length > 0 && (
           <div className="p-4 border-t border-gray-200 bg-gray-50">
-            <div className="flex justify-between mb-4">
-              <span className="font-medium">Total:</span>
-              <span className="font-bold">${totalPrice}</span>
-            </div>
             <div className="space-y-2">
-              <Link
-                to={"/products/checkout"}
-                className="w-full block text-center py-3 bg-[#e06449] hover:bg-[#c9583e] text-white font-medium rounded transition-colors"
+              <button
+                onClick={handleClearWishlist}
+                className="w-full py-2 text-gray-600 hover:text-gray-800 text-sm transition-colors"
               >
-                Proceed to checkout
-              </Link>
-              {items.length > 1 && (
-                <button
-                  onClick={handleClearCart}
-                  className="w-full py-2 text-gray-600 hover:text-gray-800 text-sm transition-colors"
-                >
-                  Clear cart
-                </button>
-              )}
+                Clear wishlist
+              </button>
             </div>
           </div>
         )}

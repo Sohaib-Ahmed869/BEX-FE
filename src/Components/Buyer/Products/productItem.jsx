@@ -2,7 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ShoppingCart, ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { toast } from "react-toastify";
-import { addToCart } from "../../../store/cart-actions"; // Import the addToCart action
+import { addToCart } from "../../../store/cart-actions";
+import {
+  addToWishlist,
+  removeFromWishlist,
+  checkWishlistItem,
+} from "../../../store/wishlist-actions";
+import { Link } from "react-router-dom";
 
 const LazyImage = ({ src, alt, className }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -76,9 +82,39 @@ const ProductItem = ({ product }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 
-  // Get userId from Redux store or sessionStorage
+  // Get userId from localStorage
   const userId = localStorage.getItem("userId");
+
+  // Get wishlist items from Redux store to check if product is already in wishlist
+  const wishlistItems = useSelector((state) => state.wishlist.items);
+
+  // Check if product is in wishlist when component mounts or wishlist changes
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (!userId || !product.id) return;
+
+      // Check if product is in wishlist by looking through wishlist items
+      const inWishlist = wishlistItems.some(
+        (item) => item.product_id === product.id
+      );
+      setIsWishlisted(inWishlist);
+
+      // Alternative: Check with API if you need server verification
+      try {
+        // You can use this approach if you want to verify with the server
+        const response = await dispatch(
+          checkWishlistItem(userId, product.id)
+        ).unwrap();
+        setIsWishlisted(response.inWishlist);
+      } catch (error) {
+        console.error("Error checking wishlist status:", error);
+      }
+    };
+
+    checkWishlistStatus();
+  }, [userId, product.id, wishlistItems, dispatch]);
 
   const formatPrice = (price) => {
     return `$${parseFloat(price).toFixed(2)}`;
@@ -108,9 +144,54 @@ const ProductItem = ({ product }) => {
     );
   };
 
-  const toggleWishlist = (e) => {
+  const toggleWishlist = async (e) => {
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
+
+    if (!userId) {
+      toast.error("Please log in to add items to your wishlist");
+      return;
+    }
+
+    setIsAddingToWishlist(true);
+
+    try {
+      if (isWishlisted) {
+        // Find the wishlist item ID from the product ID
+        const wishlistItem = wishlistItems.find(
+          (item) => item.product_id === product.id
+        );
+
+        if (wishlistItem) {
+          // Remove from wishlist
+          await dispatch(removeFromWishlist(userId, wishlistItem.id));
+          toast.success(`${product.title} removed from wishlist`);
+          setIsWishlisted(false);
+        }
+      } else {
+        // Extract product data for wishlist
+        const productData = {
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          category: product.category,
+          diameter:
+            product.category === "Core Drill Bits"
+              ? product.specifications?.bitDiameter
+              : null,
+          brand: product.specifications?.brand,
+          images: product.images,
+        };
+
+        // Add to wishlist
+        await dispatch(addToWishlist(userId, productData));
+        toast.success(`${product.title} added to wishlist`);
+        setIsWishlisted(true);
+      }
+    } catch (error) {
+      toast.error(`Failed to update wishlist: ${error.message}`);
+    } finally {
+      setIsAddingToWishlist(false);
+    }
   };
 
   // Handle adding product to cart
@@ -134,6 +215,11 @@ const ProductItem = ({ product }) => {
       title: product.title,
       price: product.price,
       images: product.images,
+      category: product.category,
+      diameter:
+        product.category === "Core Drill Bits"
+          ? product.specifications?.bitDiameter
+          : null,
       // Only include other fields if they're specifically needed by the backend
     };
 
@@ -226,7 +312,10 @@ const ProductItem = ({ product }) => {
         {/* Wishlist Heart Icon - Top Right */}
         <button
           onClick={toggleWishlist}
-          className="absolute top-12 right-3 w-8 h-8 bg-white shadow-md rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 z-10"
+          disabled={isAddingToWishlist}
+          className={`absolute top-12 right-3 w-8 h-8 bg-white shadow-md rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 z-10 ${
+            isAddingToWishlist ? "animate-pulse" : ""
+          }`}
         >
           <Heart
             size={18}
@@ -282,9 +371,12 @@ const ProductItem = ({ product }) => {
 
         {/* Action Buttons */}
         <div className="flex gap-3">
-          <button className="flex-1 border border-gray-300 text-gray-700 py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 active:scale-95">
+          <Link
+            to={`/products/${product.id}`}
+            className="flex-1 border block text-center border-gray-300 text-gray-700 py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 active:scale-95"
+          >
             Details
-          </button>
+          </Link>
           <button
             disabled={product.quantity === 0 || isAddingToCart}
             onClick={handleAddToCart}

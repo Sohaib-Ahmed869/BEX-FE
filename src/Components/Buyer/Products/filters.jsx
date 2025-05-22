@@ -5,46 +5,86 @@ import {
   Filter,
   Info,
   ChevronRight,
+  RotateCcw,
+  RefreshCw,
 } from "lucide-react";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
 
-import { ChevronLeft } from "lucide-react";
-import { getConditionDescription } from "../../../utils/productGradingDescription";
 const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
   // State for expanded sections
   const [expandedSections, setExpandedSections] = useState({
-    configurations: true,
-    brand: true,
+    categories: true,
     condition: true,
-    retippedDrills: false,
-    price: false,
-    bitDiameterMm: false,
-    bitLengthMm: false,
+    priceRange: true,
+    specifications: false,
+    retippingOptions: false,
+    retippingPrice: false,
   });
 
   // Tooltip state
   const [activeTooltip, setActiveTooltip] = useState(null);
 
   // Filter states
-  const [priceRange, setPriceRange] = useState(1200);
-  const [diameterRange, setDiameterRange] = useState(3000);
-  const [lengthRange, setLengthRange] = useState(3000);
+  const [priceRange, setPriceRange] = useState(2000);
+  const [retippingPriceRange, setRetippingPriceRange] = useState(2000);
   const [selectedFilters, setSelectedFilters] = useState({
-    configurations: [],
-    brand: [],
+    categories: [],
     condition: [],
-    retippedDrills: false,
-    diameter: '12"',
-    segments: "15",
-    priceFilter: "$200",
+    priceRange: 2000,
+    specifications: {
+      diameter: [],
+      segmentType: [],
+      headType: [],
+      bondHardness: [],
+    },
+    waterCooled: false,
+    retippingOptions: {
+      hasRetippingService: false,
+      diySegmentsAvailable: false,
+    },
+    retippingPriceRange: 2000,
   });
 
-  // Get unique brands from products
-  const brands = [
-    ...new Set(
-      products?.map((product) => product.specifications?.brand || "Unknown")
-    ),
-  ].filter((brand) => brand && brand !== "Unknown");
+  // Get unique categories from products
+  const categories = products
+    ? [
+        { name: "Core Bits", count: 42 },
+        { name: "Core Drill Bits", count: 28 },
+        { name: "Magnetic Drills", count: 15 },
+        { name: "Pneumatic Drills", count: 19 },
+        { name: "Hammer Drills", count: 23 },
+        { name: "Accessories", count: 56 },
+      ]
+    : [];
+
+  // Specification options from the design
+  const diameterOptions = [
+    { name: '2"', count: 12 },
+    { name: '2.5"', count: 8 },
+    { name: '3"', count: 15 },
+    { name: '4"', count: 10 },
+    { name: '6"', count: 7 },
+    { name: '12"', count: 5 },
+    { name: '14"', count: 3 },
+    { name: '16"', count: 2 },
+  ];
+
+  const segmentTypeOptions = [
+    { name: "Turbo", count: 18 },
+    { name: "V-Shape", count: 12 },
+    { name: "Flat", count: 22 },
+  ];
+
+  const headTypeOptions = [
+    { name: "Open Head", count: 28 },
+    { name: "Closed Head", count: 14 },
+  ];
+
+  const bondHardnessOptions = [
+    { name: "Reinforced Concrete", count: 24 },
+    { name: "General Purpose", count: 36 },
+    { name: "Soft Materials", count: 12 },
+    { name: "Hard Materials", count: 18 },
+  ];
 
   // Toggle section expansion
   const toggleSection = (section) => {
@@ -54,46 +94,91 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
     });
   };
 
-  // Handle checkbox change
-  const handleCheckboxChange = (e, filterType) => {
+  // Handle checkbox change for all filter types
+  const handleCheckboxChange = (e, filterType, subType = null) => {
     const { name, checked } = e.target;
 
-    let updatedFilters;
-    if (checked) {
-      updatedFilters = [...selectedFilters[filterType], name];
+    if (subType) {
+      // For nested filters (specifications)
+      let updatedSubFilters;
+
+      if (checked) {
+        updatedSubFilters = [...selectedFilters[filterType][subType], name];
+      } else {
+        updatedSubFilters = selectedFilters[filterType][subType].filter(
+          (item) => item !== name
+        );
+      }
+
+      const updatedFilters = {
+        ...selectedFilters,
+        [filterType]: {
+          ...selectedFilters[filterType],
+          [subType]: updatedSubFilters,
+        },
+      };
+
+      setSelectedFilters(updatedFilters);
+      applyFilters(updatedFilters);
+    } else if (
+      filterType === "waterCooled" ||
+      filterType.startsWith("retippingOptions.")
+    ) {
+      // For boolean filters
+      const path = filterType.split(".");
+      if (path.length > 1) {
+        const updatedFilters = {
+          ...selectedFilters,
+          retippingOptions: {
+            ...selectedFilters.retippingOptions,
+            [path[1]]: checked,
+          },
+        };
+        setSelectedFilters(updatedFilters);
+        applyFilters(updatedFilters);
+      } else {
+        const updatedFilters = {
+          ...selectedFilters,
+          [filterType]: checked,
+        };
+        setSelectedFilters(updatedFilters);
+        applyFilters(updatedFilters);
+      }
     } else {
-      updatedFilters = selectedFilters[filterType].filter(
-        (item) => item !== name
-      );
+      // For top-level array filters
+      let updatedFilters;
+
+      if (checked) {
+        updatedFilters = [...selectedFilters[filterType], name];
+      } else {
+        updatedFilters = selectedFilters[filterType].filter(
+          (item) => item !== name
+        );
+      }
+
+      const updatedSelectedFilters = {
+        ...selectedFilters,
+        [filterType]: updatedFilters,
+      };
+
+      setSelectedFilters(updatedSelectedFilters);
+      applyFilters(updatedSelectedFilters);
     }
-
-    setSelectedFilters({
-      ...selectedFilters,
-      [filterType]: updatedFilters,
-    });
-
-    // Apply filters
-    applyFilters({ ...selectedFilters, [filterType]: updatedFilters });
   };
 
   // Handle range input change
   const handleRangeChange = (e, setRange, type) => {
-    const newValue = parseFloat(e.target.value);
+    const newValue = parseInt(e.target.value, 10);
     setRange(newValue);
 
     // Apply filters with updated values
-    applyFilters({ ...selectedFilters, [type]: newValue });
-  };
-
-  // Handle dropdown change
-  const handleDropdownChange = (e, type) => {
-    const newFilters = {
+    const updatedFilters = {
       ...selectedFilters,
-      [type]: e.target.value,
+      [type]: newValue,
     };
 
-    setSelectedFilters(newFilters);
-    applyFilters(newFilters);
+    setSelectedFilters(updatedFilters);
+    applyFilters(updatedFilters);
   };
 
   // Apply all active filters to products
@@ -103,7 +188,33 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
     }
   };
 
-  // Apply filters whenever selectedFilters changes
+  // Reset all filters
+  const resetFilters = () => {
+    const initialFilters = {
+      categories: [],
+      condition: [],
+      priceRange: 2000,
+      specifications: {
+        diameter: [],
+        segmentType: [],
+        headType: [],
+        bondHardness: [],
+      },
+      waterCooled: false,
+      retippingOptions: {
+        hasRetippingService: false,
+        diySegmentsAvailable: false,
+      },
+      retippingPriceRange: 2000,
+    };
+
+    setPriceRange(2000);
+    setRetippingPriceRange(2000);
+    setSelectedFilters(initialFilters);
+    applyFilters(initialFilters);
+  };
+
+  // Apply filters when component mounts
   useEffect(() => {
     applyFilters(selectedFilters);
   }, []);
@@ -115,6 +226,26 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
 
   const hideTooltip = () => {
     setActiveTooltip(null);
+  };
+
+  // Condition tooltip descriptions
+  const getConditionDescription = (condition) => {
+    const descriptions = {
+      New: "Item is unused, in original packaging with full manufacturer's warranty.",
+      "Like New": "Item appears unused with minimal signs of handling.",
+      "Very Good (VG)":
+        "Minor cosmetic wear, fully functional with no performance issues.",
+      "Good Condition (GC)":
+        "Shows normal wear from regular use, fully functional.",
+      "Fair Condition (FC)":
+        "Noticeable wear and cosmetic issues, but still operational.",
+      "Poor Condition (PC)":
+        "Significant wear, may have some functional issues but still usable.",
+      "For Parts / Not Working":
+        "Item is non-functional, suitable for salvaging parts.",
+    };
+
+    return descriptions[condition] || "No description available";
   };
 
   if (!visible) {
@@ -133,174 +264,50 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
   return (
     <div className="w-full md:w-full lg:w-full bg-white rounded-lg shadow-sm border border-gray-200 transition-all duration-300">
       <div className="p-4 flex justify-between items-center border-b border-gray-200">
-        <h2 className="text-lg font-semibold flex items-center">
-          <Filter size={18} className="mr-2" />
-          Filters
-        </h2>
-        <button
-          onClick={onToggle}
-          className="p-1 rounded-full hover:bg-gray-100 md:hidden"
-        >
-          <ChevronLeft size={18} />
-        </button>
+        <h2 className="text-lg font-semibold">Filter Products</h2>
       </div>
 
-      {/* Configurations */}
-      {/* <div className="border-b border-gray-200"> */}
-      {/* <button
-          onClick={() => toggleSection("configurations")}
-          className="w-full p-4 text-left font-medium flex justify-between items-center"
-        >
-          Configurations
-          {expandedSections.configurations ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
-          )}
-        </button> */}
-
-      {/* {expandedSections.configurations && (
-          <div className="px-4 pb-4 space-y-2">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name="boredPileCFA"
-                checked={selectedFilters.configurations.includes(
-                  "boredPileCFA"
-                )}
-                className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
-                onChange={(e) => handleCheckboxChange(e, "configurations")}
-              />
-              <span className="text-sm">Bored pile in CFA</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name="boredPilesKellyBar"
-                checked={selectedFilters.configurations.includes(
-                  "boredPilesKellyBar"
-                )}
-                className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
-                onChange={(e) => handleCheckboxChange(e, "configurations")}
-              />
-              <span className="text-sm">Bored piles in Kelly Bar</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name="boredPilesKellyBarCFA"
-                checked={selectedFilters.configurations.includes(
-                  "boredPilesKellyBarCFA"
-                )}
-                className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
-                onChange={(e) => handleCheckboxChange(e, "configurations")}
-              />
-              <span className="text-sm">Bored piles in Kelly Bar + CFA</span>
-            </label>
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name="diaphragmWall"
-                checked={selectedFilters.configurations.includes(
-                  "diaphragmWall"
-                )}
-                className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
-                onChange={(e) => handleCheckboxChange(e, "configurations")}
-              />
-              <span className="text-sm">Diaphragm wall</span>
-            </label>
-          </div>
-        )} */}
-      {/* </div> */}
-
-      {/* Brand */}
+      {/* Categories Section */}
       <div className="border-b border-gray-200">
         <button
-          onClick={() => toggleSection("brand")}
+          onClick={() => toggleSection("categories")}
           className="w-full p-4 text-left font-medium flex justify-between items-center"
         >
-          Brand
-          {expandedSections.brand ? (
+          Categories
+          {expandedSections.categories ? (
             <ChevronUp size={16} />
           ) : (
             <ChevronDown size={16} />
           )}
         </button>
 
-        {expandedSections.brand && (
+        {expandedSections.categories && (
           <div className="px-4 pb-4 space-y-2">
-            {/* Core Drills/Saws Brands */}
-            <div className="mb-2">
-              <h3 className="text-xs font-semibold text-gray-500 mb-1">
-                Core Drills/Saws/Robots
-              </h3>
-              {[
-                "Hilti",
-                "Husqvarna",
-                "Diamond Products",
-                "Pentruder",
-                "Weka",
-                "Shibuya",
-              ].map((brand) => (
-                <label key={brand} className="flex items-center  space-x-2">
+            {categories.map((category) => (
+              <label
+                key={category.name}
+                className="flex items-center justify-between space-x-2"
+              >
+                <div className="flex items-center">
                   <input
                     type="checkbox"
-                    name={brand}
-                    checked={selectedFilters.brand.includes(brand)}
-                    className="w-4 h-4 text-[#F47458]-500 rounded focus:ring-[#e06449] p-2 mb-2 "
-                    onChange={(e) => handleCheckboxChange(e, "brand")}
+                    name={category.name}
+                    checked={selectedFilters.categories.includes(category.name)}
+                    className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                    onChange={(e) => handleCheckboxChange(e, "categories")}
                   />
-                  <span className="text-sm font-stretch-50%">{brand}</span>
-                </label>
-              ))}
-            </div>
-
-            {/* Bits/Blades Brands */}
-            <div>
-              <h3 className="text-xs font-semibold text-gray-500 mb-1">
-                Bits/Blades/Wire
-              </h3>
-              {["Tyrolit", "EDCO", "Core Bore", "Diteq", "ICS", "DMI"].map(
-                (brand) => (
-                  <label key={brand} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      name={brand}
-                      checked={selectedFilters.brand.includes(brand)}
-                      className="w-4 h-4  text-[#F47458]-500 rounded focus:ring-[#e06449] p-2 mb-2 "
-                      onChange={(e) => handleCheckboxChange(e, "brand")}
-                    />
-                    <span className="text-sm font-stretch-50%">{brand}</span>
-                  </label>
-                )
-              )}
-            </div>
-
-            {/* Dynamic brands from products */}
-            {brands.length > 0 && (
-              <div className="mt-2">
-                <h3 className="text-xs font-semibold text-gray-500 mb-1">
-                  Brands Available at the moment
-                </h3>
-                {brands.slice(0, 6).map((brand) => (
-                  <label key={brand} className="flex items-center space-x-2 ">
-                    <input
-                      type="checkbox"
-                      name={brand}
-                      checked={selectedFilters.brand.includes(brand)}
-                      className="w-4 h-4 text-[#F47458]-500 rounded focus:ring-[#e06449] p-2 mb-2 "
-                      onChange={(e) => handleCheckboxChange(e, "brand")}
-                    />
-                    <span className="text-sm font-stretch-50%">{brand}</span>
-                  </label>
-                ))}
-              </div>
-            )}
+                  <span className="text-sm ml-2">{category.name}</span>
+                </div>
+                <span className="text-xs text-gray-400">
+                  ({category.count})
+                </span>
+              </label>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Condition */}
+      {/* Condition Section */}
       <div className="border-b border-gray-200">
         <button
           onClick={() => toggleSection("condition")}
@@ -316,18 +323,6 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
 
         {expandedSections.condition && (
           <div className="px-4 pb-4 space-y-2">
-            {/* Condition Description */}
-            <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded mb-3 flex items-start">
-              <div className="flex-shrink-0 mt-0.5 mr-1">
-                <Info size={12} />
-              </div>
-              <p>
-                Item is unused, in its original packaging (where applicable),
-                and typically retains the full manufacturer's warranty.
-              </p>
-            </div>
-
-            {/* Condition Options */}
             {[
               "New",
               "Like New",
@@ -349,257 +344,375 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
                     className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
                     onChange={(e) => handleCheckboxChange(e, "condition")}
                   />
-                  <span className="text-sm">{condition}</span>
+                  <span className="text-sm ml-2">{condition}</span>
                 </label>
-                <div className="relative">
-                  <button
-                    className="text-gray-400 hover:text-gray-600"
-                    onMouseEnter={() => showTooltip(condition)}
-                    onMouseLeave={hideTooltip}
-                  >
-                    <AiOutlineExclamationCircle
-                      size={16}
-                      className="text-[#F47458]"
-                    />
-                  </button>
-                  {activeTooltip === condition && (
-                    <div className="absolute z-10 -top-2 right-6 w-48 p-2 bg-gray-800 text-white text-xs rounded shadow-lg">
-                      {getConditionDescription(condition)}
-                    </div>
-                  )}
-                </div>
+                <button
+                  className="text-gray-400 hover:text-gray-600"
+                  onMouseEnter={() => showTooltip(condition)}
+                  onMouseLeave={hideTooltip}
+                >
+                  <Info size={16} className="text-gray-400" />
+                </button>
+                {activeTooltip === condition && (
+                  <div className="absolute z-10 right-6 w-48 p-2 bg-gray-800 text-white text-xs rounded shadow-lg">
+                    {getConditionDescription(condition)}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* Re-tipped drills */}
+      {/* Price Range Section */}
       <div className="border-b border-gray-200">
         <button
-          onClick={() => toggleSection("retippedDrills")}
+          onClick={() => toggleSection("priceRange")}
           className="w-full p-4 text-left font-medium flex justify-between items-center"
         >
-          Re-tipped drills
-          {expandedSections.retippedDrills ? (
+          Price Range
+          {expandedSections.priceRange ? (
             <ChevronUp size={16} />
           ) : (
             <ChevronDown size={16} />
           )}
         </button>
 
-        {expandedSections.retippedDrills && (
-          <div className="px-4 pb-4 space-y-4">
-            {/* Bit diameter */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-2">
-                  <span className="inline-block w-3 h-3 bg-[#F47458] rounded-full mr-2"></span>
-                  <span className="text-sm font-medium">
-                    Bit diameter (inches)
-                  </span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={selectedFilters.diameter}
-                    onChange={(e) => handleDropdownChange(e, "diameter")}
-                    className="appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-1 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  >
-                    <option>12"</option>
-                    <option>14"</option>
-                    <option>16"</option>
-                    <option>18"</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <ChevronDown size={14} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Segments */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-2">
-                  <span className="inline-block w-3 h-3 bg-[#F47458] rounded-full mr-2"></span>
-                  <span className="text-sm font-medium">Segments</span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={selectedFilters.segments}
-                    onChange={(e) => handleDropdownChange(e, "segments")}
-                    className="appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-1 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  >
-                    <option>15</option>
-                    <option>18</option>
-                    <option>20</option>
-                    <option>24</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <ChevronDown size={14} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Price */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-2">
-                  <span className="inline-block w-3 h-3 bg-[#F47458] rounded-full mr-2"></span>
-                  <span className="text-sm font-medium">Price</span>
-                </label>
-                <div className="relative">
-                  <select
-                    value={selectedFilters.priceFilter}
-                    onChange={(e) => handleDropdownChange(e, "priceFilter")}
-                    className="appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-1 px-3 pr-8 rounded text-sm leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                  >
-                    <option>$200</option>
-                    <option>$300</option>
-                    <option>$500</option>
-                    <option>$1000</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <ChevronDown size={14} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Price */}
-      <div className="border-b border-gray-200">
-        <button
-          onClick={() => toggleSection("price")}
-          className="w-full p-4 text-left font-medium flex justify-between items-center"
-        >
-          Price
-          {expandedSections.price ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
-          )}
-        </button>
-
-        {expandedSections.price && (
+        {expandedSections.priceRange && (
           <div className="px-4 pb-6">
             <div className="flex justify-between mb-2">
-              <span className="text-sm text-gray-600">$0</span>
-              <span className="text-sm text-gray-600">$1200</span>
+              <span className="text-sm">
+                ${" "}
+                <input
+                  type="number"
+                  value={0}
+                  disabled
+                  className="w-12 bg-white border border-gray-200 rounded text-center"
+                />
+              </span>
+              <span className="text-xs text-gray-400">to</span>
+              <span className="text-sm">
+                ${" "}
+                <input
+                  type="number"
+                  value={priceRange}
+                  className="w-12 bg-white border border-gray-200 rounded text-center"
+                  onChange={(e) =>
+                    handleRangeChange(e, setPriceRange, "priceRange")
+                  }
+                />
+              </span>
             </div>
             <input
               type="range"
               min="0"
-              max="1200"
+              max="2000"
               value={priceRange}
               onChange={(e) =>
                 handleRangeChange(e, setPriceRange, "priceRange")
               }
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#F47458]"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
               style={{
-                backgroundImage: `linear-gradient(to right, #F47458 0%, #e06449 ${
-                  (priceRange / 1200) * 100
-                }%, #e5e7eb ${(priceRange / 1200) * 100}%, #e5e7eb 100%)`,
+                backgroundImage: `linear-gradient(to right, #F47458 0%, #F47458 ${
+                  (priceRange / 2000) * 100
+                }%, #e5e7eb ${(priceRange / 2000) * 100}%, #e5e7eb 100%)`,
               }}
             />
-            <div className="text-sm text-gray-600 mt-2">
-              <span>${priceRange}</span>
-            </div>
           </div>
         )}
       </div>
 
-      {/* Bit diameter (mm) */}
+      {/* Specifications Section */}
       <div className="border-b border-gray-200">
         <button
-          onClick={() => toggleSection("bitDiameterMm")}
+          onClick={() => toggleSection("specifications")}
           className="w-full p-4 text-left font-medium flex justify-between items-center"
         >
-          Bit diameter (mm)
-          {expandedSections.bitDiameterMm ? (
+          Specifications
+          {expandedSections.specifications ? (
             <ChevronUp size={16} />
           ) : (
             <ChevronDown size={16} />
           )}
         </button>
 
-        {expandedSections.bitDiameterMm && (
-          <div className="px-4 pb-6">
-            <div className="flex justify-between mb-2">
-              <span className="text-sm text-gray-600">800</span>
-              <span className="text-sm text-gray-600">3000</span>
+        {expandedSections.specifications && (
+          <div className="px-4 pb-4">
+            {/* Diameter */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Diameter</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {diameterOptions.map((option) => (
+                  <label
+                    key={option.name}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name={option.name}
+                        checked={selectedFilters.specifications.diameter.includes(
+                          option.name
+                        )}
+                        className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                        onChange={(e) =>
+                          handleCheckboxChange(e, "specifications", "diameter")
+                        }
+                      />
+                      <span className="text-sm ml-2">{option.name}</span>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      ({option.count})
+                    </span>
+                  </label>
+                ))}
+              </div>
             </div>
-            <input
-              type="range"
-              min="800"
-              max="3000"
-              value={diameterRange}
-              onChange={(e) =>
-                handleRangeChange(e, setDiameterRange, "diameterRange")
-              }
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#F47458]"
-              style={{
-                backgroundImage: `linear-gradient(to right,#F47458 0%, #e06449 ${
-                  ((diameterRange - 800) / 2200) * 100
-                }%, #e5e7eb ${
-                  ((diameterRange - 800) / 2200) * 100
-                }%, #e5e7eb 100%)`,
-              }}
-            />
-            <div className="text-sm text-gray-600 mt-2">
-              <span>{diameterRange} mm</span>
+
+            {/* Segment Type */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Segment Type</h3>
+              {segmentTypeOptions.map((option) => (
+                <label
+                  key={option.name}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name={option.name}
+                      checked={selectedFilters.specifications.segmentType.includes(
+                        option.name
+                      )}
+                      className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                      onChange={(e) =>
+                        handleCheckboxChange(e, "specifications", "segmentType")
+                      }
+                    />
+                    <span className="text-sm ml-2">{option.name}</span>
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    ({option.count})
+                  </span>
+                </label>
+              ))}
             </div>
+
+            {/* Head Type */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Head Type</h3>
+              {headTypeOptions.map((option) => (
+                <label
+                  key={option.name}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name={option.name}
+                      checked={selectedFilters.specifications.headType.includes(
+                        option.name
+                      )}
+                      className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                      onChange={(e) =>
+                        handleCheckboxChange(e, "specifications", "headType")
+                      }
+                    />
+                    <span className="text-sm ml-2">{option.name}</span>
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    ({option.count})
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            {/* Bond Hardness/Application */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">
+                Bond Hardness/Application
+              </h3>
+              {bondHardnessOptions.map((option) => (
+                <label
+                  key={option.name}
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name={option.name}
+                      checked={selectedFilters.specifications.bondHardness.includes(
+                        option.name
+                      )}
+                      className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                      onChange={(e) =>
+                        handleCheckboxChange(
+                          e,
+                          "specifications",
+                          "bondHardness"
+                        )
+                      }
+                    />
+                    <span className="text-sm ml-2">{option.name}</span>
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    ({option.count})
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            {/* Water-Cooled */}
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={selectedFilters.waterCooled}
+                className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                onChange={(e) => handleCheckboxChange(e, "waterCooled")}
+              />
+              <span className="text-sm">Water-Cooled</span>
+            </label>
           </div>
         )}
       </div>
 
-      {/* Bit length (mm) */}
+      {/* Retipping Options */}
       <div className="border-b border-gray-200">
         <button
-          onClick={() => toggleSection("bitLengthMm")}
+          onClick={() => toggleSection("retippingOptions")}
           className="w-full p-4 text-left font-medium flex justify-between items-center"
         >
-          Bit length (mm)
-          {expandedSections.bitLengthMm ? (
+          <div className="flex items-center">
+            <span>Retipping Options</span>
+            <RefreshCw size={16} className="ml-2 text-orange-500" />
+          </div>
+          {expandedSections.retippingOptions ? (
             <ChevronUp size={16} />
           ) : (
             <ChevronDown size={16} />
           )}
         </button>
 
-        {expandedSections.bitLengthMm && (
+        {expandedSections.retippingOptions && (
+          <div className="px-4 pb-4 space-y-2">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={selectedFilters.retippingOptions.hasRetippingService}
+                className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                onChange={(e) =>
+                  handleCheckboxChange(
+                    e,
+                    "retippingOptions.hasRetippingService"
+                  )
+                }
+              />
+              <span className="text-sm">Has retipping service</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={selectedFilters.retippingOptions.diySegmentsAvailable}
+                className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                onChange={(e) =>
+                  handleCheckboxChange(
+                    e,
+                    "retippingOptions.diySegmentsAvailable"
+                  )
+                }
+              />
+              <span className="text-sm">DIY segments available</span>
+            </label>
+          </div>
+        )}
+      </div>
+
+      {/* Retipping Price Range */}
+      <div className="border-b border-gray-200">
+        <button
+          onClick={() => toggleSection("retippingPrice")}
+          className="w-full p-4 text-left font-medium flex justify-between items-center"
+        >
+          Retipping Price Range
+          {expandedSections.retippingPrice ? (
+            <ChevronUp size={16} />
+          ) : (
+            <ChevronDown size={16} />
+          )}
+        </button>
+
+        {expandedSections.retippingPrice && (
           <div className="px-4 pb-6">
             <div className="flex justify-between mb-2">
-              <span className="text-sm text-gray-600">800</span>
-              <span className="text-sm text-gray-600">3000</span>
+              <span className="text-sm">
+                ${" "}
+                <input
+                  type="number"
+                  value={0}
+                  disabled
+                  className="w-12 bg-white border border-gray-200 rounded text-center"
+                />
+              </span>
+              <span className="text-xs text-gray-400">to</span>
+              <span className="text-sm">
+                ${" "}
+                <input
+                  type="number"
+                  value={retippingPriceRange}
+                  className="w-12 bg-white border border-gray-200 rounded text-center"
+                  onChange={(e) =>
+                    handleRangeChange(
+                      e,
+                      setRetippingPriceRange,
+                      "retippingPriceRange"
+                    )
+                  }
+                />
+              </span>
             </div>
             <input
               type="range"
-              min="800"
-              max="3000"
-              value={lengthRange}
+              min="0"
+              max="2000"
+              value={retippingPriceRange}
               onChange={(e) =>
-                handleRangeChange(e, setLengthRange, "lengthRange")
+                handleRangeChange(
+                  e,
+                  setRetippingPriceRange,
+                  "retippingPriceRange"
+                )
               }
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#F47458]"
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
               style={{
-                backgroundImage: `linear-gradient(to right, #F47458 0%, #e06449 ${
-                  ((lengthRange - 800) / 2200) * 100
+                backgroundImage: `linear-gradient(to right, #F47458 0%, #F47458 ${
+                  (retippingPriceRange / 2000) * 100
                 }%, #e5e7eb ${
-                  ((lengthRange - 800) / 2200) * 100
+                  (retippingPriceRange / 2000) * 100
                 }%, #e5e7eb 100%)`,
               }}
             />
-            <div className="text-sm text-gray-600 mt-2">
-              <span>{lengthRange} mm</span>
-            </div>
           </div>
         )}
+      </div>
+
+      {/* Filter Action Buttons */}
+      <div className="p-4 flex justify-between gap-2">
+        <button
+          onClick={resetFilters}
+          className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center"
+        >
+          <RotateCcw size={14} className="mr-2" />
+          Reset Filters
+        </button>
+        <button
+          onClick={() => applyFilters(selectedFilters)}
+          className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+        >
+          Apply Filters
+        </button>
       </div>
     </div>
   );
 };
+
 export default ProductFilters;

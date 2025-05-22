@@ -62,7 +62,7 @@ const BuyerForm = ({ formData, updateFormData }) => {
       }
       toast.success("Registration successful!");
       localStorage.setItem("token", result.token);
-      sessionStorage.setItem("jwtToken", response.token);
+      sessionStorage.setItem("jwtToken", result.token);
 
       localStorage.setItem("role", result.role);
       // Handle successful registration

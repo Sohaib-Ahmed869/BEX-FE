@@ -43,6 +43,8 @@ export const addToCart = (userId, productData, quantity = 1) => {
           productData.images && productData.images.length
             ? productData.images[0]
             : null,
+        diameter: productData.diameter || null,
+        category: productData.category,
         price: parseFloat(productData.price),
         quantity: parseInt(quantity),
       };

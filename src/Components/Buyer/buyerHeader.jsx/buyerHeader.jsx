@@ -5,11 +5,11 @@ import logo from "../../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
-export default function BuyerHeader({ toggleCart }) {
-  const [wishlistCount, setWishlistCount] = useState(0);
+export default function BuyerHeader({ toggleCart, toggleWishlist }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const cartCount = useSelector((state) => state.cart.productsCount);
+  const wishlistCount = useSelector((state) => state.wishlist.totalItems);
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -22,9 +22,7 @@ export default function BuyerHeader({ toggleCart }) {
   // Animation for page load
   useEffect(() => {
     // Simulate adding to wishlist after 2 seconds
-    const timer = setTimeout(() => {
-      setWishlistCount(1);
-    }, 2000);
+    const timer = setTimeout(() => {}, 2000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -57,6 +55,7 @@ export default function BuyerHeader({ toggleCart }) {
             className="relative flex items-center cursor-pointer"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => toggleWishlist(true)}
           >
             <Heart size={20} className="text-gray-700" />
             <span className="ml-5 text-sm">Wishlist</span>
@@ -132,15 +131,15 @@ export default function BuyerHeader({ toggleCart }) {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  <div className="px-4 py-2  block w-full text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
                     Profile
                   </div>
-                  <div className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  <div className="px-4 py-2 block w-full text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
                     Settings
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"
                   >
                     Sign out
                   </button>

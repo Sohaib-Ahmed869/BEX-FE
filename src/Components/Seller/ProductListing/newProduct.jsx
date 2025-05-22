@@ -75,68 +75,72 @@ const RETIPPING_PRICE_DATA = {
   '60"': { price: 1992.0, segments: 83 },
 };
 
-function CoreBitRetippingComponent({ formData, onChange }) {
-  const [localRetippingData, setLocalRetippingData] = useState({
-    diameter: formData.retipping?.diameter || '3"',
-    segments:
-      formData.retipping?.segments || RETIPPING_PRICE_DATA['3"'].segments,
-    perSegmentPrice: formData.retipping?.perSegmentPrice || "14.00",
-    totalPrice:
-      formData.retipping?.totalPrice ||
-      RETIPPING_PRICE_DATA['3"'].price.toFixed(2),
-    enableDIY: formData.retipping?.enableDIY || false,
-  });
+const defaultRetippingData = {
+  diameter: '3"',
+  segments: RETIPPING_PRICE_DATA['3"'].segments,
+  perSegmentPrice: "14.00",
+  totalPrice: RETIPPING_PRICE_DATA['3"'].price.toFixed(2),
+  enableDIY: false,
+};
 
-  // Update the form data in parent component when localRetippingData changes
-  useEffect(() => {
-    onChange({ retipping: localRetippingData });
-  }, [localRetippingData, onChange]);
+function CoreBitRetippingComponent({ formData, onChange }) {
+  // Use formData.retipping if available, otherwise use defaults
+  const retippingData = { ...defaultRetippingData, ...formData.retipping };
+
+  // Handle input changes and update parent state
+  const handleInputChange = (field, value) => {
+    const updatedRetipping = { ...retippingData, [field]: value };
+    onChange({ retipping: updatedRetipping });
+  };
 
   // Handle diameter change and update segments and price accordingly
   const handleDiameterChange = (e) => {
     const selectedDiameter = e.target.value;
     const diameterData = RETIPPING_PRICE_DATA[selectedDiameter];
 
-    setLocalRetippingData({
-      ...localRetippingData,
+    const updatedRetipping = {
+      ...retippingData,
       diameter: selectedDiameter,
       segments: diameterData.segments,
       totalPrice: diameterData.price.toFixed(2),
-    });
+    };
+
+    onChange({ retipping: updatedRetipping });
   };
 
   // Handle manual segment count change
   const handleSegmentsChange = (e) => {
     const segmentCount = parseInt(e.target.value) || 0;
-    const perSegmentPrice = parseFloat(localRetippingData.perSegmentPrice) || 0;
+    const perSegmentPrice = parseFloat(retippingData.perSegmentPrice) || 0;
     const totalPrice = (segmentCount * perSegmentPrice).toFixed(2);
 
-    setLocalRetippingData({
-      ...localRetippingData,
+    const updatedRetipping = {
+      ...retippingData,
       segments: segmentCount,
       totalPrice: totalPrice,
-    });
+    };
+
+    onChange({ retipping: updatedRetipping });
   };
 
   // Handle per-segment price change
   const handlePerSegmentPriceChange = (e) => {
     const price = e.target.value;
-    const segmentCount = parseInt(localRetippingData.segments) || 0;
-    const totalPrice = (segmentCount * parseFloat(price)).toFixed(2);
+    const segmentCount = parseInt(retippingData.segments) || 0;
+    const totalPrice = (segmentCount * parseFloat(price || 0)).toFixed(2);
 
-    setLocalRetippingData({
-      ...localRetippingData,
+    const updatedRetipping = {
+      ...retippingData,
       perSegmentPrice: price,
       totalPrice: totalPrice,
-    });
+    };
+
+    onChange({ retipping: updatedRetipping });
   };
 
   // Toggle DIY segment purchasing option
   const handleDIYToggle = (e) => {
-    setLocalRetippingData({
-      ...localRetippingData,
-      enableDIY: e.target.checked,
-    });
+    handleInputChange("enableDIY", e.target.checked);
   };
 
   return (
@@ -165,7 +169,7 @@ function CoreBitRetippingComponent({ formData, onChange }) {
         <div className="relative">
           <select
             id="diameter"
-            value={localRetippingData.diameter}
+            value={retippingData.diameter}
             onChange={handleDiameterChange}
             className="w-full p-2 border border-gray-300 rounded-md appearance-none"
           >
@@ -189,13 +193,13 @@ function CoreBitRetippingComponent({ formData, onChange }) {
         <input
           type="number"
           id="segments"
-          value={localRetippingData.segments}
+          value={retippingData.segments}
           onChange={handleSegmentsChange}
           className="w-full p-2 border border-gray-300 rounded-md"
         />
         <p className="text-xs text-gray-500 mt-1">
-          Standard segment count for {localRetippingData.diameter} core bit:{" "}
-          {RETIPPING_PRICE_DATA[localRetippingData.diameter]?.segments || "N/A"}
+          Standard segment count for {retippingData.diameter} core bit:{" "}
+          {RETIPPING_PRICE_DATA[retippingData.diameter]?.segments || "N/A"}
         </p>
       </div>
 
@@ -209,7 +213,7 @@ function CoreBitRetippingComponent({ formData, onChange }) {
         <input
           type="text"
           id="perSegmentPrice"
-          value={localRetippingData.perSegmentPrice}
+          value={retippingData.perSegmentPrice}
           onChange={handlePerSegmentPriceChange}
           className="w-full p-2 border border-gray-300 rounded-md"
         />
@@ -223,7 +227,7 @@ function CoreBitRetippingComponent({ formData, onChange }) {
           <div className="flex justify-between mb-2">
             <span className="text-sm font-medium">Total Retipping Price:</span>
             <span className="text-lg font-bold">
-              ${localRetippingData.totalPrice}
+              ${retippingData.totalPrice}
             </span>
           </div>
           <p className="text-xs text-gray-500">
@@ -237,7 +241,7 @@ function CoreBitRetippingComponent({ formData, onChange }) {
         <input
           type="checkbox"
           id="enableDIY"
-          checked={localRetippingData.enableDIY}
+          checked={retippingData.enableDIY}
           onChange={handleDIYToggle}
           className="mt-1 mr-2"
         />
@@ -350,7 +354,7 @@ export default function NewProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [key, setKey] = useState(0);
 
-  // Add this useEffect to reset the key when category changes
+  //useEffect to reset the key when category changes
   useEffect(() => {
     setKey((prevKey) => prevKey + 1);
   }, [formData.category]);
@@ -360,9 +364,6 @@ export default function NewProduct() {
   };
 
   // Handle specification data changes from child components
-  const handleretippingChange = (specsData) => {
-    setFormData({ ...formData, ...specsData });
-  };
   const handleSpecsChange = (specsData) => {
     setFormData((prev) => ({
       ...prev,
@@ -370,6 +371,12 @@ export default function NewProduct() {
         ...prev.specs,
         ...specsData,
       },
+    }));
+  };
+  const handleRetippingChange = (retippingData) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...retippingData,
     }));
   };
 
@@ -823,7 +830,7 @@ export default function NewProduct() {
               {formData.category === "Core Drill Bits" && (
                 <CoreBitRetippingComponent
                   formData={formData}
-                  onChange={handleretippingChange}
+                  onChange={handleRetippingChange}
                 />
               )}
               {/* Condition Grading */}

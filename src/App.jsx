@@ -15,6 +15,8 @@ import NewProduct from "./Components/Seller/ProductListing/newProduct";
 import EditProduct from "./Components/Seller/ProductListing/ProductActions/EditProduct";
 import ViewProduct from "./Components/Seller/ProductListing/ProductActions/ViewProduct";
 import Products from "./Components/Buyer/Products/page";
+import Checkout from "./Components/Buyer/Checkout/checkout";
+import ProductDetailsPage from "./Components/Buyer/Products/ProductDetails/ProductDetail";
 
 const App = () => {
   return (
@@ -43,7 +45,10 @@ const App = () => {
           <Route path="settings" element={<Settings />} />
           <Route path="support" element={<Support />} />
         </Route>
+        {/* Buyer routes */}
         <Route path="/products" element={<Products />} />
+        <Route path="/products/:productId" element={<ProductDetailsPage />} />
+        <Route path="/products/checkout" element={<Checkout />} />
 
         {/* Catch all - redirect to dashboard */}
         {/* <Route path="*" element={<Navigate to="/dashboard" replace />} /> */}

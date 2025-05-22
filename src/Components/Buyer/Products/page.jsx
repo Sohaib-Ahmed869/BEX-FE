@@ -8,6 +8,7 @@ import { MdOutlineShoppingBag } from "react-icons/md";
 
 import { Search, SlidersHorizontal } from "lucide-react";
 import ShoppingCart from "../Cart/cart";
+import WishlistModal from "../wishlist/wishlistModal";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -16,17 +17,23 @@ const Products = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCart, setShowCart] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
   const [activeFilters, setActiveFilters] = useState({
-    configurations: [],
-    brand: [],
+    categories: [],
     condition: [],
-    retippedDrills: false,
-    priceRange: 1200,
-    diameterRange: 3000,
-    lengthRange: 3000,
-    diameter: '12"',
-    segments: "15",
-    priceFilter: "$200",
+    priceRange: 2000,
+    specifications: {
+      diameter: [],
+      segmentType: [],
+      headType: [],
+      bondHardness: [],
+    },
+    waterCooled: false,
+    retippingOptions: {
+      hasRetippingService: false,
+      diySegmentsAvailable: false,
+    },
+    retippingPriceRange: 2000,
   });
   const [filtersVisible, setFiltersVisible] = useState(true);
 
@@ -72,25 +79,11 @@ const Products = () => {
       );
     }
 
-    // Apply configuration filters
-    if (activeFilters.configurations.length > 0) {
-      filtered = filtered.filter((product) => {
-        // Check if product has any of the selected configurations
-        const productConfig = product.specifications?.configuration || "";
-        return activeFilters.configurations.some((config) =>
-          productConfig.toLowerCase().includes(config.toLowerCase())
-        );
-      });
-    }
-
-    // Apply brand filters
-    if (activeFilters.brand.length > 0) {
-      filtered = filtered.filter((product) => {
-        const productBrand = product.specifications?.brand || "";
-        return activeFilters.brand.some(
-          (brand) => productBrand.toLowerCase() === brand.toLowerCase()
-        );
-      });
+    // Apply category filters
+    if (activeFilters.categories.length > 0) {
+      filtered = filtered.filter((product) =>
+        activeFilters.categories.includes(product.category)
+      );
     }
 
     // Apply condition filters
@@ -105,33 +98,68 @@ const Products = () => {
     }
 
     // Apply price range filter
-    if (activeFilters.priceRange < 1200) {
+    if (activeFilters.priceRange < 2000) {
       filtered = filtered.filter((product) => {
         const price = parseFloat(product.price);
         return !isNaN(price) && price <= activeFilters.priceRange;
       });
     }
 
-    // Apply diameter range filter (for core drill bits)
-    if (activeFilters.diameterRange < 3000) {
+    // Apply diameter specification filter
+    if (activeFilters.specifications.diameter.length > 0) {
       filtered = filtered.filter((product) => {
-        if (product.category !== "Core Drill Bits") return true;
-        const diameter = parseFloat(product.specifications?.bitDiameter);
-        return !isNaN(diameter) && diameter <= activeFilters.diameterRange;
+        if (!product.specifications?.bitDiameter) return false;
+
+        // Convert bitDiameter to a format that matches our filter options (e.g., "2"")
+        const bitDiameter =
+          Math.round(parseFloat(product.specifications.bitDiameter)) + '"';
+
+        return activeFilters.specifications.diameter.includes(bitDiameter);
       });
     }
 
-    // Apply bit length filter (for core drill bits)
-    if (activeFilters.lengthRange < 3000) {
+    // Apply segment type filter
+    if (activeFilters.specifications.segmentType.length > 0) {
       filtered = filtered.filter((product) => {
-        if (product.category !== "Core Drill Bits") return true;
-        const length = parseFloat(product.specifications?.barrelLength);
-        return !isNaN(length) && length <= activeFilters.lengthRange;
+        if (!product.specifications?.segmentType) return false;
+
+        return activeFilters.specifications.segmentType.includes(
+          product.specifications.segmentType
+        );
       });
     }
 
-    // Apply retipped drills filter
-    if (activeFilters.retippedDrills) {
+    // Apply head type filter
+    if (activeFilters.specifications.headType.length > 0) {
+      filtered = filtered.filter((product) => {
+        if (!product.specifications?.headType) return false;
+
+        return activeFilters.specifications.headType.includes(
+          product.specifications.headType
+        );
+      });
+    }
+
+    // Apply bond hardness filter
+    if (activeFilters.specifications.bondHardness.length > 0) {
+      filtered = filtered.filter((product) => {
+        if (!product.specifications?.bondHardness) return false;
+
+        return activeFilters.specifications.bondHardness.some((hardness) =>
+          product.specifications.bondHardness.includes(hardness)
+        );
+      });
+    }
+
+    // Apply water cooled filter
+    if (activeFilters.waterCooled) {
+      filtered = filtered.filter(
+        (product) => product.specifications?.waterCooled === true
+      );
+    }
+
+    // Apply retipping options filters
+    if (activeFilters.retippingOptions.hasRetippingService) {
       filtered = filtered.filter(
         (product) => product.requires_retipping === true
       );
@@ -151,7 +179,7 @@ const Products = () => {
   };
 
   const handleFilterChange = (newFilters) => {
-    setActiveFilters({ ...activeFilters, ...newFilters });
+    setActiveFilters(newFilters);
   };
 
   const toggleFiltersVisibility = () => {
@@ -162,10 +190,14 @@ const Products = () => {
     setShowCart(!showCart);
   };
 
+  const toggleWishlist = () => {
+    setShowWishlist(!showWishlist);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {loading && <CubeLoader />}
-      <BuyerHeader toggleCart={toggleCart} />
+      <BuyerHeader toggleCart={toggleCart} toggleWishlist={toggleWishlist} />
 
       {/* Error message display */}
       {error && (
@@ -192,7 +224,7 @@ const Products = () => {
 
         {/* Page title */}
 
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col mb-30 md:flex-row gap-6">
           {/* Filters panel - Left side with animation */}
           <div
             className={`md:w-1/3 lg:w-1/4 transition-all duration-300 ease-in-out transform ${
@@ -277,6 +309,7 @@ const Products = () => {
 
       {/* Modal Shopping Cart */}
       <ShoppingCart isOpen={showCart} setIsOpen={setShowCart} />
+      <WishlistModal isOpen={showWishlist} setIsOpen={setShowWishlist} />
     </div>
   );
 };
