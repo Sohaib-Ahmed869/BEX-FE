@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   ChevronDown,
   ChevronUp,
@@ -44,47 +44,186 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
     retippingPriceRange: 2000,
   });
 
-  // Get unique categories from products
-  const categories = products
-    ? [
-        { name: "Core Bits", count: 42 },
-        { name: "Core Drill Bits", count: 28 },
-        { name: "Magnetic Drills", count: 15 },
-        { name: "Pneumatic Drills", count: 19 },
-        { name: "Hammer Drills", count: 23 },
-        { name: "Accessories", count: 56 },
-      ]
-    : [];
+  // Dynamically calculate categories with counts from products data
+  const categories = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
 
-  // Specification options from the design
-  const diameterOptions = [
-    { name: '2"', count: 12 },
-    { name: '2.5"', count: 8 },
-    { name: '3"', count: 15 },
-    { name: '4"', count: 10 },
-    { name: '6"', count: 7 },
-    { name: '12"', count: 5 },
-    { name: '14"', count: 3 },
-    { name: '16"', count: 2 },
-  ];
+    const categoryMap = new Map();
 
-  const segmentTypeOptions = [
-    { name: "Turbo", count: 18 },
-    { name: "V-Shape", count: 12 },
-    { name: "Flat", count: 22 },
-  ];
+    products.forEach((product) => {
+      const category = product.category;
+      if (category) {
+        categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+      }
+    });
 
-  const headTypeOptions = [
-    { name: "Open Head", count: 28 },
-    { name: "Closed Head", count: 14 },
-  ];
+    return Array.from(categoryMap, ([name, count]) => ({ name, count })).sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
+  }, [products]);
 
-  const bondHardnessOptions = [
-    { name: "Reinforced Concrete", count: 24 },
-    { name: "General Purpose", count: 36 },
-    { name: "Soft Materials", count: 12 },
-    { name: "Hard Materials", count: 18 },
-  ];
+  // Dynamically calculate conditions with counts from products data
+  const conditionsWithCounts = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+
+    const conditionMap = new Map();
+    const allConditions = [
+      "New",
+      "Like New",
+      "Very Good (VG)",
+      "Good Condition (GC)",
+      "Fair Condition (FC)",
+      "Poor Condition (PC)",
+      "For Parts / Not Working",
+    ];
+
+    // Initialize all conditions with 0 count
+    allConditions.forEach((condition) => {
+      conditionMap.set(condition, 0);
+    });
+
+    // Count actual conditions in products
+    products.forEach((product) => {
+      const condition = product.condition;
+      if (condition && conditionMap.has(condition)) {
+        conditionMap.set(condition, conditionMap.get(condition) + 1);
+      }
+    });
+
+    return allConditions.map((condition) => ({
+      name: condition,
+      count: conditionMap.get(condition) || 0,
+    }));
+  }, [products]);
+
+  // Dynamically calculate specification options with counts
+  const diameterOptions = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+
+    const diameterMap = new Map();
+
+    products.forEach((product) => {
+      const diameter = product.specifications?.bitDiameter;
+      if (diameter) {
+        const formattedDiameter = `${diameter}"`;
+        diameterMap.set(
+          formattedDiameter,
+          (diameterMap.get(formattedDiameter) || 0) + 1
+        );
+      }
+    });
+
+    return Array.from(diameterMap, ([name, count]) => ({ name, count })).sort(
+      (a, b) => parseFloat(a.name) - parseFloat(b.name)
+    );
+  }, [products]);
+
+  const segmentTypeOptions = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+
+    const segmentTypeMap = new Map();
+
+    products.forEach((product) => {
+      const segmentType = product.specifications?.segmentType;
+      if (segmentType) {
+        segmentTypeMap.set(
+          segmentType,
+          (segmentTypeMap.get(segmentType) || 0) + 1
+        );
+      }
+    });
+
+    return Array.from(segmentTypeMap, ([name, count]) => ({
+      name,
+      count,
+    })).sort((a, b) => a.name.localeCompare(b.name));
+  }, [products]);
+
+  const headTypeOptions = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+
+    const headTypeMap = new Map();
+
+    products.forEach((product) => {
+      const headType = product.specifications?.headType;
+      if (headType) {
+        headTypeMap.set(headType, (headTypeMap.get(headType) || 0) + 1);
+      }
+    });
+
+    return Array.from(headTypeMap, ([name, count]) => ({ name, count })).sort(
+      (a, b) => a.name.localeCompare(b.name)
+    );
+  }, [products]);
+
+  const bondHardnessOptions = useMemo(() => {
+    if (!products || !Array.isArray(products)) return [];
+
+    const bondHardnessMap = new Map();
+
+    products.forEach((product) => {
+      const bondHardness = product.specifications?.bondHardness;
+      if (bondHardness) {
+        // Normalize the bond hardness value to match filter options
+        let normalizedValue = bondHardness;
+        if (bondHardness.includes("Soft Bond")) {
+          normalizedValue = "Hard Materials";
+        } else if (bondHardness.includes("Medium Bond")) {
+          normalizedValue = "General Purpose";
+        } else if (bondHardness.includes("Hard Bond")) {
+          normalizedValue = "Soft Materials";
+        } else if (bondHardness.includes("Reinforced")) {
+          normalizedValue = "Reinforced Concrete";
+        }
+
+        bondHardnessMap.set(
+          normalizedValue,
+          (bondHardnessMap.get(normalizedValue) || 0) + 1
+        );
+      }
+    });
+
+    const standardOptions = [
+      "Reinforced Concrete",
+      "General Purpose",
+      "Soft Materials",
+      "Hard Materials",
+    ];
+
+    return standardOptions.map((option) => ({
+      name: option,
+      count: bondHardnessMap.get(option) || 0,
+    }));
+  }, [products]);
+
+  // Calculate water-cooled count
+  const waterCooledCount = useMemo(() => {
+    if (!products || !Array.isArray(products)) return 0;
+
+    return products.filter(
+      (product) => product.specifications?.waterCooled === true
+    ).length;
+  }, [products]);
+
+  // Calculate retipping options counts
+  const retippingCounts = useMemo(() => {
+    if (!products || !Array.isArray(products))
+      return { hasRetippingService: 0, diySegmentsAvailable: 0 };
+
+    const hasRetippingService = products.filter(
+      (product) => product.requires_retipping === true
+    ).length;
+
+    // Assuming DIY segments available is a separate field or logic
+    const diySegmentsAvailable = products.filter(
+      (product) => product.specifications?.diySegments === true // Adjust this based on your data structure
+    ).length;
+
+    return {
+      hasRetippingService,
+      diySegmentsAvailable,
+    };
+  }, [products]);
 
   // Toggle section expansion
   const toggleSection = (section) => {
@@ -323,39 +462,34 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
 
         {expandedSections.condition && (
           <div className="px-4 pb-4 space-y-2">
-            {[
-              "New",
-              "Like New",
-              "Very Good (VG)",
-              "Good Condition (GC)",
-              "Fair Condition (FC)",
-              "Poor Condition (PC)",
-              "For Parts / Not Working",
-            ].map((condition) => (
+            {conditionsWithCounts.map((condition) => (
               <div
-                key={condition}
+                key={condition.name}
                 className="flex items-center justify-between"
               >
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    name={condition}
-                    checked={selectedFilters.condition.includes(condition)}
+                    name={condition.name}
+                    checked={selectedFilters.condition.includes(condition.name)}
                     className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
                     onChange={(e) => handleCheckboxChange(e, "condition")}
                   />
-                  <span className="text-sm ml-2">{condition}</span>
+                  <span className="text-sm ml-2">{condition.name}</span>
+                  <span className="text-xs text-gray-400">
+                    ({condition.count})
+                  </span>
                 </label>
                 <button
                   className="text-gray-400 hover:text-gray-600"
-                  onMouseEnter={() => showTooltip(condition)}
+                  onMouseEnter={() => showTooltip(condition.name)}
                   onMouseLeave={hideTooltip}
                 >
                   <Info size={16} className="text-gray-400" />
                 </button>
-                {activeTooltip === condition && (
+                {activeTooltip === condition.name && (
                   <div className="absolute z-10 right-6 w-48 p-2 bg-gray-800 text-white text-xs rounded shadow-lg">
-                    {getConditionDescription(condition)}
+                    {getConditionDescription(condition.name)}
                   </div>
                 )}
               </div>
@@ -439,10 +573,47 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
         {expandedSections.specifications && (
           <div className="px-4 pb-4">
             {/* Diameter */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-2">Diameter</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {diameterOptions.map((option) => (
+            {diameterOptions.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium mb-2">Diameter</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {diameterOptions.map((option) => (
+                    <label
+                      key={option.name}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          name={option.name}
+                          checked={selectedFilters.specifications.diameter.includes(
+                            option.name
+                          )}
+                          className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              e,
+                              "specifications",
+                              "diameter"
+                            )
+                          }
+                        />
+                        <span className="text-sm ml-2">{option.name}</span>
+                      </div>
+                      <span className="text-xs text-gray-400">
+                        ({option.count})
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Segment Type */}
+            {segmentTypeOptions.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium mb-2">Segment Type</h3>
+                {segmentTypeOptions.map((option) => (
                   <label
                     key={option.name}
                     className="flex items-center justify-between"
@@ -451,12 +622,16 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
                       <input
                         type="checkbox"
                         name={option.name}
-                        checked={selectedFilters.specifications.diameter.includes(
+                        checked={selectedFilters.specifications.segmentType.includes(
                           option.name
                         )}
                         className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
                         onChange={(e) =>
-                          handleCheckboxChange(e, "specifications", "diameter")
+                          handleCheckboxChange(
+                            e,
+                            "specifications",
+                            "segmentType"
+                          )
                         }
                       />
                       <span className="text-sm ml-2">{option.name}</span>
@@ -467,65 +642,38 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
                   </label>
                 ))}
               </div>
-            </div>
-
-            {/* Segment Type */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-2">Segment Type</h3>
-              {segmentTypeOptions.map((option) => (
-                <label
-                  key={option.name}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name={option.name}
-                      checked={selectedFilters.specifications.segmentType.includes(
-                        option.name
-                      )}
-                      className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
-                      onChange={(e) =>
-                        handleCheckboxChange(e, "specifications", "segmentType")
-                      }
-                    />
-                    <span className="text-sm ml-2">{option.name}</span>
-                  </div>
-                  <span className="text-xs text-gray-400">
-                    ({option.count})
-                  </span>
-                </label>
-              ))}
-            </div>
+            )}
 
             {/* Head Type */}
-            <div className="mb-4">
-              <h3 className="text-sm font-medium mb-2">Head Type</h3>
-              {headTypeOptions.map((option) => (
-                <label
-                  key={option.name}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      name={option.name}
-                      checked={selectedFilters.specifications.headType.includes(
-                        option.name
-                      )}
-                      className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
-                      onChange={(e) =>
-                        handleCheckboxChange(e, "specifications", "headType")
-                      }
-                    />
-                    <span className="text-sm ml-2">{option.name}</span>
-                  </div>
-                  <span className="text-xs text-gray-400">
-                    ({option.count})
-                  </span>
-                </label>
-              ))}
-            </div>
+            {headTypeOptions.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-sm font-medium mb-2">Head Type</h3>
+                {headTypeOptions.map((option) => (
+                  <label
+                    key={option.name}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name={option.name}
+                        checked={selectedFilters.specifications.headType.includes(
+                          option.name
+                        )}
+                        className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
+                        onChange={(e) =>
+                          handleCheckboxChange(e, "specifications", "headType")
+                        }
+                      />
+                      <span className="text-sm ml-2">{option.name}</span>
+                    </div>
+                    <span className="text-xs text-gray-400">
+                      ({option.count})
+                    </span>
+                  </label>
+                ))}
+              </div>
+            )}
 
             {/* Bond Hardness/Application */}
             <div className="mb-4">
@@ -570,7 +718,7 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
                 className="w-4 h-4 text-orange-500 rounded focus:ring-orange-500"
                 onChange={(e) => handleCheckboxChange(e, "waterCooled")}
               />
-              <span className="text-sm">Water-Cooled</span>
+              <span className="text-sm">Water-Cooled ({waterCooledCount})</span>
             </label>
           </div>
         )}
@@ -607,7 +755,9 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
                   )
                 }
               />
-              <span className="text-sm">Has retipping service</span>
+              <span className="text-sm">
+                Has retipping service ({retippingCounts.hasRetippingService})
+              </span>
             </label>
             <label className="flex items-center space-x-2">
               <input
@@ -621,80 +771,13 @@ const ProductFilters = ({ onFilterChange, products, visible, onToggle }) => {
                   )
                 }
               />
-              <span className="text-sm">DIY segments available</span>
+              <span className="text-sm">
+                DIY segments available ({retippingCounts.diySegmentsAvailable})
+              </span>
             </label>
           </div>
         )}
       </div>
-
-      {/* Retipping Price Range */}
-      <div className="border-b border-gray-200">
-        <button
-          onClick={() => toggleSection("retippingPrice")}
-          className="w-full p-4 text-left font-medium flex justify-between items-center"
-        >
-          Retipping Price Range
-          {expandedSections.retippingPrice ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
-          )}
-        </button>
-
-        {expandedSections.retippingPrice && (
-          <div className="px-4 pb-6">
-            <div className="flex justify-between mb-2">
-              <span className="text-sm">
-                ${" "}
-                <input
-                  type="number"
-                  value={0}
-                  disabled
-                  className="w-12 bg-white border border-gray-200 rounded text-center"
-                />
-              </span>
-              <span className="text-xs text-gray-400">to</span>
-              <span className="text-sm">
-                ${" "}
-                <input
-                  type="number"
-                  value={retippingPriceRange}
-                  className="w-12 bg-white border border-gray-200 rounded text-center"
-                  onChange={(e) =>
-                    handleRangeChange(
-                      e,
-                      setRetippingPriceRange,
-                      "retippingPriceRange"
-                    )
-                  }
-                />
-              </span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="2000"
-              value={retippingPriceRange}
-              onChange={(e) =>
-                handleRangeChange(
-                  e,
-                  setRetippingPriceRange,
-                  "retippingPriceRange"
-                )
-              }
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
-              style={{
-                backgroundImage: `linear-gradient(to right, #F47458 0%, #F47458 ${
-                  (retippingPriceRange / 2000) * 100
-                }%, #e5e7eb ${
-                  (retippingPriceRange / 2000) * 100
-                }%, #e5e7eb 100%)`,
-              }}
-            />
-          </div>
-        )}
-      </div>
-
       {/* Filter Action Buttons */}
       <div className="p-4 flex justify-between gap-2">
         <button

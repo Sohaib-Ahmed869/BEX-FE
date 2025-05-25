@@ -20,7 +20,18 @@ const cartSlice = createSlice({
     },
     replaceCart(state, action) {
       const cart = action.payload;
-      state.items = cart.items || [];
+      // Map the items to ensure consistent property names
+      state.items = cart.items
+        ? cart.items.map((item) => ({
+            ...item,
+            // Normalize the retip properties - keep both for compatibility
+            retipAdded: item.retip_added || item.retipAdded || false,
+            retipPrice: item.retip_price || item.retipPrice || 0,
+            retip_added: item.retip_added || item.retipAdded || false,
+            retip_price: item.retip_price || item.retipPrice || 0,
+          }))
+        : [];
+
       state.productsCount = cart.products_count || 0;
       state.totalQuantity = cart.items
         ? cart.items.reduce((total, item) => total + item.quantity, 0)
@@ -39,16 +50,20 @@ const cartSlice = createSlice({
       state.totalQuantity += newItem.quantity;
 
       if (existingItemIndex === -1) {
-        // Add new item
+        // Add new item with retip properties (both formats for compatibility)
         state.items.push({
           ...newItem,
+          retipAdded: false,
+          retipPrice: 0,
+          retip_added: false,
+          retip_price: 0,
         });
       } else {
         // Update existing item
         state.items[existingItemIndex].quantity += newItem.quantity;
       }
 
-      // Recalculate total price
+      // Recalculate total price (excluding retip prices)
       state.totalPrice = state.items.reduce(
         (total, item) => total + item.price * item.quantity,
         0
@@ -56,7 +71,6 @@ const cartSlice = createSlice({
     },
     removeItemFromCart(state, action) {
       const { itemId, quantity } = action.payload;
-      // Fix: Use item.id instead of item.item_id for comparison
       const existingItemIndex = state.items.findIndex(
         (item) => item.id === itemId
       );
@@ -76,7 +90,7 @@ const cartSlice = createSlice({
         state.items[existingItemIndex].quantity -= quantity;
       }
 
-      // Recalculate total price
+      // Recalculate total price (excluding retip prices)
       state.totalPrice = state.items.reduce(
         (total, item) => total + item.price * item.quantity,
         0
@@ -86,6 +100,36 @@ const cartSlice = createSlice({
       state.items = [];
       state.totalQuantity = 0;
       state.totalPrice = 0;
+    },
+    // Updated action to add retip service to an item
+    addRetipToItem(state, action) {
+      const { itemId, retipPrice } = action.payload;
+      const existingItemIndex = state.items.findIndex(
+        (item) => item.id === itemId
+      );
+
+      if (existingItemIndex !== -1) {
+        // Update both property formats for consistency
+        state.items[existingItemIndex].retipAdded = true;
+        state.items[existingItemIndex].retipPrice = retipPrice;
+        state.items[existingItemIndex].retip_added = true;
+        state.items[existingItemIndex].retip_price = retipPrice;
+      }
+    },
+    // Updated action to remove retip service from an item
+    removeRetipFromItem(state, action) {
+      const { itemId } = action.payload;
+      const existingItemIndex = state.items.findIndex(
+        (item) => item.id === itemId
+      );
+
+      if (existingItemIndex !== -1) {
+        // Update both property formats for consistency
+        state.items[existingItemIndex].retipAdded = false;
+        state.items[existingItemIndex].retipPrice = 0;
+        state.items[existingItemIndex].retip_added = false;
+        state.items[existingItemIndex].retip_price = 0;
+      }
     },
   },
 });

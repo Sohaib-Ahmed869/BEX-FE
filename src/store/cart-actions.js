@@ -156,3 +156,101 @@ export const clearCart = (userId) => {
     }
   };
 };
+
+//// Thunk action to add retipping service to cart item
+export const addRetipToCartItem = (userId, itemId, retipPrice) => {
+  return async (dispatch) => {
+    try {
+      // First update local state for immediate UI response
+      dispatch(cartActions.addRetipToItem({ itemId, retipPrice }));
+
+      // Then send to backend
+      const token = sessionStorage.getItem("jwtToken");
+      const response = await axios.post(
+        `${URL}/api/cart/${userId}/add-retip`,
+        {
+          itemId,
+          retipPrice,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update with the real data from the backend
+      dispatch(cartActions.replaceCart(response.data.data));
+
+      // Return success indicator
+      return { success: true, message: "Retipping service added successfully" };
+    } catch (error) {
+      dispatch(
+        cartActions.setError(
+          error.response?.data?.message || "Failed to add retipping service"
+        )
+      );
+      console.error("Error adding retip to cart item:", error);
+
+      // Fetch the cart again to sync with backend state
+      dispatch(fetchCart(userId));
+
+      // Return error indicator
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Failed to add retipping service",
+      };
+    }
+  };
+};
+
+// Thunk action to remove retipping service from cart item
+export const removeRetipFromCartItem = (userId, itemId) => {
+  return async (dispatch) => {
+    try {
+      // First update local state for immediate UI response
+      dispatch(cartActions.removeRetipFromItem({ itemId }));
+
+      // Then send to backend
+      const token = sessionStorage.getItem("jwtToken");
+      const response = await axios.post(
+        `${URL}/api/cart/${userId}/remove-retip`,
+        {
+          itemId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update with the real data from the backend
+      dispatch(cartActions.replaceCart(response.data.data));
+
+      // Return success indicator
+      return {
+        success: true,
+        message: "Retipping service removed successfully",
+      };
+    } catch (error) {
+      dispatch(
+        cartActions.setError(
+          error.response?.data?.message || "Failed to remove retipping service"
+        )
+      );
+      console.error("Error removing retip from cart item:", error);
+
+      // Fetch the cart again to sync with backend state
+      dispatch(fetchCart(userId));
+
+      // Return error indicator
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Failed to remove retipping service",
+      };
+    }
+  };
+};

@@ -17,7 +17,11 @@ import {
 import { toast } from "react-toastify";
 import { CiShoppingCart } from "react-icons/ci";
 
-import { addToCart } from "../../../../store/cart-actions";
+import {
+  addRetipToCartItem,
+  addToCart,
+  removeRetipFromCartItem,
+} from "../../../../store/cart-actions";
 import {
   addToWishlist,
   removeFromWishlist,
@@ -28,6 +32,10 @@ import { getProductById } from "../../../../services/productsServices";
 import RelatedProducts from "./relatedProductsGrid";
 import ShoppingCart from "../../Cart/cart";
 import WishlistModal from "../../wishlist/wishlistModal";
+import { retipPricing } from "../../../../utils/retipPricingInformation";
+import { ExternalLink, Navigation } from "lucide-react";
+import { cartActions } from "../../../../store/cart-slice";
+
 // Lazy Image Component
 const LazyImage = ({ src, alt, className }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -231,6 +239,7 @@ const ProductImageGallery = ({ product, isLoading }) => {
 };
 
 // Product Info Component
+
 const ProductInfo = ({
   product,
   isLoading,
@@ -240,18 +249,82 @@ const ProductInfo = ({
   isAddingToCart,
   isAddingToWishlist,
 }) => {
+  const dispatch = useDispatch();
+  const userId = localStorage.getItem("userId");
+  // Get cart state from Redux
+  const cartItems = useSelector((state) => state.cart.items);
+
   const formatPrice = (price) => {
     return `$${parseFloat(price).toFixed(2)}`;
   };
 
-  const getRetipPrice = () => {
-    if (
-      product?.requires_retipping &&
-      product?.category === "Core Drill Bits"
-    ) {
-      return formatPrice(parseFloat(product.price) * 0.6);
+  // Check if product is in cart and get cart item details
+  const cartItem = cartItems.find((item) => item.product_id === product?.id);
+  console.log("productid:", product?.id, "cartItems:", cartItems);
+  console.log("Found cart item:", cartItem);
+
+  const isInCart = !!cartItem;
+  // Fix: Check for both possible property names from API response and Redux state
+  const hasRetipAdded = cartItem?.retip_added || cartItem?.retipAdded || false;
+
+  console.log(
+    "hasRetipAdded:",
+    hasRetipAdded,
+    "cartItem retip_added:",
+    cartItem?.retip_added,
+    "cartItem retipAdded:",
+    cartItem?.retipAdded
+  );
+
+  // Calculate retip price based on diameter using the retipPricing object
+  const getRetipPriceByDiameter = () => {
+    if (!product?.specifications?.bitDiameter) {
+      // Fallback to 60% calculation if no diameter
+      return parseFloat(product?.price || 0) * 0.6;
     }
-    return null;
+
+    const diameter = parseFloat(product.specifications.bitDiameter);
+
+    // Use the retipPricing object to get the exact price
+    const retipPrice = retipPricing[diameter];
+
+    return retipPrice;
+  };
+
+  // Handler for adding retipping service
+  const handleAddRetipping = async () => {
+    if (!cartItem) {
+      console.error("Cannot add retipping: item not in cart");
+      toast.error("Cannot add retipping: item not in cart");
+      return;
+    }
+
+    const retipPrice = getRetipPriceByDiameter();
+    const result = await dispatch(
+      addRetipToCartItem(userId, cartItem.id, retipPrice)
+    );
+
+    if (result.success) {
+      // toast.success(result.message);
+    } else {
+      // toast.error(result.message);
+    }
+  };
+
+  const handleRemoveRetipping = async () => {
+    if (!cartItem) {
+      console.error("Cannot remove retipping: item not in cart");
+      toast.error("Cannot remove retipping: item not in cart");
+      return;
+    }
+
+    const result = await dispatch(removeRetipFromCartItem(userId, cartItem.id));
+
+    if (result.success) {
+      // toast.success(result.message);
+    } else {
+      // toast.error(result.message);
+    }
   };
 
   if (isLoading) {
@@ -346,24 +419,54 @@ const ProductInfo = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-lg font-semibold text-orange-900">
-                        Price per segment: $
-                        {(parseFloat(product.price) * 0.1).toFixed(2)}
+                        Total retipping price:{" "}
+                        {formatPrice(getRetipPriceByDiameter())}
                       </span>
-                      <span className="block text-sm text-orange-600">
-                        Total retipping price: {getRetipPrice()}
-                      </span>
+                      {product?.specifications?.bitDiameter && (
+                        <div className="text-sm text-orange-600 mt-1">
+                          For {product.specifications.bitDiameter}" diameter bit
+                        </div>
+                      )}
+                      {hasRetipAdded && isInCart && (
+                        <div className="text-sm text-green-600 mt-1">
+                          ✓ Retipping service added to cart
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex space-x-3 mt-3">
-                    <button className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors">
-                      Add Retipping Service
-                    </button>
+                    {/* Conditional retipping button based on cart status */}
+                    {isInCart ? (
+                      hasRetipAdded ? (
+                        <button
+                          onClick={handleRemoveRetipping}
+                          className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+                        >
+                          Remove Retipping Service
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleAddRetipping}
+                          className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 transition-colors"
+                        >
+                          Add Retipping Service
+                        </button>
+                      )
+                    ) : (
+                      <div className="text-sm text-orange-600 bg-orange-100 px-4 py-2 rounded-lg">
+                        Add item to cart first to enable retipping service
+                      </div>
+                    )}
                     <button className="border border-orange-600 text-orange-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-50 transition-colors">
                       Buy DIY Segments
                     </button>
                   </div>
                   <p className="text-xs text-orange-600 mt-2">
-                    Save ${(parseFloat(product.price) * 0.3).toFixed(2)}{" "}
+                    Save $
+                    {(
+                      parseFloat(product?.price || 0) -
+                      getRetipPriceByDiameter()
+                    ).toFixed(2)}{" "}
                     compared to buying a new bit
                   </p>
                 </div>
@@ -391,6 +494,8 @@ const ProductInfo = ({
                 ? "Sold Out"
                 : isAddingToCart
                 ? "Adding..."
+                : isInCart
+                ? "Update Cart"
                 : "Add to Cart"}
             </span>
           </button>
@@ -559,7 +664,6 @@ const ProductDetailsTabs = ({ product, isLoading }) => {
 };
 
 // Location Component
-import { ExternalLink, Navigation } from "lucide-react";
 
 const LocationSection = ({ product, isLoading }) => {
   // Utah location coordinates (Salt Lake City as example)

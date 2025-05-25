@@ -74,7 +74,7 @@ export default function CoreDrillSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="brand"
@@ -112,7 +112,7 @@ export default function CoreDrillSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="year"
@@ -158,7 +158,7 @@ export default function CoreDrillSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="powerRating"
@@ -198,7 +198,7 @@ export default function CoreDrillSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="speeds"
@@ -236,7 +236,7 @@ export default function CoreDrillSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="spindle"
@@ -296,7 +296,7 @@ export default function CoreDrillSpecs({ formData, onChange }) {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Features
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {[
             "Clutch",
             "Water Connection",
@@ -376,7 +376,7 @@ export default function CoreDrillSpecs({ formData, onChange }) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="maintenanceHistory"

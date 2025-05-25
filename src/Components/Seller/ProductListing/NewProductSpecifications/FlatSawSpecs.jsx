@@ -44,7 +44,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
   };
 
   return (
-    <div>
+    <div className="px-4 sm:px-0">
       <div className="mb-4">
         <label
           htmlFor="subtype"
@@ -70,7 +70,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="brand"
@@ -108,7 +108,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="year"
@@ -153,7 +153,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="engineMake"
@@ -191,7 +191,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="maxBladeDiameter"
@@ -233,7 +233,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="arborSize"
@@ -278,7 +278,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="operatingHours"
@@ -320,7 +320,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Features
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {[
             "Blade Clutch",
             "Electric Start",
@@ -337,7 +337,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
                 onChange={(e) => handleFeatureChange(feature, e.target.checked)}
                 className="w-4 h-4 text-orange-500 rounded mr-2"
               />
-              {feature}
+              <span className="text-sm">{feature}</span>
             </label>
           ))}
         </div>
@@ -362,7 +362,7 @@ export default function FlatSawSpecs({ formData, onChange }) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="maintenanceHistory"

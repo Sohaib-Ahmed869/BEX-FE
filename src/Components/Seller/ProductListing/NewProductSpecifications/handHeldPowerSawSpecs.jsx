@@ -66,8 +66,8 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+    <div className="px-4 sm:px-0">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="subtype"
@@ -125,7 +125,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="brand"
@@ -163,7 +163,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="year"
@@ -208,7 +208,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="maxBladeDiameter"
@@ -251,7 +251,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
       </div>
 
       {shouldShowArborSize() && (
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label
               htmlFor="arborSize"
@@ -280,7 +280,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="condition"
@@ -330,7 +330,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
         Recommended Information
       </h3>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="operatingHours"
@@ -388,7 +388,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
               }
               className="w-4 h-4 text-orange-500 rounded mr-2"
             />
-            <span className="flex items-center">
+            <span className="flex items-center text-sm">
               Water Connection
               <div className="relative group ml-1">
                 <Info className="h-4 w-4 text-gray-400" />
@@ -408,7 +408,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
               }
               className="w-4 h-4 text-orange-500 rounded mr-2"
             />
-            <span className="flex items-center">
+            <span className="flex items-center text-sm">
               Anti-Vibration System
               <div className="relative group ml-1">
                 <Info className="h-4 w-4 text-gray-400" />
@@ -428,7 +428,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
               }
               className="w-4 h-4 text-orange-500 rounded mr-2"
             />
-            <span className="flex items-center">
+            <span className="flex items-center text-sm">
               Decompression Valve
               <div className="relative group ml-1">
                 <Info className="h-4 w-4 text-gray-400" />
@@ -455,7 +455,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
               }
               className="w-4 h-4 text-orange-500 rounded mr-2"
             />
-            <span>Carrying Case</span>
+            <span className="text-sm">Carrying Case</span>
           </label>
 
           <label className="flex items-center">
@@ -467,7 +467,7 @@ export default function HandheldPowerSawSpecs({ formData, onChange }) {
               }
               className="w-4 h-4 text-orange-500 rounded mr-2"
             />
-            <span>Tools/Maintenance Kit</span>
+            <span className="text-sm">Tools/Maintenance Kit</span>
           </label>
         </div>
       </div>

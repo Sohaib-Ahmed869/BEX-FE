@@ -72,7 +72,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
         <h3 className="text-lg font-medium text-gray-800 mb-3">
           Basic Information
         </h3>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label
               htmlFor="subtype"
@@ -117,7 +117,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label
               htmlFor="model"
@@ -155,7 +155,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label
               htmlFor="powerSource"
@@ -212,7 +212,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label
               htmlFor="price"
@@ -256,7 +256,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
         <h3 className="text-lg font-medium text-gray-800 mb-3">
           Additional Information
         </h3>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label
               htmlFor="operatingHours"
@@ -335,7 +335,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           <h3 className="text-lg font-medium text-gray-800 mb-3">
             Demolition Robot Specifications
           </h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="weightClass"
@@ -377,7 +377,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="maxReachVertical"
@@ -444,7 +444,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           <h3 className="text-lg font-medium text-gray-800 mb-3">
             Mini Excavator Specifications
           </h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="operatingWeight"
@@ -486,7 +486,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="bucketCapacity"
@@ -544,7 +544,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           </div>
 
           {specs.powerSource === "Electric Battery" && (
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
                   htmlFor="batteryCondition"
@@ -588,7 +588,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           <h3 className="text-lg font-medium text-gray-800 mb-3">
             Dump Cart / Power Buggy Specifications
           </h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="loadCapacity"
@@ -637,7 +637,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="dumpType"
@@ -682,7 +682,7 @@ export default function DemolitionEquipmentSpecs({ formData, onChange }) {
           </div>
 
           {specs.powerSource === "Electric Battery" && (
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
                   htmlFor="dumpCartBatteryCondition"

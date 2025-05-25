@@ -46,8 +46,8 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="subtype"
@@ -95,7 +95,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="brand"
@@ -133,7 +133,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="year"
@@ -160,7 +160,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
             {getPowerRatingLabel()} *
             <div className="relative group ml-1">
               <Info className="h-4 w-4 text-gray-400" />
-              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                 Power rating varies by source: HP for gas/hydraulic, kW for
                 electric.
               </div>
@@ -178,7 +178,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="cuttingWidth"
@@ -187,7 +187,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
             Cutting Width (inches) *
             <div className="relative group ml-1">
               <Info className="h-4 w-4 text-gray-400" />
-              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                 Maximum width of cut the saw can make in a single pass.
               </div>
             </div>
@@ -211,7 +211,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
             Cutting Depth (inches) *
             <div className="relative group ml-1">
               <Info className="h-4 w-4 text-gray-400" />
-              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                 Maximum depth the saw can cut into the material.
               </div>
             </div>
@@ -228,7 +228,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="bladeType"
@@ -262,7 +262,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
             Blade Configuration *
             <div className="relative group ml-1">
               <Info className="h-4 w-4 text-gray-400" />
-              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                 Number and arrangement of blades (e.g., single blade, dual
                 blade, etc.).
               </div>
@@ -289,7 +289,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="condition"
@@ -339,7 +339,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
         Recommended Information
       </h3>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="operatingHours"
@@ -348,7 +348,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
             Operating Hours
             <div className="relative group ml-1">
               <Info className="h-4 w-4 text-gray-400" />
-              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                 Approximate hours of operation or general usage estimate.
               </div>
             </div>
@@ -387,7 +387,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Features
         </label>
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -401,7 +401,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
               Self-Propelled
               <div className="relative group ml-1">
                 <Info className="h-4 w-4 text-gray-400" />
-                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                   Machine moves forward automatically during cutting operation.
                 </div>
               </div>
@@ -421,7 +421,7 @@ export default function SpecialtySawSpecs({ formData, onChange }) {
               Guide System
               <div className="relative group ml-1">
                 <Info className="h-4 w-4 text-gray-400" />
-                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                   Built-in guidance system for precise, straight cuts.
                 </div>
               </div>

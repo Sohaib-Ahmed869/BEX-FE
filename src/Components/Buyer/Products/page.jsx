@@ -269,26 +269,20 @@ const Products = () => {
               </button>
             </div>
             {/* Search bar */}
-            <div className="mb-6">
+            <div className="mb-4 md:mb-6 px-4 md:px-0">
               <form
                 onSubmit={handleSearchSubmit}
-                className="relative w-full md:w-1/3"
+                className="relative w-full md:w-1/3 mx-auto md:mx-0"
               >
                 <input
                   type="text"
-                  placeholder="Search products by title, brand, or description..."
-                  className="w-full bg-gray-100 rounded-md  py-6 px-4 pr-12 focus:outline-none focus:ring-2 focus:ring-[#e06449]"
+                  placeholder="Search products..."
+                  className="w-full bg-gray-100 rounded-lg py-3 md:py-6 px-4 pr-12 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#e06449] focus:bg-white transition-all duration-200 shadow-sm"
                   value={searchQuery}
                   onChange={handleSearchChange}
                 />
-                <Search className="h-5 w-5 text-[#e06449] absolute right-10 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+                <Search className="h-4 w-4 md:h-5 md:w-5 text-[#e06449] absolute right-3 md:right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
               </form>
-            </div>
-            {/* Products info and hide filters button */}
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-gray-500 text-sm ml-2">
-                Showing {filteredProducts.length} of {products.length} products
-              </p>
             </div>
             {/* Product grid */}
             <ProductGrid products={filteredProducts} />

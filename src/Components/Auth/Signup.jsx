@@ -3,6 +3,7 @@ import InitialScreen from "./initialSignupScreen";
 import ImageGrid from "./imageGrid";
 import BuyerForm from "./buyerForm";
 import SellerForm from "./SellerForm";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   // Combined form data in a single state object
@@ -27,6 +28,7 @@ const Signup = () => {
     websiteUrl: "",
     licenseImage: null,
   });
+
   useEffect(() => {
     console.log(formData);
   }, [formData]);
@@ -49,13 +51,29 @@ const Signup = () => {
         />
       )}
       {initialFilled && (
-        <div className="bg-[#F6F6F6] h-[108vh] flex justify-between">
+        <div className="bg-[#F6F6F6] min-h-screen flex flex-col lg:flex-row lg:justify-between overflow-hidden">
           {formData.isSeller ? (
             <SellerForm updateFormData={updateFormData} formData={formData} />
           ) : (
             <BuyerForm updateFormData={updateFormData} formData={formData} />
           )}
-          <ImageGrid />
+
+          {/* Image Grid Side - Hidden on mobile and tablet */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              transition: {
+                duration: 0.8,
+                ease: "easeOut",
+                delay: 0.3,
+              },
+            }}
+            className="hidden lg:flex lg:w-1/2"
+          >
+            <ImageGrid />
+          </motion.div>
         </div>
       )}
     </>

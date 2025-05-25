@@ -9,6 +9,7 @@ import {
   checkWishlistItem,
 } from "../../../store/wishlist-actions";
 import { Link } from "react-router-dom";
+import { retipPricing } from "../../../utils/retipPricingInformation";
 
 const LazyImage = ({ src, alt, className }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -122,12 +123,18 @@ const ProductItem = ({ product }) => {
 
   const getRetipPrice = () => {
     if (product.requires_retipping) {
-      // Assuming a 60% discount for retipping based on original price
+      const bitDiameter = parseFloat(product.specifications?.bitDiameter);
+
+      // Check if we have a retipping price for this diameter
+      if (bitDiameter && retipPricing[bitDiameter]) {
+        return formatPrice(retipPricing[bitDiameter]);
+      }
+
+      // Fallback to original 60% calculation if diameter not found in pricing table
       return formatPrice(parseFloat(product.price) * 0.6);
     }
     return null;
   };
-
   const hasMultipleImages = product.images && product.images.length > 1;
 
   const nextImage = (e) => {
@@ -240,7 +247,8 @@ const ProductItem = ({ product }) => {
       : "/api/placeholder/400/400";
 
   return (
-    <div className="bg-white rounded-xl cursor-pointer shadow-sm border border-gray-200 overflow-hidden w-full md:w-80 lg:w-96 block group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div className="bg-white rounded-xl cursor-pointer shadow-sm border border-gray-200 overflow-hidden w-full sm:w-72 md:w-80 lg:w-96 block group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+      {" "}
       <div
         className="relative aspect-square overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
@@ -295,7 +303,7 @@ const ProductItem = ({ product }) => {
           <span
             className={`bg-[#D1FAE5] text-[#047857] text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm capitalize`}
           >
-            {product.condition}
+            {product.condition.split(" (")[0] || product.condition}
           </span>
           <span className="bg-[#E4E4E7] text-gray-900 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">
             {product.category}
@@ -325,7 +333,6 @@ const ProductItem = ({ product }) => {
           />
         </button>
       </div>
-
       {/* Product Details */}
       <div className="p-4">
         <h3 className="text-gray-900 font-semibold text-lg mb-3 line-clamp-2 group-hover:text-[#e06449] transition-colors duration-300">
@@ -356,21 +363,25 @@ const ProductItem = ({ product }) => {
         {/* Price Section */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-lg font-bold text-gray-900 sm:text-xl md:text-2xl">
               {formatPrice(product.price)}
             </span>
           </div>
 
-          {getRetipPrice() && (
+          {product?.category === "Core Drill Bits" && getRetipPrice() && (
             <div className="flex items-center text-[#e06449]">
-              <span className="text-sm font-medium mr-1">Retip:</span>
-              <span className="font-semibold">{getRetipPrice()}</span>
+              <span className="text-xs font-medium mr-1 sm:text-sm">
+                Retip:
+              </span>
+              <span className="text-sm font-semibold sm:text-base">
+                {getRetipPrice()}
+              </span>
             </div>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
           <Link
             to={`/products/${product.id}`}
             className="flex-1 border block text-center border-gray-300 text-gray-700 py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 active:scale-95"

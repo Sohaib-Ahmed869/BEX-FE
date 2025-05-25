@@ -29,7 +29,7 @@ const defaultSpecs = {
 };
 
 export default function DrillingEquipmentSpecs({ formData, onChange }) {
-  const specs = { ...defaultSpecs, ...formData.specs };
+  const specs = { ...defaultSpecs, ...(formData?.specs || {}) };
 
   const handleInputChange = (field, value) => {
     const updatedSpecs = { ...specs, [field]: value };
@@ -63,8 +63,8 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+    <div className="max-w-4xl mx-auto p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="subtype"
@@ -114,7 +114,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="brand"
@@ -152,7 +152,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="year"
@@ -205,7 +205,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="maxBitDiameter"
@@ -259,7 +259,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="chuckType"
@@ -320,31 +320,29 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 mb-4">
-        <div>
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Location *
-          </label>
-          <input
-            type="text"
-            id="location"
-            value={specs.location}
-            onChange={(e) => handleInputChange("location", e.target.value)}
-            placeholder="City, State"
-            className="w-full p-2 border border-gray-300 rounded-md"
-            required
-          />
-        </div>
+      <div className="mb-4">
+        <label
+          htmlFor="location"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Location *
+        </label>
+        <input
+          type="text"
+          id="location"
+          value={specs.location}
+          onChange={(e) => handleInputChange("location", e.target.value)}
+          placeholder="City, State"
+          className="w-full p-2 border border-gray-300 rounded-md max-w-md"
+          required
+        />
       </div>
 
       <h3 className="text-lg font-semibold text-gray-800 mb-3 mt-6">
         Recommended Information
       </h3>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="operatingHours"
@@ -392,7 +390,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Features
         </label>
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -437,7 +435,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Included Accessories
         </label>
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -495,7 +493,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 mb-4">
+      <div className="space-y-4 mb-4">
         <div>
           <label
             htmlFor="maintenanceHistory"
@@ -547,7 +545,7 @@ export default function DrillingEquipmentSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+      <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
         <p className="text-xs text-gray-700">
           Fields marked with * are mandatory for listing this product.
         </p>

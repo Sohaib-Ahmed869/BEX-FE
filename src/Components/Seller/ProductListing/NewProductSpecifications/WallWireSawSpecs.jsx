@@ -48,8 +48,8 @@ export default function WallWireSawSpecs({ formData, onChange }) {
   const showTrackFields = specs.subtype.includes("Track");
 
   return (
-    <div>
-      <div className="mb-4">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
+      <div className="mb-4 sm:mb-6">
         <label
           htmlFor="subtype"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -61,7 +61,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             id="subtype"
             value={specs.subtype}
             onChange={(e) => handleInputChange("subtype", e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md appearance-none"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md appearance-none text-sm sm:text-base"
             required
           >
             <option value="">Select subtype</option>
@@ -78,7 +78,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
         <div>
           <label
             htmlFor="brand"
@@ -92,7 +92,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             value={specs.brand}
             onChange={(e) => handleInputChange("brand", e.target.value)}
             placeholder="Hilti, Husqvarna, etc."
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
             required
           />
         </div>
@@ -110,13 +110,13 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             value={specs.model}
             onChange={(e) => handleInputChange("model", e.target.value)}
             placeholder="DS TS20, CS 10, etc."
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
             required
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
         <div>
           <label
             htmlFor="year"
@@ -130,7 +130,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             value={specs.year}
             onChange={(e) => handleInputChange("year", e.target.value)}
             placeholder="2020"
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
             required
           />
         </div>
@@ -147,7 +147,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
               id="powerType"
               value={specs.powerType}
               onChange={(e) => handleInputChange("powerType", e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md appearance-none"
+              className="w-full p-2 sm:p-3 border border-gray-300 rounded-md appearance-none text-sm sm:text-base"
               required
             >
               <option value="">Select power type</option>
@@ -162,7 +162,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
 
       {showWallSawFields && (
         <>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
             <div>
               <label
                 htmlFor="maxBladeDiameter"
@@ -178,7 +178,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
                   handleInputChange("maxBladeDiameter", e.target.value)
                 }
                 placeholder="24 inches"
-                className="w-full p-2 border border-gray-300 rounded-md"
+                className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
                 required={showWallSawFields}
               />
             </div>
@@ -198,7 +198,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
                   handleInputChange("maxCuttingDepth", e.target.value)
                 }
                 placeholder="10 inches"
-                className="w-full p-2 border border-gray-300 rounded-md"
+                className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
                 required={showWallSawFields}
               />
             </div>
@@ -207,7 +207,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
       )}
 
       {showWireSawFields && (
-        <div className="mb-4">
+        <div className="mb-4 sm:mb-6">
           <label
             htmlFor="wireStorageCapacity"
             className="block text-sm font-medium text-gray-700 mb-1"
@@ -222,7 +222,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
               handleInputChange("wireStorageCapacity", e.target.value)
             }
             placeholder="10 meters"
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
             required={showWireSawFields}
           />
         </div>
@@ -230,7 +230,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
 
       {(specs.subtype.includes("Power Pack") ||
         specs.subtype.includes("System")) && (
-        <div className="mb-4">
+        <div className="mb-4 sm:mb-6">
           <label
             htmlFor="powerOutput"
             className="block text-sm font-medium text-gray-700 mb-1"
@@ -243,7 +243,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             value={specs.powerOutput}
             onChange={(e) => handleInputChange("powerOutput", e.target.value)}
             placeholder="15 kW, 20 HP, etc."
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
             required={
               specs.subtype.includes("Power Pack") ||
               specs.subtype.includes("System")
@@ -253,7 +253,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
       )}
 
       {showTrackFields && (
-        <div className="mb-4">
+        <div className="mb-4 sm:mb-6">
           <label
             htmlFor="trackLength"
             className="block text-sm font-medium text-gray-700 mb-1"
@@ -266,13 +266,13 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             value={specs.trackLength}
             onChange={(e) => handleInputChange("trackLength", e.target.value)}
             placeholder="2 meters"
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
             required={showTrackFields}
           />
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6">
         <div>
           <label
             htmlFor="operatingHours"
@@ -288,7 +288,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
               handleInputChange("operatingHours", e.target.value)
             }
             placeholder="500 hours"
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
           />
         </div>
 
@@ -305,16 +305,16 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             value={specs.weight}
             onChange={(e) => handleInputChange("weight", e.target.value)}
             placeholder="25 kg / 55 lbs"
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
           />
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 sm:mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Features
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
           {[
             "Remote Control",
             "Flush Cut",
@@ -323,20 +323,23 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             "Overload Protection",
             "Digital Display",
           ].map((feature) => (
-            <label key={feature} className="flex items-center">
+            <label
+              key={feature}
+              className="flex items-center text-sm sm:text-base"
+            >
               <input
                 type="checkbox"
                 checked={specs.features.includes(feature)}
                 onChange={(e) => handleFeatureChange(feature, e.target.checked)}
-                className="w-4 h-4 text-orange-500 rounded mr-2"
+                className="w-4 h-4 text-orange-500 rounded mr-2 flex-shrink-0"
               />
-              {feature}
+              <span className="break-words">{feature}</span>
             </label>
           ))}
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 sm:mb-6">
         <label
           htmlFor="includedAccessories"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -350,12 +353,12 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             handleInputChange("includedAccessories", e.target.value)
           }
           placeholder="Track quantity, guards, cables, hoses, pulleys, etc."
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base resize-y min-h-[60px]"
           rows={2}
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 sm:mb-6">
         <div>
           <label
             htmlFor="maintenanceHistory"
@@ -370,7 +373,7 @@ export default function WallWireSawSpecs({ formData, onChange }) {
               handleInputChange("maintenanceHistory", e.target.value)
             }
             placeholder="Recent service, repairs, etc."
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base resize-y min-h-[60px]"
             rows={2}
           />
         </div>
@@ -387,13 +390,13 @@ export default function WallWireSawSpecs({ formData, onChange }) {
             value={specs.usageHistory}
             onChange={(e) => handleInputChange("usageHistory", e.target.value)}
             placeholder="Previous applications, frequency of use, etc."
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base resize-y min-h-[60px]"
             rows={2}
           />
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 sm:mb-6">
         <label
           htmlFor="sellerNotes"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -405,12 +408,12 @@ export default function WallWireSawSpecs({ formData, onChange }) {
           value={specs.sellerNotes}
           onChange={(e) => handleInputChange("sellerNotes", e.target.value)}
           placeholder="Additional information about the product"
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base resize-y min-h-[60px]"
           rows={2}
         />
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 sm:mb-6">
         <label
           htmlFor="location"
           className="block text-sm font-medium text-gray-700 mb-1"
@@ -423,13 +426,13 @@ export default function WallWireSawSpecs({ formData, onChange }) {
           value={specs.location}
           onChange={(e) => handleInputChange("location", e.target.value)}
           placeholder="City, State"
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 sm:p-3 border border-gray-300 rounded-md text-sm sm:text-base"
           required
         />
       </div>
 
-      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-        <p className="text-xs text-gray-700">
+      <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+        <p className="text-xs sm:text-sm text-gray-700">
           Fields marked with * are mandatory for listing this product.
         </p>
       </div>

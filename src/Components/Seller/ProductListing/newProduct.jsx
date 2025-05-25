@@ -507,6 +507,8 @@ export default function NewProduct() {
       setIsLoading(false);
       console.error("Error submitting product:", error);
       toast.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -632,10 +634,10 @@ export default function NewProduct() {
 
         <div className="bg-white p-6 rounded-md mb-4">
           {/* Tabs */}
-          <div className="w-full max-w-3xl ">
-            <div className="flex mb-6 ">
+          <div className="w-full max-w-3xl">
+            <div className="flex flex-col sm:flex-row mb-6 overflow-x-auto">
               <button
-                className={`mr-8 pb-4 gap-2 flex items-center cursor-pointer ${
+                className={`mb-2 sm:mb-0 sm:mr-8 pb-4 gap-2 flex items-center cursor-pointer min-w-fit ${
                   activeTab === "general"
                     ? "border-b-2 border-[#FCE1CD] text-orange-500"
                     : "text-gray-500"
@@ -643,17 +645,19 @@ export default function NewProduct() {
                 onClick={() => handleTabChange("general")}
               >
                 {completedTabs.general ? (
-                  <Check className="w-5 h-5 text-green-500" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
                 ) : activeTab === "general" ? (
-                  <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 animate-spin flex-shrink-0" />
                 ) : (
-                  <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 animate-spin flex-shrink-0" />
                 )}
-                <span className="ml-2 font-medium">General information</span>
+                <span className="ml-2 font-medium text-sm sm:text-base whitespace-nowrap">
+                  General information
+                </span>
               </button>
 
               <button
-                className={`mr-8 pb-4 gap-2 flex items-center cursor-pointer  ${
+                className={`mb-2 sm:mb-0 sm:mr-8 pb-4 gap-2 flex items-center cursor-pointer min-w-fit ${
                   activeTab === "description"
                     ? "border-b-2 border-[#FCE1CD] text-orange-500"
                     : "text-gray-500"
@@ -661,31 +665,35 @@ export default function NewProduct() {
                 onClick={() => handleTabChange("description")}
               >
                 {completedTabs.description ? (
-                  <Check className="w-5 h-5 text-green-500" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
                 ) : activeTab === "description" ? (
-                  <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 animate-spin flex-shrink-0" />
                 ) : (
-                  <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 animate-spin flex-shrink-0" />
                 )}
-                <span className="ml-2 font-medium">Description</span>
+                <span className="ml-2 font-medium text-sm sm:text-base whitespace-nowrap">
+                  Description
+                </span>
               </button>
 
               <button
-                className={`pb-4 flex gap-2 items-center cursor-pointer  ${
+                className={`pb-4 flex gap-2 items-center cursor-pointer min-w-fit ${
                   activeTab === "media"
-                    ? "border-b-2 border-[#FCE1CD]  text-orange-500"
+                    ? "border-b-2 border-[#FCE1CD] text-orange-500"
                     : "text-gray-500"
                 }`}
                 onClick={() => handleTabChange("media")}
               >
                 {completedTabs.media ? (
-                  <Check className="w-5 h-5 text-green-500" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 flex-shrink-0" />
                 ) : activeTab === "media" ? (
-                  <Loader2 className="w-5 h-5 text-orange-500 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 animate-spin flex-shrink-0" />
                 ) : (
-                  <Loader2 className="w-5 h-5 text-gray-500 animate-spin" />
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 animate-spin flex-shrink-0" />
                 )}
-                <span className="ml-2 font-medium">Media upload</span>
+                <span className="ml-2 font-medium text-sm sm:text-base whitespace-nowrap">
+                  Media upload
+                </span>
               </button>
             </div>
           </div>
@@ -848,15 +856,15 @@ export default function NewProduct() {
             />
           )}
           {/* Action Buttons */}
-          <div className="flex justify-end mt-6 space-x-4">
+          <div className="flex flex-col gap-2 sm:flex-row justify-end mt-4 sm:mt-6 space-y-3 sm:space-y-0 sm:space-x-4">
             <button
               onClick={handlePrevious}
-              className="px-6 py-2 border cursor-pointer border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2 border cursor-pointer border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm sm:text-base font-medium order-2 sm:order-1"
             >
               {activeTab === "general" ? "Cancel" : "Previous"}
             </button>
             <button
-              className="px-6 py-2 bg-[#F47458] border border-[#F47458] cursor-pointer text-white rounded-md hover:bg-[#e06449]"
+              className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2 bg-[#F47458] border border-[#F47458] cursor-pointer text-white rounded-md hover:bg-[#e06449] text-sm sm:text-base font-medium order-1 sm:order-2"
               onClick={handleNext}
             >
               {activeTab === "media" ? "Complete Form" : "Save and proceed"}

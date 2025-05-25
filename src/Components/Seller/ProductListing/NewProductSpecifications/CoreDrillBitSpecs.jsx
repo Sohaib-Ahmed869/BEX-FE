@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Info, ChevronDown } from "lucide-react";
+
 const defaultSpecs = {
   bitDiameter: "",
   arborThreadType: '5/8"-11 Thread (Smaller bits)',
@@ -17,6 +18,7 @@ const defaultSpecs = {
   brand: "",
   location: "",
 };
+
 export default function CoreDrillBitSpecs({ formData, onChange }) {
   const specs = { ...defaultSpecs, ...formData.specs };
 
@@ -27,7 +29,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
 
   return (
     <div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="bitDiameter"
@@ -77,7 +79,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="barrelLength"
@@ -123,7 +125,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="tubingFormat"
@@ -168,7 +170,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="segmentThickness"
@@ -198,7 +200,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
               </div>
             </div>
           </label>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
             <label className="flex items-center">
               <input
                 type="radio"
@@ -227,7 +229,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="segmentShape"
@@ -287,7 +289,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="bondHardness"
@@ -339,7 +341,7 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="brand"

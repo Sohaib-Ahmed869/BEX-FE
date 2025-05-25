@@ -114,7 +114,7 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
       case "Joint Sealant":
         return (
           <>
-            <div className="col-span-2 grid grid-cols-2 gap-4">
+            <div className="col-span-1 sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
                   htmlFor="width"
@@ -186,8 +186,8 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="subtype"
@@ -264,11 +264,15 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Dimensions *
         </label>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {getDimensionFields()}
           {specs.subtype && (
             <div
-              className={specs.subtype === "Joint Sealant" ? "col-span-2" : ""}
+              className={
+                specs.subtype === "Joint Sealant"
+                  ? "col-span-1 sm:col-span-2"
+                  : ""
+              }
             >
               <label
                 htmlFor="profile"
@@ -298,8 +302,8 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="flex gap-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1">
             <label
               htmlFor="quantityValue"
@@ -317,7 +321,7 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
               required
             />
           </div>
-          <div className="w-1/3">
+          <div className="w-full sm:w-1/3">
             <label
               htmlFor="quantityUnit"
               className="block text-sm font-medium text-gray-700 mb-1"
@@ -361,7 +365,7 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="condition"
@@ -394,7 +398,7 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
             {specs.subtype === "Joint Sealant" && (
               <div className="relative group ml-1">
                 <Info className="h-4 w-4 text-gray-400" />
-                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-64 z-10">
+                <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded w-48 sm:w-64 z-10">
                   Recommended for sealants - date after which the product may
                   not perform as intended.
                 </div>
@@ -413,7 +417,7 @@ export default function MaterialsConsumablesSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="lotNumber"

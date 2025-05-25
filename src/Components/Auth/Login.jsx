@@ -9,29 +9,38 @@ import { authenticate } from "../../services/AuthServices";
 import { motion } from "framer-motion";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
+import CubeLoader from "../../utils/cubeLoader";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await authenticate(email, password);
       console.log(response);
       localStorage.setItem("token", response.token);
       sessionStorage.setItem("jwtToken", response.token);
-      toast.success("Login successful!");
+      // toast.success("Login successful!");
       if (response.user.role === "buyer") {
+        setLoading(false);
         navigate("/products");
       }
       if (response.user.role === "seller") {
+        setLoading(false);
         navigate("/");
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
       toast.error("Login failed!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,7 +84,8 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#F6F6F6] h-screen flex justify-between overflow-hidden">
+    <div className="bg-[#F6F6F6] min-h-screen flex flex-col lg:flex-row lg:justify-between overflow-hidden">
+      {loading && <CubeLoader />}
       <ToastContainer
         position="top-right"
         autoClose={4000}
@@ -84,18 +94,18 @@ const Login = () => {
       />
 
       {/* Login Form Side */}
-      <div className="w-1/2 flex items-center justify-center">
+      <div className="w-full lg:w-1/3 md:w-1/2 sm:w-full mx-auto my-auto  flex items-center justify-center px-4 py-4 lg:py-0">
         <motion.form
           initial="hidden"
           animate="visible"
           variants={formVariants}
           onSubmit={(e) => handleLogin(e)}
-          className="w-[598px] py-20 px-25 bg-white rounded-3xl flex flex-col shadow-lg"
+          className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl py-6 sm:py-8 lg:py-10 xl:py-12 px-6 sm:px-8 lg:px-10 xl:px-12 bg-white rounded-2xl lg:rounded-3xl flex flex-col shadow-lg"
         >
           <motion.span
             custom={0}
             variants={itemVariants}
-            className="text-base text-gray-400 font-regular"
+            className="text-sm sm:text-base text-gray-400 font-regular"
           >
             Welcome back!
           </motion.span>
@@ -103,56 +113,70 @@ const Login = () => {
           <motion.h1
             custom={1}
             variants={itemVariants}
-            className="font-bold text-6xl leading-tight mb-3"
+            className="font-bold text-4xl  md:text-4xl sm:text-4xl lg:text-4xl    leading-tight mb-2 lg:mb-3"
           >
             Sign in
           </motion.h1>
 
-          <motion.div custom={2} variants={itemVariants} className="mb-4">
-            <label htmlFor="email" className="text-sm font-bold my-1 block">
+          <motion.div
+            custom={2}
+            variants={itemVariants}
+            className="mb-3 lg:mb-4"
+          >
+            <label
+              htmlFor="email"
+              className="text-xs sm:text-sm font-bold my-1 block"
+            >
               Email
             </label>
             <div className="relative">
               <CiMail
-                size={20}
-                className="absolute top-5 left-3 text-gray-300"
+                size={18}
+                className="absolute top-3 sm:top-4 left-3 text-gray-300"
               />
               <input
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your email"
-                className="w-full py-4 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
                 value={email}
               />
             </div>
           </motion.div>
 
-          <motion.div custom={3} variants={itemVariants} className="mb-4">
-            <label htmlFor="password" className="text-sm font-bold my-1 block">
+          <motion.div
+            custom={3}
+            variants={itemVariants}
+            className="mb-3 lg:mb-4"
+          >
+            <label
+              htmlFor="password"
+              className="text-xs sm:text-sm font-bold my-1 block"
+            >
               Password
             </label>
             <div className="relative">
               <MdLockOutline
-                size={20}
-                className="absolute top-5 left-3 text-gray-300"
+                size={18}
+                className="absolute top-3 sm:top-4 left-3 text-gray-300"
               />
               <input
                 type={showPassword ? "text" : "password"}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full py-4 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
                 placeholder="Password"
                 value={password}
               />
               {showPassword ? (
                 <IoMdEye
-                  size={20}
-                  className="absolute  right-2 cursor-pointer top-5 text-gray-500"
+                  size={18}
+                  className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 />
               ) : (
                 <IoMdEyeOff
-                  size={20}
-                  className="absolute  right-2 cursor-pointer top-5 text-gray-500"
+                  size={18}
+                  className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 />
               )}
@@ -168,7 +192,7 @@ const Login = () => {
             whileHover="hover"
             whileTap="tap"
             type="submit"
-            className="w-full py-4 mt-6 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors cursor-pointer"
+            className="w-full py-2.5 sm:py-3 lg:py-3.5 mt-3 sm:mt-4 lg:mt-5 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors cursor-pointer text-sm font-medium"
           >
             Continue
           </motion.button>
@@ -176,7 +200,7 @@ const Login = () => {
           <motion.span
             custom={5}
             variants={itemVariants}
-            className="text-center my-3"
+            className="text-center my-2 lg:my-3 text-sm text-gray-500"
           >
             or
           </motion.span>
@@ -190,26 +214,29 @@ const Login = () => {
             whileHover="hover"
             whileTap="tap"
             type="button"
-            className="flex items-center justify-center gap-4 px-4 py-4 border-2 border-gray-200 rounded-lg"
+            className="flex items-center justify-center gap-3 px-4 py-2.5 sm:py-3 lg:py-3.5 border-2 border-gray-200 rounded-lg text-sm hover:border-gray-300 transition-colors"
           >
-            <FcGoogle size={20} />
+            <FcGoogle size={18} />
             Continue using Google
           </motion.button>
 
           <motion.span
             custom={7}
             variants={itemVariants}
-            className="text-center mt-8 text-gray-400 font-medium"
+            className="text-center mt-4 sm:mt-5 lg:mt-6 text-gray-400 font-medium text-sm"
           >
             Don't have an account?
-            <Link className="text-[#F47458] ml-1" to={"/signup"}>
+            <Link
+              className="text-[#F47458] ml-1 hover:underline"
+              to={"/signup"}
+            >
               Sign-up
             </Link>
           </motion.span>
         </motion.form>
       </div>
 
-      {/* Image Grid Side */}
+      {/* Image Grid Side - Hidden on mobile and tablet */}
       <motion.div
         initial={{ opacity: 0, x: 50 }}
         animate={{
@@ -221,7 +248,7 @@ const Login = () => {
             delay: 0.3,
           },
         }}
-        className="w-1/2"
+        className="hidden lg:flex lg:w-1/2"
       >
         <ImageGrid />
       </motion.div>

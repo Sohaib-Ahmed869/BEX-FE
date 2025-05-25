@@ -11,6 +11,7 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
   const scrollContainerRef = useRef(null);
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const loadProducts = async () => {
     setLoading(true);
 
@@ -23,6 +24,7 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     loadProducts();
   }, []);
@@ -101,28 +103,50 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
     if (!scrollContainerRef.current) return;
 
     const container = scrollContainerRef.current;
-    const cardWidth = container.children[0]?.offsetWidth || 300;
-    const gap = 24; // 1.5rem gap
-    const scrollAmount = cardWidth + gap;
+    const isMobile = window.innerWidth < 768;
 
-    container.scrollBy({
-      left: -scrollAmount,
-      behavior: "smooth",
-    });
+    if (isMobile) {
+      // On mobile, scroll by full container width to show one product
+      const scrollAmount = container.clientWidth;
+      container.scrollBy({
+        left: -scrollAmount,
+        behavior: "smooth",
+      });
+    } else {
+      // On desktop, scroll by card width + gap
+      const cardWidth = container.children[0]?.offsetWidth || 300;
+      const gap = 24; // 1.5rem gap
+      const scrollAmount = cardWidth + gap;
+      container.scrollBy({
+        left: -scrollAmount,
+        behavior: "smooth",
+      });
+    }
   };
 
   const scrollRight = () => {
     if (!scrollContainerRef.current) return;
 
     const container = scrollContainerRef.current;
-    const cardWidth = container.children[0]?.offsetWidth || 300;
-    const gap = 24; // 1.5rem gap
-    const scrollAmount = cardWidth + gap;
+    const isMobile = window.innerWidth < 768;
 
-    container.scrollBy({
-      left: scrollAmount,
-      behavior: "smooth",
-    });
+    if (isMobile) {
+      // On mobile, scroll by full container width to show one product
+      const scrollAmount = container.clientWidth;
+      container.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    } else {
+      // On desktop, scroll by card width + gap
+      const cardWidth = container.children[0]?.offsetWidth || 300;
+      const gap = 24; // 1.5rem gap
+      const scrollAmount = cardWidth + gap;
+      container.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
   };
 
   // Loading state
@@ -134,7 +158,7 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
           {[1, 2, 3, 4].map((item) => (
             <div
               key={item}
-              className="flex-shrink-0 w-80 bg-white rounded-xl shadow-sm border border-gray-200"
+              className="flex-shrink-0 w-80 bg-white rounded-xl shadow-sm border border-gray-200 md:w-80 w-full"
             >
               <div className="bg-gray-200 animate-pulse aspect-square rounded-t-xl"></div>
               <div className="p-4">
@@ -208,7 +232,7 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
         {/* Scrollable Container */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+          className="flex md:gap-6 gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-4 snap-x snap-mandatory md:snap-none"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -217,7 +241,7 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
           {relatedProducts.map((product, index) => (
             <div
               key={product.id}
-              className="flex-grow  animate-fadeIn"
+              className="flex-shrink-0 md:flex-grow animate-fadeIn w-full md:w-auto snap-start md:snap-align-none"
               style={{
                 animationDelay: `${index * 100}ms`,
                 animationFillMode: "forwards",
@@ -257,31 +281,6 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
         </div>
       </div>
 
-      {/* Scroll Indicator Dots - Mobile */}
-      <div className="flex md:hidden justify-center mt-4 gap-2">
-        {relatedProducts.map((_, index) => {
-          const isActive = Math.floor(scrollPosition / 320) === index;
-          return (
-            <button
-              key={index}
-              onClick={() => {
-                const container = scrollContainerRef.current;
-                if (container) {
-                  container.scrollTo({
-                    left: index * 320,
-                    behavior: "smooth",
-                  });
-                }
-              }}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                isActive ? "bg-[#F47458] scale-125" : "bg-gray-300"
-              }`}
-              aria-label={`Go to product ${index + 1}`}
-            />
-          );
-        })}
-      </div>
-
       <style jsx>{`
         .scrollbar-hide {
           -ms-overflow-style: none;
@@ -319,6 +318,19 @@ const RelatedProducts = ({ currentProduct, isLoading = false }) => {
 
         .animate-slideInUp {
           animation: slideInUp 0.8s ease-out forwards;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 767px) {
+          .scrollbar-hide {
+            scroll-snap-type: x mandatory;
+          }
+
+          .scrollbar-hide > div {
+            scroll-snap-align: start;
+            width: 100%;
+            flex-shrink: 0;
+          }
         }
       `}</style>
     </div>

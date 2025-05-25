@@ -27,7 +27,7 @@ const defaultSpecs = {
 
 export default function DiamondConsumablesSpecs({ formData, onChange }) {
   // Merge default specs with any provided formData
-  const specs = { ...defaultSpecs, ...formData.specs };
+  const specs = { ...defaultSpecs, ...(formData?.specs || {}) };
 
   // Handle input changes and immediately propagate to parent component
   const handleInputChange = (field, value) => {
@@ -41,7 +41,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
   const showSegmentFields = specs.subtype === "Loose Diamond Segments";
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto p-4">
       <div className="mb-4">
         <label
           htmlFor="subtype"
@@ -86,7 +86,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
 
       {showBladeFields && (
         <>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="diameter"
@@ -124,7 +124,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="applicationType"
@@ -181,7 +181,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
             >
               Wet/Dry Use
             </label>
-            <div className="relative">
+            <div className="relative max-w-md">
               <select
                 id="wetDryUse"
                 value={specs.wetDryUse}
@@ -201,7 +201,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
 
       {showWireFields && (
         <>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="wireLength"
@@ -243,7 +243,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="wireCoating"
@@ -272,14 +272,14 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
 
             <div>
               <label
-                htmlFor="applicationType"
+                htmlFor="applicationTypeWire"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Application Type *
               </label>
               <div className="relative">
                 <select
-                  id="applicationType"
+                  id="applicationTypeWire"
                   value={specs.applicationType}
                   onChange={(e) =>
                     handleInputChange("applicationType", e.target.value)
@@ -298,7 +298,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="sinteredElectroplated"
@@ -325,14 +325,14 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
 
             <div>
               <label
-                htmlFor="wetDryUse"
+                htmlFor="wetDryUseWire"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Wet/Dry Use
               </label>
               <div className="relative">
                 <select
-                  id="wetDryUse"
+                  id="wetDryUseWire"
                   value={specs.wetDryUse}
                   onChange={(e) =>
                     handleInputChange("wetDryUse", e.target.value)
@@ -353,7 +353,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
 
       {showSegmentFields && (
         <>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="segmentShape"
@@ -405,7 +405,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="bondApplication"
@@ -470,7 +470,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
                 handleInputChange("compatibility", e.target.value)
               }
               placeholder="For 14-inch blades"
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="w-full p-2 border border-gray-300 rounded-md max-w-md"
             />
           </div>
         </>
@@ -489,7 +489,7 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
           onChange={(e) => handleInputChange("sellerNotes", e.target.value)}
           placeholder="Additional information about the product"
           className="w-full p-2 border border-gray-300 rounded-md"
-          rows={2}
+          rows={3}
         />
       </div>
 
@@ -506,12 +506,12 @@ export default function DiamondConsumablesSpecs({ formData, onChange }) {
           value={specs.location}
           onChange={(e) => handleInputChange("location", e.target.value)}
           placeholder="City, State"
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="w-full p-2 border border-gray-300 rounded-md max-w-md"
           required
         />
       </div>
 
-      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+      <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
         <p className="text-xs text-gray-700">
           Fields marked with * are mandatory for listing this product.
         </p>

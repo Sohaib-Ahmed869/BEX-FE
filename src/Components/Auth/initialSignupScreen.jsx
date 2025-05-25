@@ -7,10 +7,11 @@ import ImageGrid from "./imageGrid";
 import { motion } from "framer-motion";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
+
 const InitialScreen = ({ updateFormData, setInitialFilled }) => {
-  // Animation variants for form container
   const [showPassword, setShowPassword] = useState(false);
 
+  // Animation variants for signup form
   const formVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -50,20 +51,20 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
   };
 
   return (
-    <div className="bg-[#F6F6F6] h-screen flex justify-between overflow-hidden">
-      {/* Form Side */}
-      <div className="w-1/2 flex items-center justify-center">
+    <div className="bg-[#F6F6F6] min-h-screen flex flex-col lg:flex-row lg:justify-between overflow-hidden">
+      {/* Signup Form Side */}
+      <div className="w-full lg:w-1/3 md:w-1/2 sm:w-full mx-auto my-auto flex items-center justify-center px-4 py-4  lg:py-0">
         <motion.form
           initial="hidden"
           animate="visible"
           variants={formVariants}
           action=""
-          className="w-[598px] py-20 px-25 bg-white rounded-3xl flex flex-col shadow-lg"
+          className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl py-6 sm:py-8 lg:py-8 xl:py-8 px-6 sm:px-8 lg:px-10 xl:px-12 bg-white rounded-2xl lg:rounded-3xl flex flex-col shadow-lg"
         >
           <motion.span
             custom={0}
             variants={itemVariants}
-            className="text-base text-gray-400 font-regular"
+            className="text-sm sm:text-base text-gray-400 font-regular"
           >
             Welcome to BEX!
           </motion.span>
@@ -71,54 +72,68 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
           <motion.h1
             custom={1}
             variants={itemVariants}
-            className="font-bold text-6xl leading-tight mb-3"
+            className="font-bold text-4xl md:text-4xl sm:text-4xl lg:text-4xl leading-tight mb-2 lg:mb-3"
           >
             Sign up
           </motion.h1>
 
-          <motion.div custom={2} variants={itemVariants} className="mb-4">
-            <label htmlFor="email" className="text-sm font-bold my-1 block">
+          <motion.div
+            custom={2}
+            variants={itemVariants}
+            className="mb-3 lg:mb-4"
+          >
+            <label
+              htmlFor="email"
+              className="text-xs sm:text-sm font-bold my-1 block"
+            >
               Email
             </label>
             <div className="relative">
               <CiMail
-                size={20}
-                className="absolute top-5 left-3 text-gray-300"
+                size={18}
+                className="absolute top-3 sm:top-4 left-3 text-gray-300"
               />
               <input
                 type="email"
                 onChange={(e) => updateFormData("email", e.target.value)}
                 placeholder="Your email"
-                className="w-full block py-4 px-10 md:px-10 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 "
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
               />
             </div>
           </motion.div>
 
-          <motion.div custom={3} variants={itemVariants} className="mb-4">
-            <label htmlFor="password" className="text-sm font-bold my-1 block">
+          <motion.div
+            custom={3}
+            variants={itemVariants}
+            className="mb-3 lg:mb-4"
+          >
+            <label
+              htmlFor="password"
+              className="text-xs sm:text-sm font-bold my-1 block"
+            >
               Password
             </label>
             <div className="relative">
               <MdLockOutline
-                size={20}
-                className="absolute top-5 left-3 text-gray-300"
+                size={18}
+                className="absolute top-3 sm:top-4 left-3 text-gray-300"
               />
               <input
                 type={showPassword ? "text" : "password"}
                 onChange={(e) => updateFormData("password", e.target.value)}
-                className="w-full block py-4 px-10 md:px-10 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 "
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
                 placeholder="Password"
-              />{" "}
+              />
               {showPassword ? (
                 <IoMdEye
-                  size={20}
-                  className="absolute  right-2 cursor-pointer top-5 text-gray-500"
+                  size={18}
+                  className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 />
               ) : (
                 <IoMdEyeOff
-                  size={20}
-                  className="absolute  right-2 cursor-pointer top-5 text-gray-500"
+                  size={18}
+                  className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
                   onClick={() => setShowPassword(!showPassword)}
                 />
               )}
@@ -128,14 +143,17 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
           <motion.div
             custom={4}
             variants={itemVariants}
-            className="flex items-center mt-2 mb-4"
+            className="flex items-center mb-3 lg:mb-4"
           >
             <input
               type="checkbox"
               onChange={(e) => updateFormData("isSeller", e.target.checked)}
               className="mr-2"
             />
-            <label htmlFor="isSeller" className="text-sm font-medium">
+            <label
+              htmlFor="isSeller"
+              className="text-xs sm:text-sm font-medium"
+            >
               I am a Seller
             </label>
           </motion.div>
@@ -149,7 +167,7 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
             whileHover="hover"
             whileTap="tap"
             onClick={() => setInitialFilled(true)}
-            className="w-full py-4 mt-6 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors cursor-pointer"
+            className="w-full py-2.5 sm:py-3 lg:py-3.5 mt-3 sm:mt-4 lg:mt-5 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors cursor-pointer text-sm font-medium"
           >
             Continue
           </motion.button>
@@ -157,7 +175,7 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
           <motion.span
             custom={6}
             variants={itemVariants}
-            className="text-center my-3"
+            className="text-center my-2 lg:my-3 text-sm text-gray-500"
           >
             or
           </motion.span>
@@ -170,26 +188,27 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
             }}
             whileHover="hover"
             whileTap="tap"
-            className="flex items-center justify-center gap-4 px-14 py-4 border-2 border-gray-200 rounded-lg"
+            type="button"
+            className="flex items-center justify-center gap-3 px-4 py-2.5 sm:py-3 lg:py-3.5 border-2 border-gray-200 rounded-lg text-sm hover:border-gray-300 transition-colors"
           >
-            <FcGoogle size={20} />
-            Continue using google
+            <FcGoogle size={18} />
+            Continue using Google
           </motion.button>
 
           <motion.span
             custom={8}
             variants={itemVariants}
-            className="text-center mt-10 text-gray-400 font-medium"
+            className="text-center mt-4 sm:mt-5 lg:mt-6 text-gray-400 font-medium text-sm"
           >
             Already have an account?
-            <Link className="text-[#F47458] ml-1" to={"/login"}>
+            <Link className="text-[#F47458] ml-1 hover:underline" to={"/login"}>
               Login
             </Link>
           </motion.span>
         </motion.form>
       </div>
 
-      {/* Image Grid Side */}
+      {/* Image Grid Side - Hidden on mobile and tablet */}
       <motion.div
         initial={{ opacity: 0, x: 50 }}
         animate={{
@@ -201,7 +220,7 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
             delay: 0.3,
           },
         }}
-        className="w-1/2"
+        className="hidden lg:flex lg:w-1/2"
       >
         <ImageGrid />
       </motion.div>

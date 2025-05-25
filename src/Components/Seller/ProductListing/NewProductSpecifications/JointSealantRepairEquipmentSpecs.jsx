@@ -75,7 +75,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
     switch (specs.subtype) {
       case "Hot Pour Melter/Applicator (Trailer/Kettle)":
         return (
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="maxTemp"
@@ -130,7 +130,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
       case "Epoxy Pump/Dispenser":
       case "Sealant Pump (Bulk/Cartridge)":
         return (
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="pressureRating"
@@ -173,7 +173,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
       case "Compression Seal Machine/Installer":
       case "Sealant Gun (Manual/Pneumatic)":
         return specs.powerSource === "Pneumatic" ? (
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
             <div>
               <label
                 htmlFor="pressureRating"
@@ -219,8 +219,8 @@ export default function JointSealantSpecs({ formData, onChange }) {
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
+    <div className="w-full max-w-4xl mx-auto p-4 sm:p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="subtype"
@@ -266,7 +266,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="model"
@@ -304,7 +304,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="powerSource"
@@ -332,7 +332,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-1">
             <label
               htmlFor="capacity"
@@ -350,7 +350,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
               required
             />
           </div>
-          <div className="w-1/3">
+          <div className="w-full sm:w-1/3">
             <label
               htmlFor="capacityUnit"
               className="block text-sm font-medium text-gray-700 mb-1"
@@ -378,7 +378,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
 
       {renderDynamicFields()}
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="operatingHours"
@@ -424,7 +424,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div>
           <label
             htmlFor="weight"
@@ -464,7 +464,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Included Accessories
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-2">
           <label className="flex items-center">
             <input
               type="checkbox"
@@ -493,7 +493,7 @@ export default function JointSealantSpecs({ formData, onChange }) {
             <span className="ml-2">Tips</span>
           </label>
         </div>
-        <div className="mt-2">
+        <div>
           <label
             htmlFor="otherAccessories"
             className="block text-sm font-medium text-gray-700 mb-1"

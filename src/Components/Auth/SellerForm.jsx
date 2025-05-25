@@ -111,215 +111,228 @@ const SellerForm = ({ formData, updateFormData }) => {
         newestOnTop={true}
       />
 
-      <motion.form
-        initial="hidden"
-        animate="visible"
-        variants={formVariants}
-        onSubmit={handleSubmit}
-        className="w-full md:w-3/4 lg:w-1/2 block py-6 px-4 md:px-12 lg:px-16 mt-16 md:mt-24 lg:mt-40 flex flex-col m-auto"
-      >
-        <motion.h1
-          custom={0}
-          variants={itemVariants}
-          className="font-bold w-1/2 text-3xl md:text-4xl leading-tight mb-8 text-center md:text-left"
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-4 py-4 lg:py-8 overflow-y-auto">
+        <motion.form
+          initial="hidden"
+          animate="visible"
+          variants={formVariants}
+          onSubmit={handleSubmit}
+          className="w-full max-w-2xl py-6 sm:py-8 lg:py-10 px-6 sm:px-8 lg:px-10  rounded-2xl lg:rounded-3xl flex flex-col"
         >
-          Almost there! Please tell us about your Company
-        </motion.h1>
-
-        {error && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 animate-fade-in animate-duration-1000"
-            role="alert"
+          <motion.h1
+            custom={0}
+            variants={itemVariants}
+            className="font-bold text-2xl sm:text-3xl lg:text-4xl leading-tight mb-6 sm:mb-8 text-center lg:text-left"
           >
-            <span className="block sm:inline">{error}</span>
+            Almost there! Please tell us about your Company
+          </motion.h1>
+
+          {error && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm"
+              role="alert"
+            >
+              <span className="block sm:inline">{error}</span>
+            </motion.div>
+          )}
+
+          <motion.div
+            custom={1}
+            variants={itemVariants}
+            className="flex flex-col lg:flex-row w-full gap-3 lg:gap-6 mb-3 lg:mb-4"
+          >
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="name"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                Your Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={formData.name}
+                onChange={(e) => updateFormData("name", e.target.value)}
+                placeholder="Your Name"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+              />
+            </div>
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="companyName"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                Company name
+              </label>
+              <input
+                type="text"
+                id="companyName"
+                value={formData.companyName}
+                onChange={(e) => updateFormData("companyName", e.target.value)}
+                placeholder="Your Company Name"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+              />
+            </div>
           </motion.div>
-        )}
 
-        <motion.div
-          custom={1}
-          variants={itemVariants}
-          className="flex flex-col md:flex-row w-full gap-4 md:gap-10"
-        >
-          <div className="w-full md:w-1/2">
-            <label htmlFor="name" className="text-sm font-bold mb-2 block">
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={(e) => updateFormData("name", e.target.value)}
-              placeholder="Your Name"
-              className="w-full block py-4 px-4 md:px-6 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 mb-4"
-            />
-          </div>
-          <div className="w-full md:w-1/2">
-            <label
-              htmlFor="companyName"
-              className="text-sm font-bold mb-2 block"
-            >
-              Company name:
-            </label>
-            <input
-              type="text"
-              id="companyName"
-              value={formData.companyName}
-              onChange={(e) => updateFormData("companyName", e.target.value)}
-              placeholder="Your Company Name"
-              className="w-full block py-4 px-4 md:px-6 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 mb-4"
-            />
-          </div>
-        </motion.div>
-
-        <motion.div
-          custom={2}
-          variants={itemVariants}
-          className="flex flex-col md:flex-row w-full gap-4 md:gap-10"
-        >
-          <div className="w-full md:w-1/2">
-            <label
-              htmlFor="companyRegistrationNumber"
-              className="text-sm font-bold mb-2 block"
-            >
-              Company registration number:
-            </label>
-            <input
-              type="text"
-              id="companyRegistrationNumber"
-              value={formData.companyRegistrationNumber}
-              onChange={(e) =>
-                updateFormData("companyRegistrationNumber", e.target.value)
-              }
-              placeholder="Registration Number"
-              className="w-full block py-4 px-4 md:px-6 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 mb-4"
-            />
-          </div>
-          <div className="w-full md:w-1/2">
-            <label
-              htmlFor="countryOfRegistration"
-              className="text-sm font-bold mb-2 block"
-            >
-              Country of registration:
-            </label>
-
-            <select
-              id="country"
-              className="w-full block py-4 px-4 md:px-6 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 mb-4"
-              value={formData.countryOfRegistration}
-              onChange={(e) =>
-                updateFormData("countryOfRegistration", e.target.value)
-              }
-            >
-              <option value="" disabled>
-                -- Select a Country --
-              </option>
-              {countries.map((country) => (
-                <option key={country.label} value={country.label}>
-                  {country.flag} {country.value} {country.label}
+          <motion.div
+            custom={2}
+            variants={itemVariants}
+            className="flex flex-col lg:flex-row w-full gap-3 lg:gap-6 mb-3 lg:mb-4"
+          >
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="companyRegistrationNumber"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                Company registration number
+              </label>
+              <input
+                type="text"
+                id="companyRegistrationNumber"
+                value={formData.companyRegistrationNumber}
+                onChange={(e) =>
+                  updateFormData("companyRegistrationNumber", e.target.value)
+                }
+                placeholder="Registration Number"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+              />
+            </div>
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="countryOfRegistration"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                Country of registration
+              </label>
+              <select
+                id="country"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+                value={formData.countryOfRegistration}
+                onChange={(e) =>
+                  updateFormData("countryOfRegistration", e.target.value)
+                }
+              >
+                <option value="" disabled>
+                  -- Select a Country --
                 </option>
-              ))}
-            </select>
-          </div>
-        </motion.div>
+                {countries.map((country) => (
+                  <option key={country.label} value={country.label}>
+                    {country.flag} {country.value} {country.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </motion.div>
 
-        <motion.div
-          custom={3}
-          variants={itemVariants}
-          className="flex flex-col md:flex-row w-full gap-4 md:gap-10"
-        >
-          <div className="w-full md:w-1/2">
-            <label
-              htmlFor="businessAddress"
-              className="text-sm font-bold mb-2 block"
-            >
-              Business address
-            </label>
-            <input
-              type="text"
-              id="businessAddress"
-              value={formData.businessAddress}
-              onChange={(e) =>
-                updateFormData("businessAddress", e.target.value)
-              }
-              placeholder="Business Address"
-              className="w-full block py-4 px-4 md:px-6 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 mb-4"
-            />
-          </div>
-          <div className="w-full md:w-1/2">
-            <label
-              htmlFor="websiteUrl"
-              className="text-sm font-bold mb-2 block"
-            >
-              Website URL:
-            </label>
-            <input
-              type="text"
-              id="websiteUrl"
-              value={formData.websiteUrl}
-              onChange={(e) => updateFormData("websiteUrl", e.target.value)}
-              placeholder="Website URL"
-              className="w-full block py-4 px-4 md:px-6 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 mb-4"
-            />
-          </div>
-        </motion.div>
+          <motion.div
+            custom={3}
+            variants={itemVariants}
+            className="flex flex-col lg:flex-row w-full gap-3 lg:gap-6 mb-3 lg:mb-4"
+          >
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="businessAddress"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                Business address
+              </label>
+              <input
+                type="text"
+                id="businessAddress"
+                value={formData.businessAddress}
+                onChange={(e) =>
+                  updateFormData("businessAddress", e.target.value)
+                }
+                placeholder="Business Address"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+              />
+            </div>
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="websiteUrl"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                Website URL
+              </label>
+              <input
+                type="text"
+                id="websiteUrl"
+                value={formData.websiteUrl}
+                onChange={(e) => updateFormData("websiteUrl", e.target.value)}
+                placeholder="Website URL"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+              />
+            </div>
+          </motion.div>
 
-        <motion.div custom={4} variants={itemVariants} className="w-full mt-6">
-          <div className="flex items-center">
-            <label htmlFor="licenseImage" className="text-sm font-bold block">
-              Upload a license picture of your business
-            </label>
-            <span className="text-gray-400 font-medium ml-2">Optional</span>
-          </div>
-          <div className="relative">
-            <IoCloudUploadOutline
-              size={22}
-              className="absolute top-1/2 transform -translate-y-1/2 left-4 text-[#F47458]"
-            />
-            <input
-              type="file"
-              id="licenseImage"
-              onChange={(e) =>
-                updateFormData("licenseImage", e.target.files[0])
-              }
-              className="w-full block py-4 pl-12 pr-4 text-gray-700 mt-2 rounded-lg bg-white border-gray-300 border-2 mb-4"
-            />
-          </div>
-          <small className="text-gray-500">
-            Jpeg, PNG, PDF, Webp formats are accepted
-          </small>
-        </motion.div>
+          <motion.div
+            custom={4}
+            variants={itemVariants}
+            className="w-full mb-6"
+          >
+            <div className="flex items-center mb-1">
+              <label
+                htmlFor="licenseImage"
+                className="text-xs sm:text-sm font-bold"
+              >
+                Upload a license picture of your business
+              </label>
+              <span className="text-gray-400 font-medium ml-2 text-xs">
+                Optional
+              </span>
+            </div>
+            <div className="relative">
+              <IoCloudUploadOutline
+                size={18}
+                className="absolute top-3 sm:top-4 left-3 text-[#F47458]"
+              />
+              <input
+                type="file"
+                id="licenseImage"
+                onChange={(e) =>
+                  updateFormData("licenseImage", e.target.files[0])
+                }
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 pl-10 pr-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+              />
+            </div>
+            <small className="text-gray-500 text-xs mt-1 block">
+              Jpeg, PNG, PDF, Webp formats are accepted
+            </small>
+          </motion.div>
 
-        <motion.button
-          custom={5}
-          variants={{
-            ...itemVariants,
-            ...buttonVariants,
-          }}
-          whileHover="hover"
-          whileTap="tap"
-          type="submit"
-          disabled={loading}
-          className={`w-full md:w-1/2 m-auto py-4 mt-8 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors ${
-            loading ? "opacity-75 cursor-not-allowed" : "cursor-pointer"
-          }`}
-        >
-          {loading ? "Processing..." : "Sign Up"}
-        </motion.button>
+          <motion.button
+            custom={5}
+            variants={{
+              ...itemVariants,
+              ...buttonVariants,
+            }}
+            whileHover="hover"
+            whileTap="tap"
+            type="submit"
+            disabled={loading}
+            className={`w-1/2 mx-auto py-2.5 sm:py-3 lg:py-3.5 mt-3 sm:mt-4 lg:mt-5 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors text-sm font-medium ${
+              loading ? "opacity-75 cursor-not-allowed" : "cursor-pointer"
+            }`}
+          >
+            {loading ? "Processing..." : "Sign Up"}
+          </motion.button>
 
-        <motion.div
-          custom={6}
-          variants={itemVariants}
-          className="text-center mt-5"
-        >
-          Have an account already?{" "}
-          <Link className="text-[#F47458] hover:underline" to="/login">
-            Login
-          </Link>
-        </motion.div>
-      </motion.form>
+          <motion.div
+            custom={6}
+            variants={itemVariants}
+            className="text-center mt-4 sm:mt-5 lg:mt-6 text-gray-400 font-medium text-sm"
+          >
+            Have an account already?{" "}
+            <Link className="text-[#F47458] hover:underline" to="/login">
+              Login
+            </Link>
+          </motion.div>
+        </motion.form>
+      </div>
     </>
   );
 };
