@@ -29,7 +29,7 @@ const App = () => {
         {/* Protected routes with SideBar as the parent layout */}
         <Route path="/" element={<SideBar />}>
           {/* Default redirect to dashboard */}
-          <Route index element={<Navigate to="/product-list" replace />} />
+          <Route index element={<Navigate to="/login" replace />} />
 
           {/* Main menu routes */}
           <Route path="dashboard" element={<Dashboard />} />
