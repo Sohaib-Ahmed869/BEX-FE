@@ -22,7 +22,7 @@ const ProductGrid = ({ products }) => {
   ];
 
   // Items per page options
-  const itemsPerPageOptions = [1, 2, 10, 20, 30, 50];
+  const itemsPerPageOptions = [10, 20, 30, 50];
 
   useEffect(() => {
     // Simulate loading data

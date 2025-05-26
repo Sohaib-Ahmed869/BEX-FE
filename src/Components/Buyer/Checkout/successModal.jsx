@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Check, Star, Sparkles } from "lucide-react";
+import { toast } from "react-toastify";
 
 const OrderSuccessModal = ({ isOpen, onClose, orderId }) => {
   const [showContent, setShowContent] = useState(false);
@@ -20,7 +21,7 @@ const OrderSuccessModal = ({ isOpen, onClose, orderId }) => {
 
   const handleTrackOrder = () => {
     // Replace with your tracking page route
-    window.location.href = "/order-tracking";
+    toast.success("This feature will be  available soon.");
   };
 
   const handleShopMore = () => {

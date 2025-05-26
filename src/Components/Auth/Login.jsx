@@ -100,7 +100,7 @@ const Login = () => {
           animate="visible"
           variants={formVariants}
           onSubmit={(e) => handleLogin(e)}
-          className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl py-6 sm:py-8 lg:py-10 xl:py-12 px-6 sm:px-8 lg:px-10 xl:px-12 bg-white rounded-2xl lg:rounded-3xl flex flex-col shadow-lg"
+          className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-lg py-6 sm:py-8 lg:py-10 xl:py-12 px-6 sm:px-8 lg:px-10 xl:px-12 bg-white rounded-2xl lg:rounded-3xl flex flex-col shadow-lg"
         >
           <motion.span
             custom={0}

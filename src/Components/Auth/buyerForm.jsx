@@ -68,7 +68,7 @@ const BuyerForm = ({ formData, updateFormData }) => {
       // Handle successful registration
       console.log("Registration successful:", result);
 
-      navigate("/");
+      navigate("/products");
     } catch (err) {
       console.error("Registration error:", err);
       setError("An unexpected error occurred. Please try again.");

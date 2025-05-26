@@ -20,7 +20,6 @@ import BuyerHeader from "../buyerHeader.jsx/buyerHeader";
 import OrderSuccessModal from "./successModal";
 import { toast } from "react-toastify";
 import { retipPricing } from "../../../utils/retipPricingInformation";
-import { cartActions } from "../../../store/cart-slice";
 import {
   addRetipToCartItem,
   removeRetipFromCartItem,
@@ -32,7 +31,7 @@ const stripePromise = loadStripe(StripePublisherKey);
 const RetipModal = ({ isOpen, onClose, item, onAddRetip, onCancelRetip }) => {
   if (!isOpen) return null;
 
-  const diameter = item.diameter || "0";
+  const diameter = item.diameter;
   const retipPrice = retipPricing[diameter] || 0;
 
   return (
