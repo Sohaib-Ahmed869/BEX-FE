@@ -10,13 +10,26 @@ import { motion } from "framer-motion";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import CubeLoader from "../../utils/cubeLoader";
+import GoogleAuthButton from "./GoogleAuth/googleAuthButton";
+import useGoogleAuth from "../../services/googleAuth";
+import GoogleSellerForm from "./GoogleAuth/googleSellerForm";
+import RoleSelectionModal from "./GoogleAuth/RoleSelectionModel";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [Loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const {
+    showRoleModal,
+    showSellerForm,
+    googleUserData,
+    loading,
+    handleRoleSelect,
+    completeSellerRegistration,
+    cancelRegistration,
+  } = useGoogleAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -33,7 +46,7 @@ const Login = () => {
       }
       if (response.user.role === "seller") {
         setLoading(false);
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error) {
       console.log(error);
@@ -84,128 +97,129 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#F6F6F6] min-h-screen flex flex-col lg:flex-row lg:justify-between overflow-hidden">
-      {loading && <CubeLoader />}
-      <ToastContainer
-        position="top-right"
-        autoClose={4000}
-        transition={Bounce}
-        newestOnTop={true}
-      />
+    <>
+      <div className="bg-[#F6F6F6] min-h-screen flex flex-col lg:flex-row lg:justify-between overflow-hidden">
+        {Loading && <CubeLoader />}
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          transition={Bounce}
+          newestOnTop={true}
+        />
 
-      {/* Login Form Side */}
-      <div className="w-full lg:w-1/3 md:w-1/2 sm:w-full mx-auto my-auto  flex items-center justify-center px-4 py-4 lg:py-0">
-        <motion.form
-          initial="hidden"
-          animate="visible"
-          variants={formVariants}
-          onSubmit={(e) => handleLogin(e)}
-          className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-lg py-6 sm:py-8 lg:py-10 xl:py-12 px-6 sm:px-8 lg:px-10 xl:px-12 bg-white rounded-2xl lg:rounded-3xl flex flex-col shadow-lg"
-        >
-          <motion.span
-            custom={0}
-            variants={itemVariants}
-            className="text-sm sm:text-base text-gray-400 font-regular"
+        {/* Login Form Side */}
+        <div className="w-full lg:w-1/3 md:w-1/2 sm:w-full mx-auto my-auto  flex items-center justify-center px-4 py-4 lg:py-0">
+          <motion.form
+            initial="hidden"
+            animate="visible"
+            variants={formVariants}
+            onSubmit={(e) => handleLogin(e)}
+            className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-lg py-6 sm:py-8 lg:py-10 xl:py-12 px-6 sm:px-8 lg:px-10 xl:px-12 bg-white rounded-2xl lg:rounded-3xl flex flex-col shadow-lg"
           >
-            Welcome back!
-          </motion.span>
-
-          <motion.h1
-            custom={1}
-            variants={itemVariants}
-            className="font-bold text-4xl  md:text-4xl sm:text-4xl lg:text-4xl    leading-tight mb-2 lg:mb-3"
-          >
-            Sign in
-          </motion.h1>
-
-          <motion.div
-            custom={2}
-            variants={itemVariants}
-            className="mb-3 lg:mb-4"
-          >
-            <label
-              htmlFor="email"
-              className="text-xs sm:text-sm font-bold my-1 block"
+            <motion.span
+              custom={0}
+              variants={itemVariants}
+              className="text-sm sm:text-base text-gray-400 font-regular"
             >
-              Email
-            </label>
-            <div className="relative">
-              <CiMail
-                size={18}
-                className="absolute top-3 sm:top-4 left-3 text-gray-300"
-              />
-              <input
-                type="email"
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your email"
-                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
-                value={email}
-              />
-            </div>
-          </motion.div>
+              Welcome back!
+            </motion.span>
 
-          <motion.div
-            custom={3}
-            variants={itemVariants}
-            className="mb-3 lg:mb-4"
-          >
-            <label
-              htmlFor="password"
-              className="text-xs sm:text-sm font-bold my-1 block"
+            <motion.h1
+              custom={1}
+              variants={itemVariants}
+              className="font-bold text-4xl  md:text-4xl sm:text-4xl lg:text-4xl    leading-tight mb-2 lg:mb-3"
             >
-              Password
-            </label>
-            <div className="relative">
-              <MdLockOutline
-                size={18}
-                className="absolute top-3 sm:top-4 left-3 text-gray-300"
-              />
-              <input
-                type={showPassword ? "text" : "password"}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
-                placeholder="Password"
-                value={password}
-              />
-              {showPassword ? (
-                <IoMdEye
+              Sign in
+            </motion.h1>
+
+            <motion.div
+              custom={2}
+              variants={itemVariants}
+              className="mb-3 lg:mb-4"
+            >
+              <label
+                htmlFor="email"
+                className="text-xs sm:text-sm font-bold my-1 block"
+              >
+                Email
+              </label>
+              <div className="relative">
+                <CiMail
                   size={18}
-                  className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
-                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-3 sm:top-4 left-3 text-gray-300"
                 />
-              ) : (
-                <IoMdEyeOff
+                <input
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your email"
+                  className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+                  value={email}
+                />
+              </div>
+            </motion.div>
+
+            <motion.div
+              custom={3}
+              variants={itemVariants}
+              className="mb-3 lg:mb-4"
+            >
+              <label
+                htmlFor="password"
+                className="text-xs sm:text-sm font-bold my-1 block"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <MdLockOutline
                   size={18}
-                  className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
-                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-3 sm:top-4 left-3 text-gray-300"
                 />
-              )}
-            </div>
-          </motion.div>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full py-2.5 sm:py-3 lg:py-3.5 px-10 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+                  placeholder="Password"
+                  value={password}
+                />
+                {showPassword ? (
+                  <IoMdEye
+                    size={18}
+                    className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                ) : (
+                  <IoMdEyeOff
+                    size={18}
+                    className="absolute right-3 cursor-pointer top-3 sm:top-4 text-gray-500 hover:text-gray-700 transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                  />
+                )}
+              </div>
+            </motion.div>
 
-          <motion.button
-            custom={4}
-            variants={{
-              ...itemVariants,
-              ...buttonVariants,
-            }}
-            whileHover="hover"
-            whileTap="tap"
-            type="submit"
-            className="w-full py-2.5 sm:py-3 lg:py-3.5 mt-3 sm:mt-4 lg:mt-5 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors cursor-pointer text-sm font-medium"
-          >
-            Continue
-          </motion.button>
+            <motion.button
+              custom={4}
+              variants={{
+                ...itemVariants,
+                ...buttonVariants,
+              }}
+              whileHover="hover"
+              whileTap="tap"
+              type="submit"
+              className="w-full py-2.5 sm:py-3 lg:py-3.5 mt-3 sm:mt-4 lg:mt-5 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors cursor-pointer text-sm font-medium"
+            >
+              Continue
+            </motion.button>
 
-          <motion.span
-            custom={5}
-            variants={itemVariants}
-            className="text-center my-2 lg:my-3 text-sm text-gray-500"
-          >
-            or
-          </motion.span>
+            <motion.span
+              custom={5}
+              variants={itemVariants}
+              className="text-center my-2 lg:my-3 text-sm text-gray-500"
+            >
+              or
+            </motion.span>
 
-          <motion.button
+            {/* <motion.button
             custom={6}
             variants={{
               ...itemVariants,
@@ -218,41 +232,55 @@ const Login = () => {
           >
             <FcGoogle size={18} />
             Continue using Google
-          </motion.button>
-
-          <motion.span
-            custom={7}
-            variants={itemVariants}
-            className="text-center mt-4 sm:mt-5 lg:mt-6 text-gray-400 font-medium text-sm"
-          >
-            Don't have an account?
-            <Link
-              className="text-[#F47458] ml-1 hover:underline"
-              to={"/signup"}
+          </motion.button> */}
+            <GoogleAuthButton text="Continue using Google" />
+            <motion.span
+              custom={7}
+              variants={itemVariants}
+              className="text-center mt-4 sm:mt-5 lg:mt-6 text-gray-400 font-medium text-sm"
             >
-              Sign-up
-            </Link>
-          </motion.span>
-        </motion.form>
-      </div>
+              Don't have an account?
+              <Link
+                className="text-[#F47458] ml-1 hover:underline"
+                to={"/signup"}
+              >
+                Sign-up
+              </Link>
+            </motion.span>
+          </motion.form>
+        </div>
 
-      {/* Image Grid Side - Hidden on mobile and tablet */}
-      <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{
-          opacity: 1,
-          x: 0,
-          transition: {
-            duration: 0.8,
-            ease: "easeOut",
-            delay: 0.3,
-          },
-        }}
-        className="hidden lg:flex lg:w-1/2"
-      >
-        <ImageGrid />
-      </motion.div>
-    </div>
+        {/* Image Grid Side - Hidden on mobile and tablet */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{
+            opacity: 1,
+            x: 0,
+            transition: {
+              duration: 0.8,
+              ease: "easeOut",
+              delay: 0.3,
+            },
+          }}
+          className="hidden lg:flex lg:w-1/2"
+        >
+          <ImageGrid />
+        </motion.div>
+      </div>
+      <RoleSelectionModal
+        isOpen={showRoleModal}
+        onClose={cancelRegistration}
+        onRoleSelect={handleRoleSelect}
+      />
+
+      {showSellerForm && (
+        <GoogleSellerForm
+          googleUserData={googleUserData}
+          onSubmit={completeSellerRegistration}
+          onCancel={cancelRegistration}
+        />
+      )}
+    </>
   );
 };
 

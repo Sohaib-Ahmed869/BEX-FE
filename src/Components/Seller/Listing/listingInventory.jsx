@@ -9,16 +9,16 @@ import {
   X,
 } from "lucide-react";
 import SellerHeader from "../sellerHeader/page";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import CubeLoader from "../../../utils/cubeLoader";
 import { calculateDaysUntilExpiration } from "../../../utils/calculateDaysLeft";
-import RemoveProductModal from "./ProductActions/DeleteProduct";
+import RemoveProductModal from "../ProductListing/ProductActions/DeleteProduct";
 import { toast } from "react-toastify";
-import PricingGuidanceModal from "./ProductActions/pricingGuidanceModal";
-import { fetchSellerProducts } from "../../../services/productsServices";
+import PricingGuidanceModal from "../ProductListing/ProductActions/pricingGuidanceModal";
+import { fetchListingSpecificProducts } from "../../../services/listingServices";
 
-export default function ProductList() {
+export default function ListingInventoryProducts() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,15 +32,12 @@ export default function ProductList() {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
-  // Get the user ID from localStorage or context
-  const userId =
-    localStorage.getItem("userId") || "a4045d5e-b86b-41f4-8104-b3fd4d858a58"; // Default for testing
-
+  const { listingId } = useParams();
   // Fetch products from API
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await fetchSellerProducts(userId);
+      const response = await fetchListingSpecificProducts(listingId);
       if (response.success) {
         setProducts(response.data);
         setTotalItems(response.count);
@@ -59,7 +56,7 @@ export default function ProductList() {
   // Initial data fetch
   useEffect(() => {
     fetchProducts();
-  }, [userId]);
+  }, [listingId]);
 
   const handleProductDeleted = () => {
     toast.success("Product deleted successfully");
@@ -186,7 +183,15 @@ export default function ProductList() {
         <h1 className="text-2xl sm:text-3xl font-medium mb-4">
           Inventory list
         </h1>
-
+        <div className="text-sm text-gray-500 mb-6">
+          <Link
+            to="/listing"
+            className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
+          >
+            <span>Product list /</span>{" "}
+          </Link>
+          <span className="text-orange-500">Listing Inventory</span>
+        </div>
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-between mb-6">
           {/* <button
@@ -213,14 +218,8 @@ export default function ProductList() {
           {products.length === 0 ? (
             <div className="text-center py-10 text-gray-500">
               <p className="text-sm sm:text-base">
-                No products found. Add your first product to get started.
+                No products found for this Listing.
               </p>
-              <Link
-                to={"/product-list/new"}
-                className="mt-4 px-4 py-2 inline-block bg-[#F47458] text-white rounded-md hover:bg-[#ee6a4c] transition-colors text-sm sm:text-base"
-              >
-                Add Product
-              </Link>
             </div>
           ) : (
             <>

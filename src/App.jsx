@@ -17,17 +17,43 @@ import ViewProduct from "./Components/Seller/ProductListing/ProductActions/ViewP
 import Products from "./Components/Buyer/Products/page";
 import Checkout from "./Components/Buyer/Checkout/checkout";
 import ProductDetailsPage from "./Components/Buyer/Products/ProductDetails/ProductDetail";
+import AuthRedirect from "./utils/AuthRedirect";
+import TokenGuard from "./utils/ValidateTokenLife";
+import Listing from "./Components/Seller/Listing/page";
+import ListingInventoryProducts from "./Components/Seller/Listing/listingInventory";
+import AddListing from "./Components/Seller/Listing/addListing";
+import SellerOrderDetailsPage from "./Components/Seller/Orders/viewOrder";
 
 const App = () => {
   return (
     <Router>
       <Routes>
         {/* Auth routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-
+        <Route
+          path="/login"
+          element={
+            <AuthRedirect>
+              <Login />
+            </AuthRedirect>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <AuthRedirect>
+              <Signup />
+            </AuthRedirect>
+          }
+        />
         {/* Protected routes with SideBar as the parent layout */}
-        <Route path="/" element={<SideBar />}>
+        <Route
+          path="/"
+          element={
+            <TokenGuard>
+              <SideBar />
+            </TokenGuard>
+          }
+        >
           {/* Default redirect to dashboard */}
           <Route index element={<Navigate to="/login" replace />} />
 
@@ -35,10 +61,23 @@ const App = () => {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="inventory" element={<Inventory />} />
           <Route path="product-list" element={<ProductList />} />
-          <Route path="product-list/new" element={<NewProduct />} />
+          <Route path="listing" element={<Listing />} />
+          <Route path="listing/add" element={<AddListing />} />
+          <Route
+            path="listing/inventory/:listingId"
+            element={<ListingInventoryProducts />}
+          />
+          <Route
+            path="listing/addInventory/:listingId"
+            element={<NewProduct />}
+          />
           <Route path="product-list/edit/:id" element={<EditProduct />} />
           <Route path="product-list/view/:id" element={<ViewProduct />} />
           <Route path="orders" element={<Orders />} />
+          <Route
+            path="orders/details/:itemId"
+            element={<SellerOrderDetailsPage />}
+          />
 
           {/* General menu routes */}
           <Route path="messages" element={<Messages />} />
@@ -46,12 +85,30 @@ const App = () => {
           <Route path="support" element={<Support />} />
         </Route>
         {/* Buyer routes */}
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/:productId" element={<ProductDetailsPage />} />
-        <Route path="/products/checkout" element={<Checkout />} />
-
-        {/* Catch all - redirect to dashboard */}
-        {/* <Route path="*" element={<Navigate to="/dashboard" replace />} /> */}
+        <Route
+          path="/products"
+          element={
+            <TokenGuard>
+              <Products />
+            </TokenGuard>
+          }
+        />
+        <Route
+          path="/products/:productId"
+          element={
+            <TokenGuard>
+              <ProductDetailsPage />
+            </TokenGuard>
+          }
+        />
+        <Route
+          path="/products/checkout"
+          element={
+            <TokenGuard>
+              <Checkout />
+            </TokenGuard>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Info, ChevronDown, Upload, X, Check, Loader2 } from "lucide-react";
 import SellerHeader from "../sellerHeader/page";
 import { getConditionDescription } from "../../../utils/productGradingDescription";
@@ -323,6 +323,7 @@ export default function NewProduct() {
     description: false,
     media: false,
   });
+  const { listingId } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     // General information
@@ -447,6 +448,7 @@ export default function NewProduct() {
       const formDataForSubmission = new FormData();
 
       // Map frontend field names to backend expected field names
+      formDataForSubmission.append("listing_id", listingId);
       formDataForSubmission.append("title", formData.productName);
       formDataForSubmission.append("price", formData.price);
       formDataForSubmission.append("condition", formData.productCondition);
@@ -621,10 +623,10 @@ export default function NewProduct() {
       />
       {/* Main Content */}
       <div className="px-6 py-4">
-        <h1 className="text-3xl font-medium mb-2">Product List</h1>
+        <h1 className="text-3xl font-medium mb-2">Add Inventory</h1>
         <div className="text-sm text-gray-500 mb-6">
           <Link
-            to="/product-list"
+            to="/listing"
             className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
           >
             <span>Product list /</span>{" "}

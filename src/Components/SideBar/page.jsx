@@ -63,12 +63,6 @@ export default function SideBar() {
       id: "inventory",
       label: "Inventory",
       icon: <BiPieChartAlt size={24} />,
-      path: "/inventory",
-    },
-    {
-      id: "product-list",
-      label: "Product List",
-      icon: <MdOutlineInventory2 size={24} />,
       path: "/product-list",
       childPaths: [
         "/product-list/new",
@@ -77,10 +71,18 @@ export default function SideBar() {
       ],
     },
     {
+      id: "product-list",
+      label: "Product List",
+      icon: <MdOutlineInventory2 size={24} />,
+      path: "/listing",
+      childPaths: ["/listing/inventory/", "/listing/addInventory/"],
+    },
+    {
       id: "orders",
       label: "Orders",
       icon: <ShoppingCart size={24} />,
       path: "/orders",
+      childPaths: ["/orders/details/"],
     },
   ];
 

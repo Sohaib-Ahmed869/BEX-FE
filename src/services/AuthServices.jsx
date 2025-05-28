@@ -10,6 +10,8 @@ export const authenticate = async (email, password) => {
     localStorage.setItem("role", response.data.user.role);
     localStorage.setItem("userId", response.data.user.id);
     localStorage.setItem("userName", response.data.user.first_name);
+    sessionStorage.setItem("jwtToken", response.token);
+
     return response.data;
   } catch (error) {
     console.log(error);
@@ -69,20 +71,42 @@ export const registerSeller = async (sellerData) => {
   try {
     console.log("Sending seller data:", sellerData);
 
+    // Create FormData object
+    const formData = new FormData();
+
+    // Append all the text fields
+    formData.append("email", sellerData.email);
+    formData.append("password", sellerData.password);
+    formData.append("name", sellerData.name);
+    formData.append("companyName", sellerData.companyName);
+    formData.append(
+      "companyRegistrationNumber",
+      sellerData.companyRegistrationNumber
+    );
+    formData.append("countryOfRegistration", sellerData.countryOfRegistration);
+    formData.append("businessAddress", sellerData.businessAddress);
+    formData.append("websiteUrl", sellerData.websiteUrl);
+
+    // Append the file if it exists
+    if (sellerData.licenseImage && sellerData.licenseImage instanceof File) {
+      formData.append("licenseImage", sellerData.licenseImage);
+    }
+
     const response = await axios.post(
       `${URL}/api/auth/register-seller`,
-      sellerData,
+      formData,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       }
     );
+
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("role", response.data.user.role);
     localStorage.setItem("userId", response.data.user.id);
     localStorage.setItem("userName", response.data.user.first_name);
-    sessionStorage.setItem("jwtToken", response.token);
+    sessionStorage.setItem("jwtToken", response.data.token); // Fixed: was response.token
 
     return response.data;
   } catch (error) {
