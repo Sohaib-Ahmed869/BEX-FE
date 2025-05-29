@@ -657,69 +657,69 @@ export default function Orders() {
                 </div>
 
                 {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-500">Show</span>
-                      <select
-                        value={itemsPerPage}
-                        onChange={(e) => {
-                          setItemsPerPage(Number(e.target.value));
-                          setCurrentPage(1); // Reset to first page when changing items per page
-                        }}
-                        className="border border-gray-200 rounded px-2 py-1 text-sm"
-                      >
-                        <option value={10}>10</option>
-                        <option value={20}>20</option>
-                        <option value={50}>50</option>
-                      </select>
-                      <span className="text-sm text-gray-500">per page</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
-                        disabled={currentPage === 1}
-                        onClick={() => handlePageChange(currentPage - 1)}
-                      >
-                        Previous
-                      </button>
-
-                      <div className="flex gap-1">
-                        {getPaginationNumbers().map((page, index) =>
-                          page === "..." ? (
-                            <span
-                              key={`ellipsis-${index}`}
-                              className="px-2 text-sm"
-                            >
-                              ...
-                            </span>
-                          ) : (
-                            <button
-                              key={`page-${page}`}
-                              className={`w-8 h-8 flex items-center justify-center rounded text-sm ${
-                                currentPage === page
-                                  ? "bg-blue-500 text-white"
-                                  : "border border-gray-200 hover:bg-gray-100 text-gray-700"
-                              }`}
-                              onClick={() => handlePageChange(page)}
-                            >
-                              {page}
-                            </button>
-                          )
-                        )}
-                      </div>
-
-                      <button
-                        className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
-                        disabled={currentPage === totalPages}
-                        onClick={() => handlePageChange(currentPage + 1)}
-                      >
-                        Next
-                      </button>
-                    </div>
+                {/* {totalPages > 1 && ( */}
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">Show</span>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) => {
+                        setItemsPerPage(Number(e.target.value));
+                        setCurrentPage(1); // Reset to first page when changing items per page
+                      }}
+                      className="border border-gray-200 rounded px-2 py-1 text-sm"
+                    >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span className="text-sm text-gray-500">per page</span>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
+                      disabled={currentPage === 1}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                      Previous
+                    </button>
+
+                    <div className="flex gap-1">
+                      {getPaginationNumbers().map((page, index) =>
+                        page === "..." ? (
+                          <span
+                            key={`ellipsis-${index}`}
+                            className="px-2 text-sm"
+                          >
+                            ...
+                          </span>
+                        ) : (
+                          <button
+                            key={`page-${page}`}
+                            className={`w-8 h-8 flex items-center justify-center rounded text-sm ${
+                              currentPage === page
+                                ? "bg-[#f47458] text-white"
+                                : "border border-gray-200 hover:bg-gray-100 text-gray-700"
+                            }`}
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page}
+                          </button>
+                        )
+                      )}
+                    </div>
+
+                    <button
+                      className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
+                      disabled={currentPage === totalPages}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+                {/* // )} */}
               </>
             )}
           </div>

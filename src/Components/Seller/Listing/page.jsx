@@ -222,13 +222,12 @@ export default function Listing() {
             {listings.length === 0 ? (
               <div className="text-center py-10">
                 <p className="text-gray-500 mb-4">No listings found</p>
-                <button
-                  onClick={onAddListing}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mx-auto"
+                <Link
+                  to={"/listing/add"}
+                  className="px-4 py-2 bg-[#f47458] text-white rounded hover:bg-[e0e0e0] transition-all duration-300 ease-in-out"
                 >
-                  <Plus className="h-4 w-4" />
-                  Add Your First Listing
-                </button>
+                  Add New Listing +
+                </Link>
               </div>
             ) : (
               <>
@@ -545,68 +544,66 @@ export default function Listing() {
                 </div>
 
                 {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-500">Show</span>
-                      <select
-                        value={itemsPerPage}
-                        onChange={(e) =>
-                          setItemsPerPage(Number(e.target.value))
-                        }
-                        className="border border-gray-200 rounded px-2 py-1 text-sm"
-                      >
-                        <option value={10}>10</option>
-                        <option value={20}>20</option>
-                        <option value={50}>50</option>
-                      </select>
-                      <span className="text-sm text-gray-500">per page</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
-                        disabled={currentPage === 1}
-                        onClick={() => handlePageChange(currentPage - 1)}
-                      >
-                        Previous
-                      </button>
-
-                      <div className="flex gap-1">
-                        {getPaginationNumbers().map((page, index) =>
-                          page === "..." ? (
-                            <span
-                              key={`ellipsis-${index}`}
-                              className="px-2 text-sm"
-                            >
-                              ...
-                            </span>
-                          ) : (
-                            <button
-                              key={`page-${page}`}
-                              className={`w-8 h-8 flex items-center justify-center rounded text-sm ${
-                                currentPage === page
-                                  ? "bg-blue-500 text-white"
-                                  : "border border-gray-200 hover:bg-gray-100 text-gray-700"
-                              }`}
-                              onClick={() => handlePageChange(page)}
-                            >
-                              {page}
-                            </button>
-                          )
-                        )}
-                      </div>
-
-                      <button
-                        className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
-                        disabled={currentPage === totalPages}
-                        onClick={() => handlePageChange(currentPage + 1)}
-                      >
-                        Next
-                      </button>
-                    </div>
+                {/* {totalPages > 1 && ( */}
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">Show</span>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                      className="border border-gray-200 rounded px-2 py-1 text-sm"
+                    >
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                    <span className="text-sm text-gray-500">per page</span>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
+                      disabled={currentPage === 1}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                      Previous
+                    </button>
+
+                    <div className="flex gap-1">
+                      {getPaginationNumbers().map((page, index) =>
+                        page === "..." ? (
+                          <span
+                            key={`ellipsis-${index}`}
+                            className="px-2 text-sm"
+                          >
+                            ...
+                          </span>
+                        ) : (
+                          <button
+                            key={`page-${page}`}
+                            className={`w-8 h-8 flex items-center justify-center rounded text-sm ${
+                              currentPage === page
+                                ? "bg-[#f47458] text-white"
+                                : "border border-gray-200 hover:bg-gray-100 text-gray-700"
+                            }`}
+                            onClick={() => handlePageChange(page)}
+                          >
+                            {page}
+                          </button>
+                        )
+                      )}
+                    </div>
+
+                    <button
+                      className="px-3 py-1 border border-gray-200 rounded hover:bg-gray-100 disabled:opacity-50"
+                      disabled={currentPage === totalPages}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+                {/* )} */}
               </>
             )}
           </div>

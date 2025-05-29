@@ -23,6 +23,7 @@ import Listing from "./Components/Seller/Listing/page";
 import ListingInventoryProducts from "./Components/Seller/Listing/listingInventory";
 import AddListing from "./Components/Seller/Listing/addListing";
 import SellerOrderDetailsPage from "./Components/Seller/Orders/viewOrder";
+import BuyerProfile from "./Components/Buyer/profile/page";
 
 const App = () => {
   return (
@@ -57,7 +58,7 @@ const App = () => {
           {/* Default redirect to dashboard */}
           <Route index element={<Navigate to="/login" replace />} />
 
-          {/* Main menu routes */}
+          {/* Seller routes */}
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="inventory" element={<Inventory />} />
           <Route path="product-list" element={<ProductList />} />
@@ -106,6 +107,14 @@ const App = () => {
           element={
             <TokenGuard>
               <Checkout />
+            </TokenGuard>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <TokenGuard>
+              <BuyerProfile />
             </TokenGuard>
           }
         />

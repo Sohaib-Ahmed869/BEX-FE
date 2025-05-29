@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 const SalesChart = ({ data }) => {
   const [animatedData, setAnimatedData] = useState([]);
   const [hoveredBar, setHoveredBar] = useState(null);
 
-  // Sample data if none provided
-  const defaultData = [
-    { day: "Sun", revenue: 0 },
-    { day: "Mon", revenue: 0 },
-    { day: "Tue", revenue: 0 },
-    { day: "Wed", revenue: 0 },
-    { day: "Thu", revenue: 0 },
-    { day: "Fri", revenue: 0 },
-    { day: "Sat", revenue: 0 },
-  ];
+  // Sample data if none provided - memoized to prevent re-creation
+  const defaultData = useMemo(
+    () => [
+      { day: "Sun", revenue: 0 },
+      { day: "Mon", revenue: 0 },
+      { day: "Tue", revenue: 0 },
+      { day: "Wed", revenue: 0 },
+      { day: "Thu", revenue: 0 },
+      { day: "Fri", revenue: 0 },
+      { day: "Sat", revenue: 0 },
+    ],
+    []
+  );
 
   const chartData = data && data.length > 0 ? data : defaultData;
 

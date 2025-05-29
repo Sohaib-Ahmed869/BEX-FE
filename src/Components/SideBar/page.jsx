@@ -146,7 +146,9 @@ export default function SideBar() {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="p-4 flex-shrink-0">
-        <img src={logo} alt="Logo" width={100} height={100} />
+        <Link to={"/products"}>
+          <img src={logo} alt="Logo" width={100} height={100} />
+        </Link>
       </div>
 
       {/* Scrollable content */}

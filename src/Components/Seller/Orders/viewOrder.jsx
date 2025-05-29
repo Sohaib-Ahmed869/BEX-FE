@@ -97,7 +97,7 @@ const SellerOrderDetailsPage = () => {
           <p className="text-gray-600">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-[#f47458] text-white rounded-lg hover:bg-blue-700"
           >
             Try Again
           </button>
@@ -179,8 +179,7 @@ const SellerOrderDetailsPage = () => {
                     orderData.orderStatus.slice(1)}
                 </span>
               </div>
-
-              {/* Quick Actions */}
+              {/* Quick Actions
               {!["rejected", "cancelled", "delivered"].includes(
                 orderData.orderStatus.toLowerCase()
               ) && (
@@ -226,10 +225,9 @@ const SellerOrderDetailsPage = () => {
                     </button>
                   )}
                 </div>
-              )}
-
+              )} */}
               {/* Tracking Number Input */}
-              {showTrackingInput && (
+              {/* {showTrackingInput && (
                 <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <h4 className="font-medium mb-2">
                     {orderData.trackingNumber
@@ -260,8 +258,7 @@ const SellerOrderDetailsPage = () => {
                     </div>
                   </div>
                 </div>
-              )}
-
+              )} */}
               {/* Current Tracking Number */}
               {orderData.trackingNumber && !showTrackingInput && (
                 <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">

@@ -12,7 +12,7 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
   const navigate = useNavigate();
   const cartCount = useSelector((state) => state.cart.productsCount);
   const wishlistCount = useSelector((state) => state.wishlist.totalItems);
-
+  const role = localStorage.getItem("role");
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -130,6 +130,7 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
           >
             <div className="flex items-center">
               <motion.div
+                onClick={() => navigate("/profile")}
                 className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center"
                 whileHover={{ backgroundColor: "#e5e7eb" }}
               >
@@ -152,9 +153,20 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="px-4 py-2 block w-full text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
+                  <button
+                    onClick={() => navigate("/profile")}
+                    className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  >
                     Profile
-                  </div>
+                  </button>
+                  {role !== "buyer" && (
+                    <button
+                      onClick={() => navigate("/dashboard")}
+                      className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    >
+                      Seller Dashboard
+                    </button>
+                  )}
                   <div className="px-4 py-2 block w-full text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">
                     Settings
                   </div>

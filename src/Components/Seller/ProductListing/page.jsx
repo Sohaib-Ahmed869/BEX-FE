@@ -29,12 +29,8 @@ export default function ProductList() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
 
-  // Get the user ID from localStorage or context
-  const userId =
-    localStorage.getItem("userId") || "a4045d5e-b86b-41f4-8104-b3fd4d858a58"; // Default for testing
+  const userId = localStorage.getItem("userId");
 
   // Fetch products from API
   const fetchProducts = async () => {
@@ -43,8 +39,6 @@ export default function ProductList() {
       const response = await fetchSellerProducts(userId);
       if (response.success) {
         setProducts(response.data);
-        setTotalItems(response.count);
-        setTotalPages(Math.ceil(response.count / itemsPerPage));
       } else {
         setError("Failed to fetch products");
       }
@@ -65,13 +59,28 @@ export default function ProductList() {
     toast.success("Product deleted successfully");
     fetchProducts();
   };
+  // Get current page products
 
-  // Calculate pagination when itemsPerPage changes
+  const filteredProducts = products.filter((product) => !product.is_Archived);
+  const getCurrentPageProducts = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredProducts.slice(startIndex, endIndex);
+  };
+  const currentPageProducts = getCurrentPageProducts();
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   useEffect(() => {
-    if (totalItems > 0) {
-      setTotalPages(Math.ceil(totalItems / itemsPerPage));
+    setCurrentPage(1);
+  }, [itemsPerPage]);
+
+  // Reset to last valid page if current page exceeds total pages
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
     }
-  }, [itemsPerPage, totalItems]);
+  }, [currentPage, totalPages]);
 
   // Calculate stock status based on quantity
   const getStockStatus = (quantity) => {
@@ -115,10 +124,7 @@ export default function ProductList() {
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
-    // In a real implementation, you would fetch data for the specific page
-    // fetchProducts(page, itemsPerPage);
   };
-
   // Generate pagination numbers
   const getPaginationNumbers = () => {
     const pages = [];
@@ -189,15 +195,6 @@ export default function ProductList() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-between mb-6">
-          {/* <button
-            onClick={() => navigate("/product-list/new")}
-            className="group flex items-center justify-center w-full sm:w-auto sm:min-w-[240px] lg:w-60 bg-white gap-2 px-4 py-3 sm:py-2.5 lg:py-3 border border-[#F47458] rounded-md cursor-pointer text-[#F47458] hover:bg-[#F47458] hover:text-white transition-all duration-300 ease-in-out"
-          >
-            <Plus className="h-4 w-4 text-[#F47458] group-hover:text-white transition-colors duration-300" />
-            <span className="text-sm sm:text-sm lg:text-base font-medium">
-              NEW PRODUCT
-            </span>
-          </button> */}
           <button
             onClick={() => setShowPricingModal(true)}
             className="group flex items-center justify-center w-full sm:w-auto sm:min-w-[160px] lg:min-w-[180px] uppercase bg-white gap-2 px-4 py-3 sm:py-2.5 lg:py-3 border border-[#F47458] rounded-md cursor-pointer text-[#F47458] hover:bg-[#F47458] hover:text-white transition-all duration-300 ease-in-out"
@@ -213,13 +210,13 @@ export default function ProductList() {
           {products.length === 0 ? (
             <div className="text-center py-10 text-gray-500">
               <p className="text-sm sm:text-base">
-                No products found. Add your first product to get started.
+                No Inventory found. Create your first listing and add inventory.
               </p>
               <Link
-                to={"/product-list/new"}
+                to={"/listing/add"}
                 className="mt-4 px-4 py-2 inline-block bg-[#F47458] text-white rounded-md hover:bg-[#ee6a4c] transition-colors text-sm sm:text-base"
               >
-                Add Product
+                Add Listing
               </Link>
             </div>
           ) : (
@@ -262,7 +259,7 @@ export default function ProductList() {
                     </tr>
                   </thead>
                   <tbody>
-                    {products
+                    {currentPageProducts
                       .filter((product) => !product.is_Archived)
                       .map((product, index) => {
                         const stockStatus = getStockStatus(product.quantity);
@@ -471,6 +468,7 @@ export default function ProductList() {
                       value={itemsPerPage}
                       onChange={(e) => setItemsPerPage(Number(e.target.value))}
                     >
+                      <option value={1}>1 per page</option>
                       <option value={10}>10 per page</option>
                       <option value={20}>20 per page</option>
                       <option value={50}>50 per page</option>

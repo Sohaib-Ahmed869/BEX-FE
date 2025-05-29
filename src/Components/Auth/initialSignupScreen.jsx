@@ -7,9 +7,32 @@ import ImageGrid from "./imageGrid";
 import { motion } from "framer-motion";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
-const InitialScreen = ({ updateFormData, setInitialFilled }) => {
+const InitialScreen = ({ updateFormData, setInitialFilled, formData }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const handleContinue = (e) => {
+    e.preventDefault();
+    // Check if email is empty or doesn't include @
+    if (!formData.email || !formData.email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    // Check if password is empty
+    if (!formData.password || formData.password.length === 0) {
+      toast.error("Please enter a password");
+      return;
+    }
+
+    // Check if password is too short (existing logic)
+    if (formData.password.length <= 6) {
+      toast.error("Password must be more than 6 characters");
+      return;
+    }
+
+    setInitialFilled(true);
+  };
 
   // Animation variants for signup form
   const formVariants = {
@@ -52,6 +75,12 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
 
   return (
     <div className="bg-[#F6F6F6] min-h-screen flex flex-col lg:flex-row lg:justify-between overflow-hidden">
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        transition={Bounce}
+        newestOnTop={true}
+      />
       {/* Signup Form Side */}
       <div className="w-full lg:w-1/3 md:w-1/2 sm:w-full mx-auto my-auto flex items-center justify-center px-4 py-4  lg:py-0">
         <motion.form
@@ -166,7 +195,7 @@ const InitialScreen = ({ updateFormData, setInitialFilled }) => {
             }}
             whileHover="hover"
             whileTap="tap"
-            onClick={() => setInitialFilled(true)}
+            onClick={(e) => handleContinue(e)}
             className="w-full py-2.5 sm:py-3 lg:py-3.5 mt-3 sm:mt-4 lg:mt-5 bg-[#F47458] text-white rounded-lg hover:bg-[#e06449] transition-colors cursor-pointer text-sm font-medium"
           >
             Continue
