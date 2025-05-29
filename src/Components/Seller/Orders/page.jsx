@@ -23,7 +23,7 @@ const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
-  const [allOrders, setAllOrders] = useState([]); // Store all orders for frontend pagination
+  const [allOrders, setAllOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +39,6 @@ export default function Orders() {
 
   const userId = localStorage.getItem("userId");
 
-  // Fetch all orders from API (no pagination on backend)
   const fetchOrders = async () => {
     setLoading(true);
     try {
@@ -108,7 +107,6 @@ export default function Orders() {
         setShowConfirmModal(false);
         setSelectedOrder(null);
 
-        // Optional: Show success message
         console.log(response.message || "Order confirmed successfully");
         toast.success("Order confirmed successfully");
       } else {
@@ -116,13 +114,18 @@ export default function Orders() {
       }
     } catch (error) {
       console.error("Error confirming order:", error);
-      toast.error(error.message || "Error confirming order");
+
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Error confirming order";
+
+      toast.error(errorMessage);
     } finally {
       setModalLoading(false);
     }
   };
 
-  // Handle order rejection
   // Handle order rejection
   const handleRejectOrder = async (itemId) => {
     if (!selectedOrder) return;
@@ -144,7 +147,6 @@ export default function Orders() {
         setShowRejectModal(false);
         setSelectedOrder(null);
 
-        // Optional: Show success message
         console.log(response.message || "Order rejected successfully");
         toast.success("Order rejected successfully");
       } else {
@@ -310,7 +312,7 @@ export default function Orders() {
           <p>Error: {error}</p>
           <button
             onClick={fetchOrders}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="mt-4 px-4 py-2 bg-[#f47458] text-white rounded hover:bg-[f47458]"
           >
             Try Again
           </button>
