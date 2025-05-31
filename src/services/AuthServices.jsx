@@ -10,11 +10,13 @@ export const authenticate = async (email, password) => {
     localStorage.setItem("role", response.data.user.role);
     localStorage.setItem("userId", response.data.user.id);
     localStorage.setItem("userName", response.data.user.first_name);
-    sessionStorage.setItem("jwtToken", response.token);
+    sessionStorage.setItem("jwtToken", response.data.token);
 
     return response.data;
   } catch (error) {
     console.log(error);
+    // Important: Re-throw the error so it can be caught by handleLogin
+    throw error;
   }
 };
 

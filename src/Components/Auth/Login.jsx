@@ -30,7 +30,6 @@ const Login = () => {
     completeSellerRegistration,
     cancelRegistration,
   } = useGoogleAuth();
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -39,19 +38,27 @@ const Login = () => {
       console.log(response);
       localStorage.setItem("token", response.token);
       sessionStorage.setItem("jwtToken", response.token);
-      // toast.success("Login successful!");
+
       if (response.user.role === "buyer") {
-        setLoading(false);
         navigate("/products");
-      }
-      if (response.user.role === "seller") {
-        setLoading(false);
+      } else if (response.user.role === "seller") {
         navigate("/dashboard");
+      } else if (response.user.role === "admin") {
+        navigate("/admin/dashboard");
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
-      toast.error("Login failed!");
+
+      // Extract the error message from the API response
+      let errorMessage = "Login failed!"; // Default message
+
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
