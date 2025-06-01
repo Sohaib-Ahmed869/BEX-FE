@@ -154,7 +154,6 @@ const ViewProduct = () => {
       Number.parseInt(formData.quantity) > 0
         ? "text-green-600"
         : "text-red-600";
-
     return (
       <div className="flex flex-col w-full max-w-7xl mb-8 bg-white border border-gray-200 rounded-lg shadow-sm">
         <div className="flex flex-col md:flex-row">
@@ -315,6 +314,8 @@ const ViewProduct = () => {
       </div>
     );
   };
+  const role = localStorage.getItem("role");
+
   return (
     <div className="w-full max-w-7xl mx-auto p-4">
       {loading && <CubeLoader />}
@@ -333,7 +334,7 @@ const ViewProduct = () => {
       )}
       <div className="text-sm text-gray-500 mb-6">
         <Link
-          to="/product-list"
+          to={role === "admin" ? "/admin/products" : "/product-list"}
           className=" hover:text-orange-500 transition-all ease-in-out duration-300 hover:ease-in-out"
         >
           <span>Product list /</span>{" "}
@@ -431,16 +432,6 @@ const ViewProduct = () => {
                       </p>
                       <p className="text-lg font-medium">
                         {formData?.retippingDetails?.segments}
-                      </p>
-                    </div>
-
-                    {/* Price per Segment */}
-                    <div className="bg-gray-50 p-3 rounded-md">
-                      <p className="text-sm text-gray-500 mb-1">
-                        Price per Segment
-                      </p>
-                      <p className="text-lg font-medium">
-                        ${formData?.retippingDetails?.per_segment_price}
                       </p>
                     </div>
 

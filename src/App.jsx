@@ -31,6 +31,7 @@ import OrdersOverviewTable from "./Components/Admin/Orders/page";
 import OrderItems from "./Components/Admin/Orders/ViewOrderItems";
 import UserInsights from "./Components/Admin/Users/userInsights";
 import AdminProductsTable from "./Components/Admin/Products/page";
+import BuyerOrderDetails from "./Components/Buyer/Orders/page";
 const App = () => {
   return (
     <Router>
@@ -124,6 +125,14 @@ const App = () => {
             </TokenGuard>
           }
         />
+        <Route
+          path="/myorders"
+          element={
+            <TokenGuard>
+              <BuyerOrderDetails />
+            </TokenGuard>
+          }
+        />
 
         {/* Admin Routes */}
         <Route
@@ -137,13 +146,14 @@ const App = () => {
           {/* Default redirect to dashboard */}
           <Route index element={<Navigate to="/login" replace />} />
 
-          {/* Seller routes */}
+          {/* Admin routes */}
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<UserManagement />} />
           <Route path="users/insights/:userId" element={<UserInsights />} />
           <Route path="orders" element={<OrdersOverviewTable />} />
           <Route path="orders/orderItems/:orderId" element={<OrderItems />} />
           <Route path="products" element={<AdminProductsTable />} />
+          <Route path="products/view/:id" element={<ViewProduct />} />
         </Route>
       </Routes>
     </Router>

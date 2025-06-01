@@ -27,8 +27,7 @@ const SellerForm = ({ formData, updateFormData }) => {
       !formData.companyName ||
       !formData.companyRegistrationNumber ||
       !formData.countryOfRegistration ||
-      !formData.businessAddress ||
-      !formData.websiteUrl
+      !formData.businessAddress
     ) {
       setError("Please fill in all required fields");
       toast.error("Please fill in all required fields");

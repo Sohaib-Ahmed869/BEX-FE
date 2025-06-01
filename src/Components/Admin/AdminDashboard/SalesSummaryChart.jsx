@@ -28,7 +28,7 @@ const SalesSummaryChart = ({ data }) => {
     <div className="bg-white rounded-lg p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold">Sales summary</h3>
-        <div className="flex space-x-4 text-sm">
+        {/* <div className="flex space-x-4 text-sm">
           <button
             className={`pb-1 ${
               activeTab === "D"
@@ -59,7 +59,7 @@ const SalesSummaryChart = ({ data }) => {
           >
             M
           </button>
-        </div>
+        </div> */}
       </div>
 
       <div className="text-sm text-green-600 mb-6">
@@ -218,10 +218,6 @@ const SalesSummaryChart = ({ data }) => {
         <div className="flex items-center">
           <div className="w-3 h-3 bg-orange-500 rounded mr-2"></div>
           <span>Revenue</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-3 h-1 border-t-2 border-dashed border-orange-500 mr-2"></div>
-          <span>Commission trend</span>
         </div>
       </div>
 

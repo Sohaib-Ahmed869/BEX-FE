@@ -134,7 +134,8 @@ export const getProductById = async (productId) => {
 export const updateProduct = async (productId, productData, newFiles = []) => {
   try {
     // Get auth token from localStorage
-    const authToken = localStorage.getItem("authToken");
+    const authToken =
+      localStorage.getItem("token") || sessionStorage.getItem("jwtToken");
 
     if (!authToken) {
       return {
@@ -301,7 +302,7 @@ export const fetchSellerProducts = async (userId) => {
 // get all products
 export const fetchAllProducts = async () => {
   try {
-    const response = await axios.get(`${URL}/api/products`);
+    const response = await axios.get(`${URL}/api/products/getAllProducts`);
 
     if (response.data.success) {
       return {

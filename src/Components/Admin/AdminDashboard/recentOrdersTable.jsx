@@ -205,7 +205,7 @@ const RecentOrdersTable = ({ orders }) => {
                   <td className="py-3 px-2 transition-all duration-300 min-w-[120px]">
                     <div className="space-y-1">
                       <span
-                        className={`inline-block text-nowrap text-center px-2 py-1 text-xs font-medium rounded-full border transition-all duration-300 transform hover:scale-105 hover:shadow-sm ${getStatusColor(
+                        className={`inline-block text-nowrap capitalize text-center px-2 py-1 text-xs font-medium rounded-full border transition-all duration-300 transform hover:scale-105 hover:shadow-sm ${getStatusColor(
                           item.status
                         )}`}
                       >

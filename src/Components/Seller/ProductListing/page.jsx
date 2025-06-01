@@ -308,10 +308,10 @@ export default function ProductList() {
                             <td className="py-3 border-r border-gray-100 px-4">
                               <span
                                 className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getListingStatusStyle(
-                                  product.is_active
+                                  product.list_for_selling
                                 )}`}
                               >
-                                {getListingStatusText(product.is_active)}
+                                {getListingStatusText(product.list_for_selling)}
                               </span>
                             </td>
                             <td className="py-3 px-4">

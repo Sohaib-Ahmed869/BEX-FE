@@ -33,16 +33,58 @@ import AccessoriesNonDiamondSpecs from "../NewProductSpecifications/AcessoriesSp
 import { Bounce, toast, ToastContainer } from "react-toastify";
 
 // Constants for retipping price data
+
 const RETIPPING_PRICE_DATA = {
-  '3"': { segments: 6, price: 84.0 },
-  '4"': { segments: 7, price: 98.0 },
-  '5"': { segments: 10, price: 120.0 },
-  '6"': { segments: 12, price: 144.0 },
-  '8"': { segments: 16, price: 192.0 },
-  '10"': { segments: 24, price: 288.0 },
-  '12"': { segments: 28, price: 336.0 },
-  '14"': { segments: 32, price: 384.0 },
-  '16"': { segments: 36, price: 432.0 },
+  // Small Diameters (2" - 12")
+  "select bit diameter": { price: 0.0, segments: 0 },
+  '2"': { price: 48.0, segments: 4 },
+  '2.5"': { price: 60.0, segments: 5 },
+  '3"': { price: 84.0, segments: 6 },
+  '3.5"': { price: 96.0, segments: 8 },
+  '4"': { price: 108.0, segments: 9 },
+  '4.5"': { price: 108.0, segments: 9 },
+  '5"': { price: 120.0, segments: 10 },
+  '5.5"': { price: 132.0, segments: 11 },
+  '6"': { price: 144.0, segments: 12 },
+  '6.5"': { price: 156.0, segments: 13 },
+  '7"': { price: 168.0, segments: 14 },
+  '8"': { price: 180.0, segments: 15 },
+  '9"': { price: 192.0, segments: 16 },
+  '10"': { price: 238.0, segments: 17 },
+  '11"': { price: 252.0, segments: 18 },
+  '12"': { price: 280.0, segments: 20 },
+  // Large Diameters (14" - 60")
+  '14"': { price: 384.0, segments: 25 },
+  '15"': { price: 400.0, segments: 26 },
+  '16"': { price: 416.0, segments: 27 },
+  '18"': { price: 464.0, segments: 30 },
+  '20"': { price: 540.0, segments: 33 },
+  '22"': { price: 594.0, segments: 34 },
+  '24"': { price: 630.0, segments: 35 },
+  '25"': { price: 648.0, segments: 36 },
+  '26"': { price: 684.0, segments: 37 },
+  '27"': { price: 702.0, segments: 38 },
+  '28"': { price: 720.0, segments: 39 },
+  '29"': { price: 738.0, segments: 40 },
+  '30"': { price: 840.0, segments: 42 },
+  '31"': { price: 860.0, segments: 43 },
+  '32"': { price: 900.0, segments: 44 },
+  '33"': { price: 920.0, segments: 45 },
+  '34"': { price: 940.0, segments: 46 },
+  '35"': { price: 980.0, segments: 47 },
+  '36"': { price: 1000.0, segments: 50 },
+  '38"': { price: 1060.0, segments: 53 },
+  '40"': { price: 1320.0, segments: 55 },
+  '42"': { price: 1392.0, segments: 58 },
+  '44"': { price: 1464.0, segments: 61 },
+  '46"': { price: 1536.0, segments: 64 },
+  '48"': { price: 1584.0, segments: 66 },
+  '50"': { price: 1656.0, segments: 69 },
+  '52"': { price: 1728.0, segments: 72 },
+  '54"': { price: 1800.0, segments: 75 },
+  '56"': { price: 1872.0, segments: 78 },
+  '58"': { price: 1920.0, segments: 80 },
+  '60"': { price: 1992.0, segments: 83 },
 };
 
 const EditProduct = () => {
@@ -104,6 +146,7 @@ const EditProduct = () => {
           price: data.price || "",
           quantity: data.quantity || "",
           description: data.description || "",
+          retippingDetails: data.retippingDetails || [],
           condition: data.condition || "",
           location: data.location || "",
           images: data.images
@@ -389,52 +432,83 @@ const EditProduct = () => {
       );
     }
   };
-
+  const handleFormChange = (updates) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  };
   // Core Bit Retipping Component
-  const CoreBitRetippingComponent = () => {
-    // Handle diameter change
-    const handleDiameterChange = (e) => {
+  const CoreBitRetippingComponent = ({ formData, onChange, onSave }) => {
+    const retippingData = formData.retippingDetails || {};
+
+    const handleDiameterChange = async (e) => {
       const selectedDiameter = e.target.value;
       const diameterData = RETIPPING_PRICE_DATA[selectedDiameter];
 
-      handleRetippingChange({
+      if (!diameterData) return;
+
+      const updatedRetipping = {
+        ...retippingData,
         diameter: selectedDiameter,
-        segments: diameterData?.segments,
-        totalPrice: diameterData?.price.toFixed(2),
-      });
+        segments: diameterData.segments,
+        total_price: diameterData.price.toFixed(2),
+      };
+
+      // Update local form data
+      onChange({ retippingDetails: updatedRetipping });
     };
 
-    // Handle segments change
-    const handleSegmentsChange = (e) => {
-      const segmentCount = Number.parseInt(e.target.value) || 0;
-      const perSegmentPrice =
-        Number.parseFloat(formData.retipping?.perSegmentPrice) || 0;
-      const totalPrice = (segmentCount * perSegmentPrice).toFixed(2);
+    // Handle segments change (manual override)
+    const handleSegmentsChange = async (e) => {
+      const segmentCount = parseInt(e.target.value) || 0;
+      const currentDiameter = retippingData.diameter;
+      const diameterData = RETIPPING_PRICE_DATA[currentDiameter];
 
-      handleRetippingChange({
+      if (!diameterData) return;
+
+      // Calculate price based on segment count vs standard segments
+      const standardSegments = diameterData.segments;
+      const pricePerSegment = diameterData.price / standardSegments;
+      const totalPrice = (segmentCount * pricePerSegment).toFixed(2);
+
+      const updatedRetipping = {
+        ...retippingData,
         segments: segmentCount,
-        totalPrice: totalPrice,
-      });
+        total_price: totalPrice,
+      };
+
+      // Update local form data
+      onChange({ retippingDetails: updatedRetipping });
+
+      // Auto-save the changes
+      if (onSave) {
+        try {
+          await onSave({ retippingDetails: updatedRetipping });
+        } catch (error) {
+          console.error("Failed to save retipping changes:", error);
+        }
+      }
     };
 
-    // Handle per-segment price change
-    const handlePerSegmentPriceChange = (e) => {
-      const price = e.target.value;
-      const segmentCount =
-        Number.parseInt(formData.retippingDetails?.segments) || 0;
-      const totalPrice = (segmentCount * Number.parseFloat(price)).toFixed(2);
+    // Toggle DIY segment purchasing option
+    const handleDIYToggle = async (e) => {
+      const updatedRetipping = {
+        ...retippingData,
+        enable_diy: e.target.checked,
+      };
 
-      handleRetippingChange({
-        perSegmentPrice: price,
-        totalPrice: totalPrice,
-      });
-    };
+      // Update local form data
+      onChange({ retippingDetails: updatedRetipping });
 
-    // Toggle DIY option
-    const handleDIYToggle = (e) => {
-      handleRetippingChange({
-        enableDIY: e.target.checked,
-      });
+      // Auto-save the changes
+      if (onSave) {
+        try {
+          await onSave({ retippingDetails: updatedRetipping });
+        } catch (error) {
+          console.error("Failed to save retipping changes:", error);
+        }
+      }
     };
 
     return (
@@ -445,7 +519,7 @@ const EditProduct = () => {
           </h2>
           <div className="relative group cursor-pointer">
             <Info className="h-5 w-5 text-gray-400" />
-            <div className="absolute right-0 cursor-pointer bottom-full mb-2 hidden group-hover:block bg-black text-white text-sm p-4 rounded-xl w-64 z-10">
+            <div className="absolute right-0 cursor-pointer bottom-full mb-2 hidden group-hover:block bg-black text-white text-sm p-4 rounded-xl w-70 z-10">
               Retipping replaces worn diamond segments on core bits for
               significant cost savings compared to buying new bits. BEX in-house
               premium retipping service (Roy, UT).
@@ -463,16 +537,19 @@ const EditProduct = () => {
           <div className="relative">
             <select
               id="diameter"
-              value={formData.retippingDetails?.diameter}
+              value={retippingData.diameter || ""}
               onChange={handleDiameterChange}
               className="w-full p-2 border border-gray-300 rounded-md appearance-none"
             >
-              {Object.keys(RETIPPING_PRICE_DATA).map((diameter) => (
-                <option key={diameter} value={diameter}>
-                  {diameter} - $
-                  {RETIPPING_PRICE_DATA[diameter].price.toFixed(2)}
-                </option>
-              ))}
+              <option value="">Select diameter</option>
+              {Object.keys(RETIPPING_PRICE_DATA)
+                .filter((key) => key !== "select bit diameter")
+                .map((diameter) => (
+                  <option key={diameter} value={diameter}>
+                    {diameter} - $
+                    {RETIPPING_PRICE_DATA[diameter].price.toFixed(2)}
+                  </option>
+                ))}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
           </div>
@@ -488,35 +565,18 @@ const EditProduct = () => {
           <input
             type="number"
             id="segments"
-            value={formData.retippingDetails?.segments}
+            value={retippingData.segments || ""}
             onChange={handleSegmentsChange}
             className="w-full p-2 border border-gray-300 rounded-md"
+            min="1"
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Standard segment count for {formData.retippingDetails?.diameter}{" "}
-            core bit:{" "}
-            {RETIPPING_PRICE_DATA[formData.retippingDetails?.diameter]
-              ?.segments || "N/A"}
-          </p>
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="perSegmentPrice"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Price Per Segment ($)
-          </label>
-          <input
-            type="text"
-            id="perSegmentPrice"
-            value={formData.retippingDetails?.perSegmentPrice}
-            onChange={handlePerSegmentPriceChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Premium quality segments used for BEX in-house retipping service
-          </p>
+          {retippingData.diameter &&
+            RETIPPING_PRICE_DATA[retippingData.diameter] && (
+              <p className="text-xs text-gray-500 mt-1">
+                Standard segment count for {retippingData.diameter} core bit:{" "}
+                {RETIPPING_PRICE_DATA[retippingData.diameter].segments}
+              </p>
+            )}
         </div>
 
         <div className="mb-6">
@@ -526,7 +586,7 @@ const EditProduct = () => {
                 Total Retipping Price:
               </span>
               <span className="text-lg font-bold">
-                ${formData.retippingDetails?.totalPrice}
+                ${retippingData.total_price || "0.00"}
               </span>
             </div>
             <p className="text-xs text-gray-500">
@@ -540,7 +600,7 @@ const EditProduct = () => {
           <input
             type="checkbox"
             id="enableDIY"
-            checked={formData.retippingDetails?.enableDIY}
+            checked={retippingData.enable_diy || false}
             onChange={handleDIYToggle}
             className="mt-1 mr-2"
           />
@@ -559,6 +619,157 @@ const EditProduct = () => {
       </div>
     );
   };
+  // const CoreBitRetippingComponent = () => {
+  //   // Handle diameter change
+  //   const handleDiameterChange = (e) => {
+  //     const selectedDiameter = e.target.value;
+  //     const diameterData = RETIPPING_PRICE_DATA[selectedDiameter];
+
+  //     handleRetippingChange({
+  //       diameter: selectedDiameter,
+  //       segments: diameterData?.segments,
+  //       totalPrice: diameterData?.price.toFixed(2),
+  //     });
+  //   };
+
+  //   // Handle segments change
+  //   const handleSegmentsChange = (e) => {
+  //     const segmentCount = Number.parseInt(e.target.value) || 0;
+  //     const perSegmentPrice =
+  //       Number.parseFloat(formData.retipping?.perSegmentPrice) || 0;
+  //     const totalPrice = (segmentCount * perSegmentPrice).toFixed(2);
+
+  //     handleRetippingChange({
+  //       segments: segmentCount,
+  //       totalPrice: totalPrice,
+  //     });
+  //   };
+
+  //   // Handle per-segment price change
+  //   const handlePerSegmentPriceChange = (e) => {
+  //     const price = e.target.value;
+  //     const segmentCount =
+  //       Number.parseInt(formData.retippingDetails?.segments) || 0;
+  //     const totalPrice = (segmentCount * Number.parseFloat(price)).toFixed(2);
+
+  //     handleRetippingChange({
+  //       perSegmentPrice: price,
+  //       totalPrice: totalPrice,
+  //     });
+  //   };
+
+  //   // Toggle DIY option
+  //   const handleDIYToggle = (e) => {
+  //     handleRetippingChange({
+  //       enableDIY: e.target.checked,
+  //     });
+  //   };
+
+  //   return (
+  //     <div className="bg-white border border-gray-100 rounded-lg p-6">
+  //       <div className="flex items-center justify-between mb-4">
+  //         <h2 className="text-lg font-semibold">
+  //           Core Bit Retipping Configuration
+  //         </h2>
+  //         <div className="relative group cursor-pointer">
+  //           <Info className="h-5 w-5 text-gray-400" />
+  //           <div className="absolute right-0 cursor-pointer bottom-full mb-2 hidden group-hover:block bg-black text-white text-sm p-4 rounded-xl w-64 z-10">
+  //             Retipping replaces worn diamond segments on core bits for
+  //             significant cost savings compared to buying new bits. BEX in-house
+  //             premium retipping service (Roy, UT).
+  //           </div>
+  //         </div>
+  //       </div>
+
+  //       <div className="mb-4">
+  //         <label
+  //           htmlFor="diameter"
+  //           className="block text-sm font-medium text-gray-700 mb-1"
+  //         >
+  //           Bit Diameter (inches)
+  //         </label>
+  //         <div className="relative">
+  //           <select
+  //             id="diameter"
+  //             value={formData.retippingDetails?.diameter}
+  //             onChange={handleDiameterChange}
+  //             className="w-full p-2 border border-gray-300 rounded-md appearance-none"
+  //           >
+  //             {Object.keys(RETIPPING_PRICE_DATA).map((diameter) => (
+  //               <option key={diameter} value={diameter}>
+  //                 {diameter} - $
+  //                 {RETIPPING_PRICE_DATA[diameter].price.toFixed(2)}
+  //               </option>
+  //             ))}
+  //           </select>
+  //           <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+  //         </div>
+  //       </div>
+
+  //       <div className="mb-4">
+  //         <label
+  //           htmlFor="segments"
+  //           className="block text-sm font-medium text-gray-700 mb-1"
+  //         >
+  //           Number of Segments
+  //         </label>
+  //         <input
+  //           type="number"
+  //           readOnly
+  //           id="segments"
+  //           value={formData.retippingDetails?.segments}
+  //           onChange={handleSegmentsChange}
+  //           className="w-full p-2 border border-gray-300 rounded-md"
+  //         />
+  //         <p className="text-xs text-gray-500 mt-1">
+  //           Standard segment count for {formData.retippingDetails?.diameter}{" "}
+  //           core bit:{" "}
+  //           {RETIPPING_PRICE_DATA[formData.retippingDetails?.diameter]
+  //             ?.segments || "N/A"}
+  //         </p>
+  //       </div>
+
+  //       <div className="mb-6">
+  //         <div className="border border-gray-200 rounded-md p-4 bg-gray-50">
+  //           <div className="flex justify-between mb-2">
+  //             <span className="text-sm font-medium">
+  //               Total Retipping Price:
+  //             </span>
+  //             <span className="text-lg font-bold">
+  //               {RETIPPING_PRICE_DATA[formData.retippingDetails?.price] ||
+  //                 "N/A"}
+  //             </span>
+  //           </div>
+  //           <p className="text-xs text-gray-500">
+  //             Price does not include shipping costs. Retipping performed at BEX
+  //             facility in Roy, UT.
+  //           </p>
+  //         </div>
+  //       </div>
+
+  //       <div className="flex items-start">
+  //         <input
+  //           type="checkbox"
+  //           id="enableDIY"
+  //           checked={formData.retippingDetails?.enable_diy}
+  //           onChange={handleDIYToggle}
+  //           className="mt-1 mr-2"
+  //         />
+  //         <div>
+  //           <label
+  //             htmlFor="enableDIY"
+  //             className="block text-sm font-medium text-gray-700"
+  //           >
+  //             Enable DIY segment purchasing option
+  //           </label>
+  //           <p className="text-xs text-gray-500">
+  //             Allow customers to purchase individual segments for DIY retipping
+  //           </p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   // Media Upload Component
   const MediaUploadComponent = () => {
@@ -1037,7 +1248,14 @@ const EditProduct = () => {
 
       {/* Edit Button */}
       {!loading && !error && (
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-end  gap-5 mb-6">
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-2 flex items-center bg-orange-500 cursor-pointer text-white rounded-md hover:bg-orange-600 transition-colors"
+          >
+            <Check className="w-5 h-5 mr-2" />
+            Save Changes
+          </button>
           <button
             onClick={toggleEditMode}
             className="px-4 py-2 bg-orange-500 cursor-pointer text-white rounded-md hover:bg-orange-600 transition-colors"
@@ -1247,7 +1465,10 @@ const EditProduct = () => {
 
           {activeTab === "retipping" &&
             formData.category === "Core Drill Bits" && (
-              <CoreBitRetippingComponent />
+              <CoreBitRetippingComponent
+                onChange={handleFormChange}
+                formData={formData}
+              />
             )}
 
           {activeTab === "media" && <MediaUploadComponent />}

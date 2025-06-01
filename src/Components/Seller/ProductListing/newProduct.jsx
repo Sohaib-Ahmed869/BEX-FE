@@ -78,7 +78,6 @@ const RETIPPING_PRICE_DATA = {
 const defaultRetippingData = {
   diameter: '3"',
   segments: RETIPPING_PRICE_DATA['3"'].segments,
-  perSegmentPrice: "14.00",
   totalPrice: RETIPPING_PRICE_DATA['3"'].price.toFixed(2),
   enableDIY: false,
 };
@@ -200,25 +199,6 @@ function CoreBitRetippingComponent({ formData, onChange }) {
         <p className="text-xs text-gray-500 mt-1">
           Standard segment count for {retippingData.diameter} core bit:{" "}
           {RETIPPING_PRICE_DATA[retippingData.diameter]?.segments || "N/A"}
-        </p>
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="perSegmentPrice"
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          Price Per Segment ($)
-        </label>
-        <input
-          type="text"
-          id="perSegmentPrice"
-          value={retippingData.perSegmentPrice}
-          onChange={handlePerSegmentPriceChange}
-          className="w-full p-2 border border-gray-300 rounded-md"
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Premium quality segments used for BEX in-house retipping service
         </p>
       </div>
 

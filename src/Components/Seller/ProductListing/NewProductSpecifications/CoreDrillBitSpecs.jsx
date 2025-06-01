@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Info, ChevronDown } from "lucide-react";
-
+import { retipPricing } from "../../../../utils/retipPricingInformation";
 const defaultSpecs = {
   bitDiameter: "",
   arborThreadType: '5/8"-11 Thread (Smaller bits)',
@@ -37,15 +37,20 @@ export default function CoreDrillBitSpecs({ formData, onChange }) {
           >
             Bit Diameter (inches) *
           </label>
-          <input
-            type="text"
+          <select
             id="bitDiameter"
             value={specs.bitDiameter}
             onChange={(e) => handleInputChange("bitDiameter", e.target.value)}
-            placeholder="4.0"
             className="w-full p-2 border border-gray-300 rounded-md"
             required
-          />
+          >
+            <option value="">Select bit diameter...</option>
+            {Object.keys(retipPricing).map((diameter) => (
+              <option key={diameter} value={diameter}>
+                {diameter}"
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

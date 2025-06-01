@@ -61,6 +61,7 @@ const AdminDashboard = () => {
       if (dashboardResult.success) setDashboardData(dashboardResult.data);
       if (paymentsResult.success) setPaymentsData(paymentsResult.data);
       if (companiesResult.success) setCompaniesData(companiesResult.data);
+      console.log("companies data", companiesResult.data);
     } catch (error) {
       console.error("Error fetching admin dashboard data:", error);
     } finally {
@@ -155,9 +156,7 @@ const AdminDashboard = () => {
               mounted ? "scale-100 opacity-100" : "scale-90 opacity-0"
             }`}
           >
-            <TopCompaniesChart
-              companies={dashboardData.topPerformingCompanies}
-            />
+            <TopCompaniesChart companies={companiesData.companies} />
           </div>
         </div>
 

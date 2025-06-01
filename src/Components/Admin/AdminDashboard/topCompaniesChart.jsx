@@ -56,12 +56,6 @@ const TopCompaniesChart = ({ companies }) => {
                     style={{ height: `${revenueHeight}px`, minHeight: "4px" }}
                   ></div>
                   {/* Orders line chart point */}
-                  <div className="relative">
-                    <div
-                      className="w-2 h-2 bg-orange-500 rounded-full absolute"
-                      style={{ bottom: `${orderHeight}px` }}
-                    ></div>
-                  </div>
                 </div>
                 <span className="text-xs text-gray-600 text-center">
                   {company.companyName.length > 10
@@ -98,10 +92,6 @@ const TopCompaniesChart = ({ companies }) => {
         <div className="flex items-center">
           <div className="w-3 h-3 bg-gray-600 rounded mr-2"></div>
           <span>Total Volume</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-3 h-3 bg-orange-500 rounded mr-2"></div>
-          <span>User activity score</span>
         </div>
       </div>
     </div>
