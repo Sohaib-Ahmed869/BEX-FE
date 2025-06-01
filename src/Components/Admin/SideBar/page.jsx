@@ -1,6 +1,13 @@
-import { ShoppingCart, MessageSquare, LogOut, Menu, X } from "lucide-react";
+import {
+  ShoppingCart,
+  MessageSquare,
+  LogOut,
+  Menu,
+  X,
+  User,
+} from "lucide-react";
 import { MdOutlineInventory2 } from "react-icons/md";
-import { BiPieChartAlt } from "react-icons/bi";
+import { BiMoney, BiPieChartAlt } from "react-icons/bi";
 import { RiHome7Fill } from "react-icons/ri";
 import { IoSettingsSharp } from "react-icons/io5";
 import { BsExclamationCircleFill } from "react-icons/bs";
@@ -62,7 +69,7 @@ export default function AdminSideBar() {
     {
       id: "users",
       label: "Users",
-      icon: <BiPieChartAlt size={24} />,
+      icon: <User size={24} />,
       path: "/admin/users",
       childPaths: ["/admin/users/insights/"],
     },
@@ -78,6 +85,13 @@ export default function AdminSideBar() {
       label: "Product List",
       icon: <MdOutlineInventory2 size={24} />,
       path: "/admin/products",
+      childPaths: [],
+    },
+    {
+      id: "commission",
+      label: "Commission",
+      icon: <BiMoney size={24} />,
+      path: "/admin/commission",
       childPaths: [],
     },
   ];
@@ -182,7 +196,7 @@ export default function AdminSideBar() {
 
         {/* General Menu */}
         <div className="p-4">
-          <div className="text-sm font-medium text-gray-500 mb-4">General</div>
+          {/* <div className="text-sm font-medium text-gray-500 mb-4">General</div> */}
           <nav>
             {generalItems.map((item) => (
               <Link

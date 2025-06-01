@@ -423,7 +423,7 @@ function AdminProductsTable() {
     <div className="bg-gray-100 p-4 sm:p-6 lg:p-10 min-h-screen">
       <div className="mt-10">
         {/* Header */}
-        <h1 className="text-2xl sm:text-3xl font-medium mb-4">All Products</h1>
+        <h1 className="text-2xl sm:text-3xl font-regular mb-4">All Products</h1>
 
         {/* Table */}
         <div className="bg-white rounded-lg shadow-sm">

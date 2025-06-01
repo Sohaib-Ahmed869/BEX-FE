@@ -39,16 +39,13 @@ const PaymentsTable = ({ data }) => {
     return colors[status] || "bg-gray-100 text-gray-800 border-gray-300";
   };
 
-  if (!data || !data.payments) {
+  if (data.payments.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 transform transition-all duration-700 ease-out animate-fade-in-up">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-800 animate-fade-in-right">
             Total Payments
           </h3>
-          <button className="text-sm text-blue-600 hover:text-blue-800 transition-all duration-300 hover:scale-105 hover:bg-blue-50 px-3 py-1 rounded-lg transform animate-fade-in-left">
-            Go to Payments Page →
-          </button>
         </div>
         <div className="text-center text-gray-500 py-12">
           <div className="text-6xl mb-4 animate-bounce">💳</div>
@@ -73,9 +70,6 @@ const PaymentsTable = ({ data }) => {
           <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200 animate-pulse hover:animate-bounce transform transition-transform duration-300 hover:scale-110">
             +{data.payments.length} payments
           </span>
-          <button className="text-sm text-blue-600 hover:text-blue-800 transition-all duration-300 hover:bg-blue-50 px-2 py-1 rounded transform hover:scale-105 hover:-translate-y-0.5">
-            Go to Payments Page →
-          </button>
         </div>
       </div>
 

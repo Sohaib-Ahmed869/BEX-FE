@@ -468,7 +468,7 @@ export default function UserManagement() {
 
       <div className="mt-10">
         {/* Header */}
-        <h1 className="text-2xl sm:text-3xl font-medium mb-4">
+        <h1 className="text-2xl sm:text-3xl font-regular mb-4">
           User Management
         </h1>
 
@@ -495,7 +495,7 @@ export default function UserManagement() {
         {showFilters && (
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Search
                 </label>
@@ -509,7 +509,7 @@ export default function UserManagement() {
                     className="pl-10 w-full border border-gray-200 rounded px-3 py-2 text-sm"
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

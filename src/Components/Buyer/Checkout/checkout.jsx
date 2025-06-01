@@ -24,6 +24,7 @@ import {
   addRetipToCartItem,
   removeRetipFromCartItem,
 } from "../../../store/cart-actions";
+import axios from "axios";
 const StripePublisherKey = import.meta.env.VITE_STRIPE_PUBLISHER_KEY;
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 const stripePromise = loadStripe(StripePublisherKey);
@@ -578,7 +579,29 @@ export default function Checkout() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [orderId, setOrderId] = useState("");
   const dispatch = useDispatch();
+  const [commissions, setCommissions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchCommissions = async () => {
+    setLoading(true);
+    try {
+      // Simulate API call
+      const response = await axios.get(`${URL}/api/admin/commission`);
+      const data = await response.data;
+      console.log(data);
+      setCommissions(data.data);
+      setLoading(false);
+    } catch (err) {
+      const errorMessage = err.message || "An error occurred";
+      setError(errorMessage);
+      console.error(errorMessage);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchCommissions();
+  }, []);
   // Get cart data from Redux store
   const {
     items: cartItems,
@@ -619,6 +642,12 @@ export default function Checkout() {
     const result = await dispatch(removeRetipFromCartItem(userId, itemId));
   };
 
+  // Helper function to get commission rate for a category
+  const getCommissionRate = (category) => {
+    const commission = commissions.find((c) => c.category === category);
+    return commission ? parseFloat(commission.commission_rate) / 100 : 0;
+  };
+
   // Calculate order summary values directly from Redux store
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -632,10 +661,16 @@ export default function Checkout() {
     0
   );
 
+  // Calculate individual commission fees for each item
+  const totalCommissionFee = cartItems.reduce((sum, item) => {
+    const commissionRate = getCommissionRate(item.category);
+    const itemTotal = item.price * item.quantity;
+    return sum + itemTotal * commissionRate;
+  }, 0);
+
   const tax = subtotal * 0.0109; // Example tax rate
-  const commissionFee = subtotal * 0.05; // 5% commission fee
   const shipping = 0; // Free shipping
-  const total = subtotal + tax + commissionFee + shipping + retipTotal;
+  const total = subtotal + tax + totalCommissionFee + shipping + retipTotal;
 
   return (
     <>
@@ -690,8 +725,15 @@ export default function Checkout() {
 
                         <div className="flex justify-between mt-2">
                           <p className="text-gray-700">${item.price}</p>
+
                           <p className="text-gray-500">Qty: {item.quantity}</p>
                         </div>
+                        <p className="text-sm text-gray-700">
+                          Commission : $
+                          {getCommissionRate(item.category) *
+                            item.price *
+                            item.quantity || 0}
+                        </p>
 
                         {item.retipAdded && (
                           <div className="mt-2 bg-orange-50 p-2 rounded-md">
@@ -740,7 +782,7 @@ export default function Checkout() {
                 <div className="flex justify-between mb-2">
                   <span className="text-gray-600">Commission fee</span>
                   <span className="font-medium">
-                    ${commissionFee.toFixed(2)}
+                    ${totalCommissionFee.toFixed(2)}
                   </span>
                 </div>
 
@@ -833,7 +875,7 @@ export default function Checkout() {
                       items={cartItems}
                       subtotal={subtotal}
                       tax={tax}
-                      commissionFee={commissionFee}
+                      commissionFee={totalCommissionFee}
                       retipTotal={retipTotal}
                       total={total}
                       showSuccessModal={setShowSuccessModal}

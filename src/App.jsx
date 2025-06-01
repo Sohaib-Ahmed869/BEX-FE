@@ -32,6 +32,7 @@ import OrderItems from "./Components/Admin/Orders/ViewOrderItems";
 import UserInsights from "./Components/Admin/Users/userInsights";
 import AdminProductsTable from "./Components/Admin/Products/page";
 import BuyerOrderDetails from "./Components/Buyer/Orders/page";
+import CommissionManagement from "./Components/Admin/Commission/Page";
 const App = () => {
   return (
     <Router>
@@ -154,6 +155,7 @@ const App = () => {
           <Route path="orders/orderItems/:orderId" element={<OrderItems />} />
           <Route path="products" element={<AdminProductsTable />} />
           <Route path="products/view/:id" element={<ViewProduct />} />
+          <Route path="commission" element={<CommissionManagement />} />
         </Route>
       </Routes>
     </Router>
