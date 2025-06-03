@@ -244,7 +244,7 @@ const Products = () => {
           {/* Products content - Right side */}
           <div
             className={`transition-all duration-300 ${
-              filtersVisible ? "md:w-3/4 lg:w-4/5" : "w-full"
+              filtersVisible ? "md:w-3/4 lg:w-full" : "w-full"
             }`}
           >
             {" "}

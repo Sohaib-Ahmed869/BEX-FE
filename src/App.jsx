@@ -33,6 +33,8 @@ import UserInsights from "./Components/Admin/Users/userInsights";
 import AdminProductsTable from "./Components/Admin/Products/page";
 import BuyerOrderDetails from "./Components/Buyer/Orders/page";
 import CommissionManagement from "./Components/Admin/Commission/Page";
+import OrderDisputes from "./Components/Admin/Disputes/page";
+import MessagingComponent from "./Components/Messaging/page";
 const App = () => {
   return (
     <Router>
@@ -134,6 +136,14 @@ const App = () => {
             </TokenGuard>
           }
         />
+        <Route
+          path="/chats"
+          element={
+            <TokenGuard>
+              <MessagingComponent />
+            </TokenGuard>
+          }
+        />
 
         {/* Admin Routes */}
         <Route
@@ -156,6 +166,7 @@ const App = () => {
           <Route path="products" element={<AdminProductsTable />} />
           <Route path="products/view/:id" element={<ViewProduct />} />
           <Route path="commission" element={<CommissionManagement />} />
+          <Route path="disputes" element={<OrderDisputes />} />
         </Route>
       </Routes>
     </Router>

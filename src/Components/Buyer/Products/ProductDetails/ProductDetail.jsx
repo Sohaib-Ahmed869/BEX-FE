@@ -629,6 +629,28 @@ const ProductDetailsTabs = ({ product, isLoading }) => {
                   .replace(/([A-Z])/g, " $1")
                   .replace(/^./, (str) => str.toUpperCase());
 
+                // Special handling for features array
+                if (key === "features" && Array.isArray(value)) {
+                  return (
+                    <div
+                      key={key}
+                      className="md:col-span-2 py-3 border-b border-gray-100"
+                    >
+                      <span className="font-medium text-gray-700 block mb-3">
+                        {formattedKey}
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {value.map((feature, index) => (
+                          <div key={index} className="flex items-center">
+                            <span className="w-2 h-2 bg-[#f47458] rounded-full mr-3 flex-shrink-0"></span>
+                            <span className="text-gray-900">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div
                     key={key}
@@ -649,7 +671,6 @@ const ProductDetailsTabs = ({ product, isLoading }) => {
               })}
           </div>
         )}
-
         {activeTab === "reviews" && (
           <div className="space-y-6">
             <div className="text-center py-12 text-gray-500">

@@ -122,7 +122,7 @@ const ProductGrid = ({ products }) => {
         transition={Bounce}
         newestOnTop={true}
       />
-      <div className="w-full px-6 mt-10">
+      <div className="w-full px-2 mt-10">
         {/* Header with view options and sorting */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6">
           <div className="text-sm text-gray-600 mb-4 md:mb-0">
@@ -265,7 +265,7 @@ const ProductGrid = ({ products }) => {
 
         {/* Pagination */}
         {!isLoading && totalPages > 1 && (
-          <div className="flex flex-col md:flex-row justify-between items-center mt-10 pt-6 border-t border-gray-200">
+          <div className="flex flex-col md:flex-row justify-between items-center mt-20 pt-6 border-t border-gray-200">
             <div className="text-sm text-gray-600 mb-4 md:mb-0">
               Page {currentPage} of {totalPages} ({totalItems} total items)
             </div>

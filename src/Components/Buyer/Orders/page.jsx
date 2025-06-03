@@ -18,6 +18,7 @@ import {
 import CubeLoader from "../../../utils/cubeLoader";
 import BuyerHeader from "../buyerHeader.jsx/buyerHeader";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -29,11 +30,12 @@ const BuyerOrderDetails = () => {
   const [disputeItem, setDisputeItem] = useState(null);
   const [disputeForm, setDisputeForm] = useState({
     email: "",
-    category: "Technical issue",
+    category: "",
     description: "",
   });
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [submissionLoading, setSubmissionLoading] = useState(false);
   const userId = localStorage.getItem("userId");
 
   // Check for mobile screen
@@ -132,18 +134,61 @@ const BuyerOrderDetails = () => {
     setShowDispute(true);
   };
 
-  const handleDisputeSubmit = () => {
-    console.log("Dispute submitted:", disputeForm, disputeItem);
-    setShowDispute(false);
-    setDisputeForm({ ...disputeForm, description: "" });
+  const handleDisputeSubmit = async () => {
+    try {
+      setSubmissionLoading(true);
+
+      const disputeData = {
+        userId: userId,
+        email: disputeForm.email,
+        disputeCategory: disputeForm.category,
+        description: disputeForm.description,
+        orderId: disputeItem.parentOrder.orderId,
+        orderItemId: disputeItem.orderItemId,
+        productId: disputeItem.productId,
+      };
+
+      const response = await fetch(`${URL}/api/orderdispute/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(disputeData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Show success message
+        toast.success(
+          "Dispute created successfully! Our team will review your case."
+        );
+        setShowDispute(false);
+        setDisputeForm({
+          email: "",
+          category: "Technical issue",
+          description: "",
+        });
+      } else {
+        // Show error message
+        toast.error(
+          result.message || "Failed to create dispute. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("Error creating dispute:", error);
+      alert("Failed to create dispute. Please try again.");
+    } finally {
+      setSubmissionLoading(false);
+    }
   };
 
   const getItemProgress = (item) => {
     switch (item.orderStatus.toLowerCase()) {
       case "approved":
-        return 2; // Order confirmation
+        return 3; // Order confirmation
       case "pending approval":
-        return 1; // Order placed
+        return 2; // Order placed
       case "rejected":
         return -1; // Rejected (special case)
       default:
@@ -200,7 +245,7 @@ const BuyerOrderDetails = () => {
           {/* Active Progress Line */}
           <div
             className={`absolute top-5 left-5 h-0.5 z-0 transition-all duration-500 ease-in-out ${
-              isRejected ? "bg-red-300" : "bg-orange-500"
+              isRejected ? "bg-red-300" : "bg-green-300"
             }`}
             style={{
               width: isRejected
@@ -585,16 +630,18 @@ const BuyerOrderDetails = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
                             <span className="font-medium text-sm text-gray-900">
-                              Order ID: {item.parentOrder.orderId.slice(0, 12)}
+                              Order ID: {item.parentOrder.orderId.slice(0, 8)}
                             </span>
                           </div>
-                          <div className="text-xs text-gray-600 mb-1">
+                          <div className=" ml-1 text-xs text-gray-600 mb-1">
                             Order date: {formatDate(item.parentOrder.orderDate)}
                           </div>
                           <div className="text-xs">
-                            <span className="text-gray-600">Order status:</span>
+                            <span className="ml-1 text-gray-600 block">
+                              Order status:
+                            </span>
                             <span
-                              className={`ml-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                              className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${
                                 item.orderStatus.toLowerCase() === "approved"
                                   ? "bg-green-50 text-green-700"
                                   : item.orderStatus.toLowerCase() ===
@@ -604,9 +651,9 @@ const BuyerOrderDetails = () => {
                               }`}
                             >
                               {item.orderStatus === "approved"
-                                ? "Dispatched"
+                                ? "Order Processing"
                                 : item.orderStatus === "pending approval"
-                                ? "Order processing"
+                                ? "Pending Approval"
                                 : "Rejected"}
                             </span>
                           </div>
@@ -665,10 +712,15 @@ const BuyerOrderDetails = () => {
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                 >
-                  <option>Technical issue</option>
-                  <option>Product quality</option>
-                  <option>Delivery issue</option>
-                  <option>Other</option>
+                  <option value="">Select a category</option>
+                  <option value="product_quality">Product Quality</option>
+                  <option value="shipping_delay">Shipping Delay</option>
+                  <option value="wrong_item">Wrong Item</option>
+                  <option value="damaged_item">Damaged Item</option>
+                  <option value="not_received">Not Received</option>
+                  <option value="billing_issue">Billing Issue</option>
+                  <option value="refund_request">Refund Request</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
 
@@ -700,9 +752,13 @@ const BuyerOrderDetails = () => {
                 </button>
                 <button
                   onClick={handleDisputeSubmit}
-                  className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                  disabled={submissionLoading}
+                  className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Send dispute
+                  {submissionLoading && (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  )}
+                  {submissionLoading ? "Sending..." : "Send dispute"}
                 </button>
               </div>
             </div>

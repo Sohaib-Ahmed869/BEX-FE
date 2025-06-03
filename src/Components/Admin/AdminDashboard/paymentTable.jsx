@@ -3,12 +3,21 @@ import React, { useState, useEffect } from "react";
 const PaymentsTable = ({ data }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [rowsVisible, setRowsVisible] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     const timer = setTimeout(() => setIsVisible(true), 100);
 
     if (data && data.payments) {
-      const rowTimers = data.payments.slice(0, 6).map((_, index) =>
+      const rowTimers = data.payments.map((_, index) =>
         setTimeout(() => {
           setRowsVisible((prev) => [...prev, index]);
         }, 300 + index * 100)
@@ -17,10 +26,14 @@ const PaymentsTable = ({ data }) => {
       return () => {
         clearTimeout(timer);
         rowTimers.forEach(clearTimeout);
+        window.removeEventListener("resize", checkMobile);
       };
     }
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", checkMobile);
+    };
   }, [data]);
 
   const formatCurrency = (amount) => {
@@ -55,9 +68,54 @@ const PaymentsTable = ({ data }) => {
     );
   }
 
+  const displayedPayments = showAll ? data.payments : data.payments.slice(0, 6);
+
+  // Mobile Card View
+  const MobileCardView = () => (
+    <div className="space-y-4">
+      {displayedPayments.map((payment, index) => (
+        <div
+          key={payment.id || index}
+          className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in-up"
+          style={{
+            animationDelay: `${index * 50}ms`,
+            animationFillMode: "forwards",
+          }}
+        >
+          <div className="flex justify-between items-start mb-3">
+            <div className="flex-1">
+              <h4 className="text-lg font-semibold text-gray-900 mb-1">
+                {formatCurrency(payment.amount)}
+              </h4>
+              <p className="text-sm text-gray-600 mb-2">
+                {payment.description}
+              </p>
+            </div>
+            <span
+              className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ml-2 ${getStatusColor(
+                payment.status
+              )}`}
+            >
+              {payment.status}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-sm text-gray-500">
+            <span>
+              {new Date(payment.date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 transform transition-all duration-700 ease-out animate-fade-in-up overflow-hidden hover:shadow-md">
-      <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white gap-4">
         <div className="animate-fade-in-right">
           <h3 className="text-lg font-semibold text-gray-800">
             Total Payments
@@ -68,95 +126,147 @@ const PaymentsTable = ({ data }) => {
         </div>
         <div className="flex items-center space-x-2 animate-fade-in-left">
           <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200 animate-pulse hover:animate-bounce transform transition-transform duration-300 hover:scale-110">
-            +{data.payments.length} payments
+            {data.payments.length} payments
           </span>
         </div>
       </div>
 
-      {/* Mobile: Show horizontal scroll message */}
-      <div className="block md:hidden bg-blue-50 p-2 text-center">
-        <p className="text-xs text-blue-600">
-          ← Swipe left/right to view all columns →
-        </p>
-      </div>
-
-      <div className="overflow-hidden">
-        <div className="max-h-80 overflow-y-auto overflow-x-auto scroll-smooth">
-          <table className="w-full min-w-[600px]">
-            <thead className="bg-gray-50 sticky top-0 z-10 animate-slide-down">
-              <tr>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 min-w-[100px] transition-colors duration-300 hover:text-gray-700">
-                  Amount
-                </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 min-w-[120px] transition-colors duration-300 hover:text-gray-700">
-                  Date
-                </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[200px] transition-colors duration-300 hover:text-gray-700">
-                  Description
-                </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[100px] transition-colors duration-300 hover:text-gray-700">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
-              {data.payments.slice(0, 6).map((payment, index) => (
-                <tr
-                  key={payment.id || index}
-                  className="hover:bg-gray-50 transition-all duration-300 ease-out transform hover:scale-[1.01] hover:shadow-sm opacity-0 animate-fade-in-up cursor-pointer"
-                  style={{
-                    animationDelay: `${index * 50}ms`,
-                    animationFillMode: "forwards",
-                  }}
-                >
-                  <td className="py-3 px-3 transition-all duration-300 min-w-[100px]">
-                    <div className="text-sm font-semibold text-gray-900 hover:text-green-600 transition-colors duration-300 transform hover:scale-105">
-                      {formatCurrency(payment.amount)}
-                    </div>
-                  </td>
-                  <td className="py-3 px-3 transition-all duration-300 min-w-[120px]">
-                    <div className="text-xs text-gray-900 leading-tight hover:text-blue-600 transition-colors duration-300">
-                      {new Date(payment.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })}
-                      <br />
-                      <span className="text-gray-500 hover:text-gray-700 transition-colors duration-300">
-                        {new Date(payment.date).getFullYear()}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-2 transition-all duration-300 min-w-[200px]">
-                    <div
-                      className="text-sm text-gray-900 hover:text-blue-600 transition-colors duration-300"
-                      title={payment.description}
-                    >
-                      {payment.description}
-                    </div>
-                  </td>
-                  <td className="py-3 px-2 transition-all duration-300 min-w-[100px]">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border transition-all duration-300 transform hover:scale-105 hover:shadow-sm ${getStatusColor(
-                        payment.status
-                      )}`}
-                    >
-                      {payment.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Mobile: Show cards instead of table */}
+      {isMobile ? (
+        <div className="p-4">
+          <MobileCardView />
         </div>
-
-        {data.payments.length > 6 && (
-          <div className="p-3 bg-gray-50 border-t border-gray-100 text-center animate-fade-in-up animation-delay-500">
-            <p className="text-xs text-gray-500 hover:text-gray-700 transition-colors duration-300">
-              Showing 6 of {data.payments.length} payments. Scroll to see more.
+      ) : (
+        <>
+          {/* Desktop: Table view with horizontal scroll hint */}
+          <div className="block lg:hidden bg-blue-50 p-2 text-center">
+            <p className="text-xs text-blue-600">
+              ← Swipe left/right to view all columns →
             </p>
           </div>
-        )}
-      </div>
+
+          <div className="overflow-hidden">
+            <div className="max-h-96 overflow-y-auto overflow-x-auto scroll-smooth">
+              <table className="w-full min-w-[600px]">
+                <thead className="bg-gray-50 sticky top-0 z-10 animate-slide-down">
+                  <tr>
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 min-w-[100px] transition-colors duration-300 hover:text-gray-700">
+                      Amount
+                    </th>
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 min-w-[120px] transition-colors duration-300 hover:text-gray-700">
+                      Date
+                    </th>
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[200px] transition-colors duration-300 hover:text-gray-700">
+                      Description
+                    </th>
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[100px] transition-colors duration-300 hover:text-gray-700">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 bg-white">
+                  {displayedPayments.map((payment, index) => (
+                    <tr
+                      key={payment.id || index}
+                      className="hover:bg-gray-50 transition-all duration-300 ease-out transform hover:scale-[1.01] hover:shadow-sm opacity-0 animate-fade-in-up cursor-pointer"
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                        animationFillMode: "forwards",
+                      }}
+                    >
+                      <td className="py-3 px-3 transition-all duration-300 min-w-[100px]">
+                        <div className="text-sm font-semibold text-gray-900 hover:text-green-600 transition-colors duration-300 transform hover:scale-105">
+                          {formatCurrency(payment.amount)}
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 transition-all duration-300 min-w-[120px]">
+                        <div className="text-xs text-gray-900 leading-tight hover:text-blue-600 transition-colors duration-300">
+                          {new Date(payment.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                          <br />
+                          <span className="text-gray-500 hover:text-gray-700 transition-colors duration-300">
+                            {new Date(payment.date).getFullYear()}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 transition-all duration-300 min-w-[200px]">
+                        <div
+                          className="text-sm text-gray-900 hover:text-blue-600 transition-colors duration-300 truncate"
+                          title={payment.description}
+                        >
+                          {payment.description}
+                        </div>
+                      </td>
+                      <td className="py-3 px-2 transition-all duration-300 min-w-[100px]">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border transition-all duration-300 transform hover:scale-105 hover:shadow-sm ${getStatusColor(
+                            payment.status
+                          )}`}
+                        >
+                          {payment.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Show More/Less Button */}
+      {data.payments.length > 6 && (
+        <div className="p-4 bg-gray-50 border-t border-gray-100 text-center animate-fade-in-up animation-delay-500">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="inline-flex items-center px-4 py-2 bg-[#f47458] text-white text-sm font-medium rounded-lg hover:bg-[#ed6e4e] transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            {showAll ? (
+              <>
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
+                Show Less
+              </>
+            ) : (
+              <>
+                <svg
+                  className="w-4 h-4 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+                Show All {data.payments.length} Payments
+              </>
+            )}
+          </button>
+          <p className="text-xs text-gray-500 mt-2">
+            {showAll
+              ? `Showing all ${data.payments.length} payments`
+              : `Showing 6 of ${data.payments.length} payments`}
+          </p>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes fade-in-up {
@@ -277,6 +387,13 @@ const PaymentsTable = ({ data }) => {
             rgba(59, 130, 246, 0.05) 0%,
             rgba(147, 197, 253, 0.05) 100%
           );
+        }
+
+        /* Mobile-specific improvements */
+        @media (max-width: 767px) {
+          .min-w-[600px] {
+            min-width: auto;
+          }
         }
       `}</style>
     </div>

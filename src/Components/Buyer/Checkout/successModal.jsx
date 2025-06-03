@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Check, Star, Sparkles } from "lucide-react";
 import { toast } from "react-toastify";
+import { Link, Navigate } from "react-router-dom";
 
 const OrderSuccessModal = ({ isOpen, onClose, orderId }) => {
   const [showContent, setShowContent] = useState(false);
@@ -18,11 +19,6 @@ const OrderSuccessModal = ({ isOpen, onClose, orderId }) => {
   }, [isOpen]);
 
   if (!isOpen) return null;
-
-  const handleTrackOrder = () => {
-    // Replace with your tracking page route
-    toast.success("This feature will be  available soon.");
-  };
 
   const handleShopMore = () => {
     // Replace with your products page route
@@ -118,12 +114,12 @@ const OrderSuccessModal = ({ isOpen, onClose, orderId }) => {
 
           {/* Action buttons */}
           <div className="space-y-3">
-            <button
-              onClick={handleTrackOrder}
-              className="w-full bg-[#e06449] text-white font-medium py-3 px-6 rounded-lg hover:bg-[#c9583e] transition-colors duration-200 transform hover:scale-105"
+            <Link
+              to={"/myorders"}
+              className="w-full block bg-[#e06449] text-white font-medium py-3 px-6 rounded-lg hover:bg-[#c9583e] transition-colors duration-200 transform hover:scale-105"
             >
               Track order
-            </button>
+            </Link>
 
             <button
               onClick={handleShopMore}

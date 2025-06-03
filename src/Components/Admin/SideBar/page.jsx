@@ -85,13 +85,20 @@ export default function AdminSideBar() {
       label: "Product List",
       icon: <MdOutlineInventory2 size={24} />,
       path: "/admin/products",
-      childPaths: [],
+      childPaths: ["/admin/products/view/"],
     },
     {
       id: "commission",
       label: "Commission",
       icon: <BiMoney size={24} />,
       path: "/admin/commission",
+      childPaths: [],
+    },
+    {
+      id: "disputes",
+      label: "Disputes",
+      icon: <BiPieChartAlt size={24} />,
+      path: "/admin/disputes",
       childPaths: [],
     },
   ];
