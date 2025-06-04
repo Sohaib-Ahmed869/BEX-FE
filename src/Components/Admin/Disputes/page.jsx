@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Bounce, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 // Confirmation Modal Component
 const ConfirmationModal = ({
@@ -170,7 +171,7 @@ const OrderDisputes = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        "http://localhost:5000/api/orderdispute/admin/all-disputes"
+        `${URL}/api/orderdispute/admin/all-disputes`
       );
       const result = await response.json();
 
@@ -192,7 +193,7 @@ const OrderDisputes = () => {
     setIsProcessing(true);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/orderdispute/admin/${selectedDispute.disputeId}/status`,
+        `${URL}/api/orderdispute/admin/${selectedDispute.disputeId}/status`,
         {
           method: "PUT",
           headers: {
@@ -244,7 +245,7 @@ const OrderDisputes = () => {
     setIsProcessing(true);
     try {
       const response = await fetch(
-        `http://localhost:5000/api/orderdispute/admin/${selectedDispute.disputeId}/status`,
+        `${URL}/api/orderdispute/admin/${selectedDispute.disputeId}/status`,
         {
           method: "PUT",
           headers: {

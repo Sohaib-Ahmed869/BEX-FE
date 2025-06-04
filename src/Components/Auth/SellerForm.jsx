@@ -27,7 +27,11 @@ const SellerForm = ({ formData, updateFormData }) => {
       !formData.companyName ||
       !formData.companyRegistrationNumber ||
       !formData.countryOfRegistration ||
-      !formData.businessAddress
+      !formData.businessAddress ||
+      !formData.email ||
+      !formData.password ||
+      !formData.city ||
+      !formData.postalCode
     ) {
       setError("Please fill in all required fields");
       toast.error("Please fill in all required fields");
@@ -45,6 +49,8 @@ const SellerForm = ({ formData, updateFormData }) => {
         countryOfRegistration: formData.countryOfRegistration,
         businessAddress: formData.businessAddress,
         websiteUrl: formData.websiteUrl,
+        city: formData.city,
+        postalCode: formData.postalCode,
         licenseImage: formData.licenseImage,
       };
       console.log(sellerData);
@@ -148,7 +154,7 @@ const SellerForm = ({ formData, updateFormData }) => {
                 htmlFor="name"
                 className="text-xs sm:text-sm font-bold mb-1 block"
               >
-                Your Name
+                Your Name *
               </label>
               <input
                 type="text"
@@ -164,7 +170,7 @@ const SellerForm = ({ formData, updateFormData }) => {
                 htmlFor="companyName"
                 className="text-xs sm:text-sm font-bold mb-1 block"
               >
-                Company name
+                Company name *
               </label>
               <input
                 type="text"
@@ -187,7 +193,7 @@ const SellerForm = ({ formData, updateFormData }) => {
                 htmlFor="companyRegistrationNumber"
                 className="text-xs sm:text-sm font-bold mb-1 block"
               >
-                Company registration number
+                Company registration number *
               </label>
               <input
                 type="text"
@@ -205,7 +211,7 @@ const SellerForm = ({ formData, updateFormData }) => {
                 htmlFor="countryOfRegistration"
                 className="text-xs sm:text-sm font-bold mb-1 block"
               >
-                Country of registration
+                Country of registration *
               </label>
               <select
                 id="country"
@@ -226,7 +232,45 @@ const SellerForm = ({ formData, updateFormData }) => {
               </select>
             </div>
           </motion.div>
-
+          <motion.div
+            custom={3}
+            variants={itemVariants}
+            className="flex flex-col lg:flex-row w-full gap-3 lg:gap-6 mb-3 lg:mb-4"
+          >
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="Postal Code"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                Postal Code *
+              </label>
+              <input
+                type="number"
+                id="postalCode"
+                value={formData.postalCode}
+                onChange={(e) => updateFormData("postalCode", e.target.value)}
+                placeholder="Postal Code"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+            </div>
+            <div className="w-full lg:w-1/2">
+              <label
+                htmlFor="city"
+                className="text-xs sm:text-sm font-bold mb-1 block"
+              >
+                {" "}
+                City *
+              </label>
+              <input
+                type="text"
+                id="city"
+                value={formData.city}
+                onChange={(e) => updateFormData("city", e.target.value)}
+                placeholder="City"
+                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+              />
+            </div>
+          </motion.div>
           <motion.div
             custom={3}
             variants={itemVariants}
@@ -237,7 +281,7 @@ const SellerForm = ({ formData, updateFormData }) => {
                 htmlFor="businessAddress"
                 className="text-xs sm:text-sm font-bold mb-1 block"
               >
-                Business address
+                Business address *
               </label>
               <input
                 type="text"
@@ -250,12 +294,14 @@ const SellerForm = ({ formData, updateFormData }) => {
                 className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
               />
             </div>
+
             <div className="w-full lg:w-1/2">
               <label
                 htmlFor="websiteUrl"
                 className="text-xs sm:text-sm font-bold mb-1 block"
               >
-                Website URL
+                Website URL{" "}
+                <span className="text-gray-400 text-xs">Optional</span>
               </label>
               <input
                 type="text"

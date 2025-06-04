@@ -23,8 +23,6 @@ export default function Listing() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [showPricingModal, setShowPricingModal] = useState(false);
 
   // Image handling states
@@ -35,6 +33,13 @@ export default function Listing() {
 
   const userId = localStorage.getItem("userId");
 
+  // Calculate pagination values
+  const totalItems = listings.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentListings = listings.slice(startIndex, endIndex);
+
   // Fetch listings from API
   const fetchListings = async () => {
     setLoading(true);
@@ -44,8 +49,6 @@ export default function Listing() {
 
       if (data.success) {
         setListings(data.data);
-        setTotalItems(data.count);
-        setTotalPages(Math.ceil(data.count / itemsPerPage));
 
         // Initialize current image index for each listing
         const initialImageIndex = {};
@@ -68,7 +71,12 @@ export default function Listing() {
 
   useEffect(() => {
     fetchListings();
-  }, [userId, itemsPerPage]);
+  }, [userId]);
+
+  // Reset to page 1 when items per page changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
 
   // Get stock status
   const getStockStatus = (stock) => {
@@ -266,7 +274,7 @@ export default function Listing() {
                       </tr>
                     </thead>
                     <tbody>
-                      {listings.map((listing, index) => {
+                      {currentListings.map((listing, index) => {
                         const stockStatus = getStockStatus(listing.Stock);
                         const currentIndex = currentImageIndex[listing.id] || 0;
                         const hasImages =
@@ -283,7 +291,7 @@ export default function Listing() {
                             style={{ animationDelay: `${index * 50}ms` }}
                           >
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {index + 1 + (currentPage - 1) * itemsPerPage}
+                              {startIndex + index + 1}
                             </td>
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                               <div>
@@ -409,10 +417,9 @@ export default function Listing() {
                     </tbody>
                   </table>
                 </div>
-
                 {/* Mobile Cards */}
                 <div className="md:hidden space-y-4">
-                  {listings.map((listing, index) => {
+                  {currentListings.map((listing, index) => {
                     const stockStatus = getStockStatus(listing.Stock);
                     const currentIndex = currentImageIndex[listing.id] || 0;
                     const hasImages =
@@ -542,7 +549,6 @@ export default function Listing() {
                     );
                   })}
                 </div>
-
                 {/* Pagination */}
                 {/* {totalPages > 1 && ( */}
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
@@ -558,6 +564,10 @@ export default function Listing() {
                       <option value={50}>50</option>
                     </select>
                     <span className="text-sm text-gray-500">per page</span>
+                    <span className="text-sm text-gray-500 ml-4">
+                      Showing {startIndex + 1}-{Math.min(endIndex, totalItems)}{" "}
+                      of {totalItems} items
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-2">

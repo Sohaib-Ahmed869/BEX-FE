@@ -88,7 +88,8 @@ export const registerSeller = async (sellerData) => {
     formData.append("countryOfRegistration", sellerData.countryOfRegistration);
     formData.append("businessAddress", sellerData.businessAddress);
     formData.append("websiteUrl", sellerData.websiteUrl);
-
+    formData.append("city", sellerData.city);
+    formData.append("postalCode", sellerData.postalCode);
     // Append the file if it exists
     if (sellerData.licenseImage && sellerData.licenseImage instanceof File) {
       formData.append("licenseImage", sellerData.licenseImage);

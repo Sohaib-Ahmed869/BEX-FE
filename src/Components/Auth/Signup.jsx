@@ -27,6 +27,8 @@ const Signup = () => {
     businessAddress: "",
     websiteUrl: "",
     licenseImage: null,
+    postalCode: "",
+    city: "",
   });
 
   useEffect(() => {

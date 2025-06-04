@@ -13,6 +13,8 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
     countryOfRegistration: "",
     businessAddress: "",
     websiteUrl: "",
+    postalCode: "",
+    city: "",
     licenseImage: null,
   });
   const [loading, setLoading] = useState(false);
@@ -58,7 +60,8 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
       !formData.companyRegistrationNumber ||
       !formData.countryOfRegistration ||
       !formData.businessAddress ||
-      !formData.websiteUrl
+      !formData.city ||
+      !formData.postalCode
     ) {
       toast.error("Please fill in all required fields");
       return;
@@ -96,7 +99,7 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-bold mb-2 block">
-                Company Name
+                Company Name *
               </label>
               <input
                 type="text"
@@ -110,7 +113,7 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
 
             <div>
               <label className="text-sm font-bold mb-2 block">
-                Registration Number
+                Registration Number *
               </label>
               <input
                 type="text"
@@ -129,7 +132,7 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-bold mb-2 block">
-                Country of Registration
+                Country of Registration *
               </label>
               <select
                 value={formData.countryOfRegistration}
@@ -150,7 +153,8 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
 
             <div>
               <label className="text-sm font-bold mb-2 block">
-                Website URL
+                Website URL{" "}
+                <span className="text-gray-400 text-xs">Optional</span>
               </label>
               <input
                 type="url"
@@ -158,7 +162,6 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
                 onChange={(e) => updateFormData("websiteUrl", e.target.value)}
                 placeholder="https://yourwebsite.com"
                 className="w-full py-3 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
-                required
               />
             </div>
           </div>
@@ -166,7 +169,7 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
           {/* Business Address - Full Width */}
           <div>
             <label className="text-sm font-bold mb-2 block">
-              Business Address
+              Business Address *
             </label>
             <input
               type="text"
@@ -179,11 +182,39 @@ const GoogleSellerForm = ({ googleUserData, onSubmit, onCancel }) => {
               required
             />
           </div>
-
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-bold mb-2 block">
+                Postal Code *
+              </label>
+              <input
+                type="number"
+                value={formData.postalCode}
+                onChange={(e) => updateFormData("postalCode", e.target.value)}
+                placeholder="Postal Code"
+                className="w-full py-3 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-bold mb-2 block">City *</label>
+              <input
+                type="text"
+                value={formData.city}
+                onChange={(e) => updateFormData("city", e.target.value)}
+                placeholder="city"
+                className="w-full py-3 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
+                required
+              />
+            </div>
+          </div>
           {/* File Upload */}
           <div>
             <div className="flex items-center mb-2">
-              <label className="text-sm font-bold">Business License</label>
+              <label className="text-sm font-bold">
+                Business License{" "}
+                <span className="text-gray-400 text-xs">Optional</span>
+              </label>
               <span className="text-gray-400 font-medium ml-2 text-xs">
                 Optional
               </span>

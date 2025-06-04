@@ -139,7 +139,7 @@ const RecentOrders = ({ orders }) => {
                 <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
                   Item Price
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left text-xs px-4 font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
                   Order Status
                 </th>
                 <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
@@ -179,9 +179,9 @@ const RecentOrders = ({ orders }) => {
                   <td className="py-3 text-sm text-gray-900 font-semibold hover:text-green-600 transition-colors duration-150">
                     {formatCurrency(item.price)}
                   </td>
-                  <td className="py-3 text-sm">
+                  <td className="py-3 text-sm text-center">
                     <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full transition-all duration-200 hover:scale-105 ${getOrderStatusColor(
+                      className={`inline-flex px-2 py-1  items-center text-xs font-semibold capitalize rounded-full transition-all duration-200 hover:scale-105 ${getOrderStatusColor(
                         item.orderStatus
                       )}`}
                     >

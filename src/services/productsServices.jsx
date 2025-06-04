@@ -155,6 +155,10 @@ export const updateProduct = async (productId, productData, newFiles = []) => {
     formData.append("price", productData.price);
     formData.append("quantity", productData.quantity);
     formData.append("condition", productData.condition);
+    formData.append("weight", productData.weight);
+    formData.append("height", productData.height);
+    formData.append("width", productData.width);
+    formData.append("length", productData.length);
     formData.append("location", productData.location || "");
     formData.append("list_for_selling", productData.list_for_selling);
     formData.append("is_active", productData.is_active);

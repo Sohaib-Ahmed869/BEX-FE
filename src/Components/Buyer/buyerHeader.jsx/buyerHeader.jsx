@@ -172,9 +172,19 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
                       Admin Dashboard
                     </button>
                   )}
-                  <div className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer">
-                    <Link to="/myorders">My Orders</Link>
-                  </div>
+
+                  <Link
+                    className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    to="/myorders"
+                  >
+                    My Orders
+                  </Link>
+                  <Link
+                    className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    to="/user/chats"
+                  >
+                    Chats
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"

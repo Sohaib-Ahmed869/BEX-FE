@@ -35,6 +35,8 @@ import BuyerOrderDetails from "./Components/Buyer/Orders/page";
 import CommissionManagement from "./Components/Admin/Commission/Page";
 import OrderDisputes from "./Components/Admin/Disputes/page";
 import MessagingComponent from "./Components/Messaging/page";
+import SellerOrders from "./Components/Seller/Orders/newPage";
+import SellerOrderItems from "./Components/Seller/Orders/viewOrderDetails";
 const App = () => {
   return (
     <Router>
@@ -84,14 +86,15 @@ const App = () => {
           />
           <Route path="product-list/edit/:id" element={<EditProduct />} />
           <Route path="product-list/view/:id" element={<ViewProduct />} />
-          <Route path="orders" element={<Orders />} />
+          <Route path="orders" element={<SellerOrders />} />
+          <Route path="orders/items/:orderId" element={<SellerOrderItems />} />
           <Route
-            path="orders/details/:itemId"
+            path="orders/items/view/:itemId"
             element={<SellerOrderDetailsPage />}
           />
 
           {/* General menu routes */}
-          <Route path="messages" element={<Messages />} />
+          <Route path="chats" element={<MessagingComponent />} />
           <Route path="settings" element={<Settings />} />
           <Route path="support" element={<Support />} />
         </Route>
@@ -137,7 +140,7 @@ const App = () => {
           }
         />
         <Route
-          path="/chats"
+          path="/user/chats"
           element={
             <TokenGuard>
               <MessagingComponent />

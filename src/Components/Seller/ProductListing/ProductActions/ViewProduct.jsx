@@ -28,7 +28,10 @@ const ViewProduct = () => {
     description: "",
     condition: "",
     location: "",
-
+    weight: "",
+    length: "",
+    width: "",
+    height: "",
     // Media
     images: [],
     retippingDetails: {},
@@ -67,6 +70,10 @@ const ViewProduct = () => {
           description: data.description || "",
           condition: data.condition || "",
           location: data.location || "",
+          weight: data.weight || "",
+          length: data.length || "",
+          width: data.width || "",
+          height: data.height || "",
           images: data.images
             ? data.images.map((url, index) => ({
                 preview: url,

@@ -157,7 +157,8 @@ const useGoogleAuth = () => {
       );
       formData.append("businessAddress", sellerData.businessAddress);
       formData.append("websiteUrl", sellerData.websiteUrl);
-
+      formData.append("postalCode", sellerData.postalCode);
+      formData.append("city", sellerData.city);
       // Append the file if it exists
       if (sellerData.licenseImage && sellerData.licenseImage instanceof File) {
         formData.append("licenseImage", sellerData.licenseImage);

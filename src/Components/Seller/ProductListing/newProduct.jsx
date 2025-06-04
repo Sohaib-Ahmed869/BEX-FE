@@ -313,7 +313,10 @@ export default function NewProduct() {
     price: "",
     stockQuantity: "",
     description: "",
-
+    weight: "",
+    length: "",
+    width: "",
+    height: "",
     // Condition
     productCondition: "good",
 
@@ -411,9 +414,15 @@ export default function NewProduct() {
         !formData.productName ||
         !formData.price ||
         !formData.productCondition ||
-        !formData.category
+        !formData.category ||
+        !formData.weight ||
+        !formData.length ||
+        !formData.width ||
+        !formData.height
       ) {
-        toast.error("Please fill in all required fields");
+        toast.error(
+          "Please fill in all required fields in the General info tab"
+        );
         return;
       }
 
@@ -435,6 +444,10 @@ export default function NewProduct() {
       formDataForSubmission.append("category", formData.category);
       formDataForSubmission.append("description", formData.description || "");
       formDataForSubmission.append("quantity", formData.stockQuantity || "1");
+      formDataForSubmission.append("weight", formData.weight || "1");
+      formDataForSubmission.append("length", formData.length || "1");
+      formDataForSubmission.append("width", formData.width || "1");
+      formDataForSubmission.append("height", formData.height || "1");
       formDataForSubmission.append("subtype", formData.subtype || "");
       formDataForSubmission.append("location", formData.specs?.location || "");
       formDataForSubmission.append(
@@ -746,12 +759,12 @@ export default function NewProduct() {
                     Price ($)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     id="price"
                     value={formData.price}
                     onChange={(e) => handleInputChange("price", e.target.value)}
                     placeholder="899.00"
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
 
@@ -770,10 +783,84 @@ export default function NewProduct() {
                       handleInputChange("stockQuantity", e.target.value)
                     }
                     placeholder="0"
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
-
+                <div className="mb-6">
+                  <label
+                    htmlFor="weight"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Product Weight (lbs)
+                  </label>
+                  <input
+                    required
+                    type="number"
+                    id="weight"
+                    value={formData.weight}
+                    onChange={(e) =>
+                      handleInputChange("weight", e.target.value)
+                    }
+                    placeholder="0"
+                    className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="mb-6">
+                    <label
+                      htmlFor="length"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Lenght (inches)
+                    </label>
+                    <input
+                      type="number"
+                      id="length"
+                      value={formData.length}
+                      onChange={(e) =>
+                        handleInputChange("length", e.target.value)
+                      }
+                      placeholder="0"
+                      className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                  <div className="mb-6">
+                    <label
+                      htmlFor="width"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Width (inches)
+                    </label>
+                    <input
+                      type="number"
+                      id="width"
+                      value={formData.width}
+                      onChange={(e) =>
+                        handleInputChange("width", e.target.value)
+                      }
+                      placeholder="0"
+                      className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                  <div className="mb-6">
+                    <label
+                      htmlFor="height"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Height (inches)
+                    </label>
+                    <input
+                      type="number"
+                      id="height"
+                      value={formData.height}
+                      onChange={(e) =>
+                        handleInputChange("height", e.target.value)
+                      }
+                      placeholder="0"
+                      className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                </div>
                 <div>
                   <label
                     htmlFor="description"

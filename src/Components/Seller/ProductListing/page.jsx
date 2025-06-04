@@ -59,18 +59,22 @@ export default function ProductList() {
     toast.success("Product deleted successfully");
     fetchProducts();
   };
-  // Get current page products
 
+  // Filter products (exclude archived ones)
   const filteredProducts = products.filter((product) => !product.is_Archived);
+
+  // Get current page products
   const getCurrentPageProducts = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return filteredProducts.slice(startIndex, endIndex);
   };
+
   const currentPageProducts = getCurrentPageProducts();
   const totalItems = filteredProducts.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+  // Reset to page 1 when items per page changes
   useEffect(() => {
     setCurrentPage(1);
   }, [itemsPerPage]);
@@ -125,6 +129,7 @@ export default function ProductList() {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
   };
+
   // Generate pagination numbers
   const getPaginationNumbers = () => {
     const pages = [];
@@ -207,7 +212,7 @@ export default function ProductList() {
 
         {/* Product Table/Cards */}
         <div className="bg-white py-4 sm:py-8 px-2 sm:px-4 rounded-md shadow-sm animate-fadeIn">
-          {products.length === 0 ? (
+          {filteredProducts.length === 0 ? (
             <div className="text-center py-10 text-gray-500">
               <p className="text-sm sm:text-base">
                 No Inventory found. Create your first listing and add inventory.
@@ -259,96 +264,94 @@ export default function ProductList() {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentPageProducts
-                      .filter((product) => !product.is_Archived)
-                      .map((product, index) => {
-                        const stockStatus = getStockStatus(product.quantity);
-                        return (
-                          <tr
-                            key={product.id}
-                            className={`border-b border-gray-100 ${
-                              index % 2 !== 0 ? "bg-white" : "bg-gray-50"
-                            } hover:bg-gray-100 transition-colors duration-200 animate-fadeIn`}
-                            style={{ animationDelay: `${index * 50}ms` }}
-                          >
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {index + 1 + (currentPage - 1) * itemsPerPage}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.title}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.id.substring(0, 6)}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              ${parseFloat(product.price).toFixed(2)}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.specifications?.brand || "N/A"}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.condition.split(" (")[0] ||
-                                product.condition ||
-                                "N/A"}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {calculateDaysUntilExpiration(
-                                product.expiration_date
-                              ) || "N/A"}
-                            </td>
-                            <td className="py-3 border-r border-gray-100 px-4">
-                              <span
-                                className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getStockStatusStyle(
-                                  stockStatus
-                                )}`}
+                    {currentPageProducts.map((product, index) => {
+                      const stockStatus = getStockStatus(product.quantity);
+                      return (
+                        <tr
+                          key={product.id}
+                          className={`border-b border-gray-100 ${
+                            index % 2 !== 0 ? "bg-white" : "bg-gray-50"
+                          } hover:bg-gray-100 transition-colors duration-200 animate-fadeIn`}
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {index + 1 + (currentPage - 1) * itemsPerPage}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.title}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.id.substring(0, 6)}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            ${parseFloat(product.price).toFixed(2)}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.specifications?.brand || "N/A"}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.condition.split(" (")[0] ||
+                              product.condition ||
+                              "N/A"}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {calculateDaysUntilExpiration(
+                              product.expiration_date
+                            ) || "N/A"}
+                          </td>
+                          <td className="py-3 border-r border-gray-100 px-4">
+                            <span
+                              className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getStockStatusStyle(
+                                stockStatus
+                              )}`}
+                            >
+                              {stockStatus}
+                            </span>
+                          </td>
+                          <td className="py-3 border-r border-gray-100 px-4">
+                            <span
+                              className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getListingStatusStyle(
+                                product.list_for_selling
+                              )}`}
+                            >
+                              {getListingStatusText(product.list_for_selling)}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex justify-center gap-2">
+                              <Link
+                                className="p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
+                                title="View Product"
+                                to={`/product-list/view/${product.id}`}
                               >
-                                {stockStatus}
-                              </span>
-                            </td>
-                            <td className="py-3 border-r border-gray-100 px-4">
-                              <span
-                                className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getListingStatusStyle(
-                                  product.list_for_selling
-                                )}`}
+                                <ArrowUpRight className="h-4 w-4" />
+                              </Link>
+                              <Link
+                                className="p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
+                                title="Edit Product"
+                                to={`/product-list/edit/${product.id}`}
                               >
-                                {getListingStatusText(product.list_for_selling)}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="flex justify-center gap-2">
-                                <Link
-                                  className="p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
-                                  title="View Product"
-                                  to={`/product-list/view/${product.id}`}
-                                >
-                                  <ArrowUpRight className="h-4 w-4" />
-                                </Link>
-                                <Link
-                                  className="p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
-                                  title="Edit Product"
-                                  to={`/product-list/edit/${product.id}`}
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                </Link>
-                                <button
-                                  className="p-2 border border-gray-200 cursor-pointer rounded hover:bg-gray-100 transition-colors duration-200"
-                                  title="Delete Product"
-                                  onClick={() => handleDeleteClick(product.id)}
-                                >
-                                  <Trash className="h-4 w-4" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                                <Pencil className="h-4 w-4" />
+                              </Link>
+                              <button
+                                className="p-2 border border-gray-200 cursor-pointer rounded hover:bg-gray-100 transition-colors duration-200"
+                                title="Delete Product"
+                                onClick={() => handleDeleteClick(product.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
 
-              {/* Mobile/Tablet Card View */}
+              {/* Mobile/Tablet Card View - FIXED: Now uses currentPageProducts */}
               <div className="lg:hidden space-y-4">
-                {products.map((product, index) => {
+                {currentPageProducts.map((product, index) => {
                   const stockStatus = getStockStatus(product.quantity);
                   return (
                     <div
@@ -417,10 +420,10 @@ export default function ProductList() {
                           </span>
                           <span
                             className={`px-2 py-1 rounded text-xs font-medium ${getListingStatusStyle(
-                              product.is_active
+                              product.list_for_selling
                             )}`}
                           >
-                            {getListingStatusText(product.is_active)}
+                            {getListingStatusText(product.list_for_selling)}
                           </span>
                         </div>
 
@@ -455,8 +458,8 @@ export default function ProductList() {
             </>
           )}
 
-          {/* Pagination */}
-          {!loading && !error && products.length > 0 && (
+          {/* Pagination - Only show if there are products */}
+          {!loading && !error && filteredProducts.length > 0 && (
             <div className="mt-6 sm:mt-8 animate-fadeIn">
               {/* Items per page selector */}
               <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
@@ -468,7 +471,7 @@ export default function ProductList() {
                       value={itemsPerPage}
                       onChange={(e) => setItemsPerPage(Number(e.target.value))}
                     >
-                      <option value={1}>1 per page</option>
+                      <option value={5}>5 per page</option>
                       <option value={10}>10 per page</option>
                       <option value={20}>20 per page</option>
                       <option value={50}>50 per page</option>
@@ -477,57 +480,62 @@ export default function ProductList() {
                   </div>
                 </div>
 
-                {/* Pagination Controls */}
-                <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                  <div className="text-sm text-gray-500 text-center sm:text-left">
-                    {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}{" "}
-                    to {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
-                    {totalItems} results
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <button
-                      className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors duration-200"
-                      disabled={currentPage === 1}
-                      onClick={() => handlePageChange(currentPage - 1)}
-                    >
-                      <ChevronDown className="h-4 w-4 text-gray-500 transform rotate-90" />
-                    </button>
-
-                    <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
-                      {getPaginationNumbers().map((page, index) =>
-                        page === "..." ? (
-                          <span
-                            key={`ellipsis-${index}`}
-                            className="px-2 text-sm"
-                          >
-                            ...
-                          </span>
-                        ) : (
-                          <button
-                            key={`page-${page}`}
-                            className={`w-8 h-8 flex items-center justify-center rounded transition-colors duration-200 text-sm ${
-                              currentPage === page
-                                ? "bg-blue-300 text-white"
-                                : "border border-gray-200 hover:bg-gray-100 text-gray-700"
-                            }`}
-                            onClick={() => handlePageChange(page)}
-                          >
-                            {page}
-                          </button>
-                        )
-                      )}
+                {/* Pagination Controls - Only show if more than one page */}
+                {totalPages > 1 && (
+                  <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                    <div className="text-sm text-gray-500 text-center sm:text-left">
+                      {Math.min(
+                        (currentPage - 1) * itemsPerPage + 1,
+                        totalItems
+                      )}{" "}
+                      to {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                      {totalItems} results
                     </div>
 
-                    <button
-                      className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors duration-200"
-                      disabled={currentPage === totalPages}
-                      onClick={() => handlePageChange(currentPage + 1)}
-                    >
-                      <ChevronDown className="h-4 w-4 text-gray-500 transform -rotate-90" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors duration-200"
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                      >
+                        <ChevronDown className="h-4 w-4 text-gray-500 transform rotate-90" />
+                      </button>
+
+                      <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
+                        {getPaginationNumbers().map((page, index) =>
+                          page === "..." ? (
+                            <span
+                              key={`ellipsis-${index}`}
+                              className="px-2 text-sm"
+                            >
+                              ...
+                            </span>
+                          ) : (
+                            <button
+                              key={`page-${page}`}
+                              className={`w-8 h-8 flex items-center justify-center rounded transition-colors duration-200 text-sm ${
+                                currentPage === page
+                                  ? "bg-[#F47458] text-white"
+                                  : "border border-gray-200 hover:bg-gray-100 text-gray-700"
+                              }`}
+                              onClick={() => handlePageChange(page)}
+                            >
+                              {page}
+                            </button>
+                          )
+                        )}
+                      </div>
+
+                      <button
+                        className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors duration-200"
+                        disabled={currentPage === totalPages}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                      >
+                        <ChevronDown className="h-4 w-4 text-gray-500 transform -rotate-90" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           )}

@@ -19,6 +19,8 @@ const UpgradeToSellerModal = ({ isOpen, onClose, onUpgradeSuccess }) => {
     countryOfRegistration: "",
     businessAddress: "",
     websiteUrl: "",
+    postalCode: "",
+    city: "",
     licenseImage: null,
   });
   const countries = countryList().getData();
@@ -55,7 +57,8 @@ const UpgradeToSellerModal = ({ isOpen, onClose, onUpgradeSuccess }) => {
       );
       formDataToSend.append("businessAddress", sellerData.businessAddress);
       formDataToSend.append("websiteUrl", sellerData.websiteUrl);
-
+      formDataToSend.append("postalCode", sellerData.postalCode);
+      formDataToSend.append("city", sellerData.city);
       if (sellerData.licenseImage && sellerData.licenseImage instanceof File) {
         formDataToSend.append("licenseImage", sellerData.licenseImage);
       }
@@ -150,6 +153,17 @@ const UpgradeToSellerModal = ({ isOpen, onClose, onUpgradeSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (
+      !formData.companyName ||
+      !formData.companyRegistrationNumber ||
+      !formData.countryOfRegistration ||
+      !formData.businessAddress ||
+      !formData.postalCode ||
+      !formData.city
+    ) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
     setIsLoading(true);
     setError("");
 
@@ -230,7 +244,7 @@ const UpgradeToSellerModal = ({ isOpen, onClose, onUpgradeSuccess }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Building2 className="w-4 h-4 inline mr-2" />
-                Company Name
+                Company Name *
               </label>
               <input
                 type="text"
@@ -246,7 +260,7 @@ const UpgradeToSellerModal = ({ isOpen, onClose, onUpgradeSuccess }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Hash className="w-4 h-4 inline mr-2" />
-                Company Registration Number
+                Company Registration Number *
               </label>
               <input
                 type="text"
@@ -265,7 +279,7 @@ const UpgradeToSellerModal = ({ isOpen, onClose, onUpgradeSuccess }) => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Flag className="w-4 h-4 inline mr-2" />
-                Country of Registration
+                Country of Registration *
               </label>
 
               <select
@@ -306,11 +320,48 @@ const UpgradeToSellerModal = ({ isOpen, onClose, onUpgradeSuccess }) => {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <MapPin className="w-4 h-4 inline mr-2" />
+                City *
+              </label>
+              <input
+                type="text"
+                name="city"
+                value={formData.city}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f47458] focus:border-transparent"
+                placeholder="Enter your city"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="postalCode"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                {" "}
+                <MapPin className="w-4 h-4 inline mr-2" /> Postal Code *
+              </label>
+              <input
+                type="number"
+                name="postalCode"
+                value={formData.postalCode}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#f47458] focus:border-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                placeholder="Enter your postal code"
+              />
+            </div>
+          </div>
+
           {/* Full Width: Business Address */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <MapPin className="w-4 h-4 inline mr-2" />
-              Business Address
+              Business Address *
             </label>
             <textarea
               name="businessAddress"

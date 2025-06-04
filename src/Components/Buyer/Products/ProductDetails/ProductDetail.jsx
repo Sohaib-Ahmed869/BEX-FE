@@ -35,6 +35,7 @@ import WishlistModal from "../../wishlist/wishlistModal";
 import { retipPricing } from "../../../../utils/retipPricingInformation";
 import { ExternalLink, Navigation } from "lucide-react";
 import { cartActions } from "../../../../store/cart-slice";
+import { initiateChat } from "../../../../services/chatServices";
 
 // Lazy Image Component
 const LazyImage = ({ src, alt, className }) => {
@@ -253,6 +254,7 @@ const ProductInfo = ({
   const userId = localStorage.getItem("userId");
   // Get cart state from Redux
   const cartItems = useSelector((state) => state.cart.items);
+  const [isMessageLoading, setMessageIsLoading] = useState(false);
 
   const formatPrice = (price) => {
     return `$${parseFloat(price).toFixed(2)}`;
@@ -326,7 +328,23 @@ const ProductInfo = ({
       // toast.error(result.message);
     }
   };
+  const handleSendMessage = async () => {
+    if (!userId || !product.id) {
+      alert("User ID and Product ID are required");
+      return;
+    }
 
+    setMessageIsLoading(true);
+    try {
+      await initiateChat(userId, product.id);
+      // Navigation happens automatically in the service function
+    } catch (error) {
+      console.error("Failed to initiate chat:", error.message);
+      alert(`Failed to start chat: ${error.message}`);
+    } finally {
+      setMessageIsLoading(false);
+    }
+  };
   if (isLoading) {
     return (
       <div className="animate-fadeIn">
@@ -521,8 +539,12 @@ const ProductInfo = ({
             <h3 className="font-medium my-2 text-base sm:text-lg text-gray-900">
               Chat with Seller
             </h3>
-            <button className="w-full sm:max-w-full bg-white p-2 sm:p-3 rounded-2xl border border-[#F47458] text-[#F47458] hover:bg-[#F47458] hover:text-white hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200 font-medium text-sm sm:text-base">
-              Send Message
+            <button
+              onClick={handleSendMessage}
+              disabled={isMessageLoading}
+              className="w-full sm:max-w-full bg-white p-2 sm:p-3 rounded-2xl border border-[#F47458] text-[#F47458] hover:bg-[#F47458] hover:text-white hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200 font-medium text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isMessageLoading ? "Starting Chat..." : "Send Message"}
             </button>
           </div>
         </div>

@@ -82,7 +82,7 @@ export default function SideBar() {
       label: "Orders",
       icon: <ShoppingCart size={24} />,
       path: "/orders",
-      childPaths: ["/orders/details/"],
+      childPaths: ["/orders/items/", "/orders/items/view"],
     },
   ];
 
@@ -91,7 +91,7 @@ export default function SideBar() {
       id: "messages",
       label: "Messages",
       icon: <MessageSquare size={24} />,
-      path: "/messages",
+      path: "/chats",
     },
     {
       id: "settings",

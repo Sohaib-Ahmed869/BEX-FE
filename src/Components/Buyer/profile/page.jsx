@@ -35,6 +35,7 @@ const BuyerProfile = () => {
       try {
         setLoading(true);
         const data = await fetchUserDetails(userId);
+        console.log(data);
         setUserDetails(data);
         setError(null);
       } catch (err) {
@@ -386,6 +387,22 @@ const BuyerProfile = () => {
                   >
                     {userDetails.website_url}
                   </a>
+                </div>
+              )}
+              {userDetails.city && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500 block mb-1">
+                    City
+                  </label>
+                  <p className="text-gray-800">{userDetails.city}</p>
+                </div>
+              )}
+              {userDetails.postal_code && (
+                <div>
+                  <label className="text-sm font-medium text-gray-500 block mb-1">
+                    Postal Code
+                  </label>
+                  <p className="text-gray-800">{userDetails.postal_code}</p>
                 </div>
               )}
             </div>

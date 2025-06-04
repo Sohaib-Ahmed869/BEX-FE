@@ -476,7 +476,7 @@ export default function Orders() {
                             </td>
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                               <span
-                                className={`px-2 py-1 rounded  text-nowrap text-sm font-medium ${orderStatus.className}`}
+                                className={`px-2 py-1 rounded  text-nowraptext-sm font-medium ${orderStatus.className}`}
                               >
                                 {orderStatus.text}
                               </span>

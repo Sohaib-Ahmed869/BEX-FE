@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   ChevronDown,
   Plus,
@@ -20,28 +20,39 @@ import { fetchListingSpecificProducts } from "../../../services/listingServices"
 
 export default function ListingInventoryProducts() {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Store all products
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [showPricingModal, setShowPricingModal] = useState(false);
-  // Pagination state
+
+  // Frontend pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [totalItems, setTotalItems] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
 
   const { listingId } = useParams();
-  // Fetch products from API
+
+  // Filter out archived products and calculate pagination
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) => !product.is_Archived);
+  }, [allProducts]);
+
+  // Calculate pagination values
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+  // Fetch all products from API (no pagination parameters)
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const response = await fetchListingSpecificProducts(listingId);
+
       if (response.success) {
-        setProducts(response.data);
-        setTotalItems(response.count);
-        setTotalPages(Math.ceil(response.count / itemsPerPage));
+        setAllProducts(response.data);
       } else {
         setError("Failed to fetch products");
       }
@@ -58,17 +69,31 @@ export default function ListingInventoryProducts() {
     fetchProducts();
   }, [listingId]);
 
+  // Reset to first page when items per page changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
+
+  // Ensure current page is valid when products change
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const handleProductDeleted = () => {
     toast.success("Product deleted successfully");
+    // Refresh the products list
     fetchProducts();
-  };
 
-  // Calculate pagination when itemsPerPage changes
-  useEffect(() => {
-    if (totalItems > 0) {
-      setTotalPages(Math.ceil(totalItems / itemsPerPage));
+    // If we're on the last page and it becomes empty, go to previous page
+    const remainingItems = totalItems - 1;
+    const newTotalPages = Math.ceil(remainingItems / itemsPerPage);
+
+    if (currentPage > newTotalPages && newTotalPages > 0) {
+      setCurrentPage(newTotalPages);
     }
-  }, [itemsPerPage, totalItems]);
+  };
 
   // Calculate stock status based on quantity
   const getStockStatus = (quantity) => {
@@ -112,8 +137,12 @@ export default function ListingInventoryProducts() {
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
-    // In a real implementation, you would fetch data for the specific page
-    // fetchProducts(page, itemsPerPage);
+  };
+
+  // Handle items per page change
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    // currentPage will be reset to 1 by the useEffect above
   };
 
   // Generate pagination numbers
@@ -160,7 +189,9 @@ export default function ListingInventoryProducts() {
       }
 
       // Always show last page
-      pages.push(totalPages);
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
     }
 
     return pages;
@@ -170,6 +201,11 @@ export default function ListingInventoryProducts() {
   const handleDeleteClick = (productId) => {
     setSelectedProductId(productId);
     setIsDeleteModalOpen(true);
+  };
+
+  // Get the current page's starting index for row numbering
+  const getRowStartIndex = () => {
+    return (currentPage - 1) * itemsPerPage;
   };
 
   return (
@@ -194,15 +230,6 @@ export default function ListingInventoryProducts() {
         </div>
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-between mb-6">
-          {/* <button
-            onClick={() => navigate("/product-list/new")}
-            className="group flex items-center justify-center w-full sm:w-auto sm:min-w-[240px] lg:w-60 bg-white gap-2 px-4 py-3 sm:py-2.5 lg:py-3 border border-[#F47458] rounded-md cursor-pointer text-[#F47458] hover:bg-[#F47458] hover:text-white transition-all duration-300 ease-in-out"
-          >
-            <Plus className="h-4 w-4 text-[#F47458] group-hover:text-white transition-colors duration-300" />
-            <span className="text-sm sm:text-sm lg:text-base font-medium">
-              NEW PRODUCT
-            </span>
-          </button> */}
           <button
             onClick={() => setShowPricingModal(true)}
             className="group flex items-center justify-center w-full sm:w-auto sm:min-w-[160px] lg:min-w-[180px] uppercase bg-white gap-2 px-4 py-3 sm:py-2.5 lg:py-3 border border-[#F47458] rounded-md cursor-pointer text-[#F47458] hover:bg-[#F47458] hover:text-white transition-all duration-300 ease-in-out"
@@ -215,7 +242,7 @@ export default function ListingInventoryProducts() {
 
         {/* Product Table/Cards */}
         <div className="bg-white py-4 sm:py-8 px-2 sm:px-4 rounded-md shadow-sm animate-fadeIn">
-          {products.length === 0 ? (
+          {filteredProducts.length === 0 && !loading ? (
             <div className="text-center py-10 text-gray-500">
               <p className="text-sm sm:text-base">
                 No products found for this Listing.
@@ -250,7 +277,7 @@ export default function ListingInventoryProducts() {
                         Expires in
                       </th>
                       <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
-                        Stock status
+                        Stock Quantity
                       </th>
                       <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
                         Listing status
@@ -261,96 +288,95 @@ export default function ListingInventoryProducts() {
                     </tr>
                   </thead>
                   <tbody>
-                    {products
-                      .filter((product) => !product.is_Archived)
-                      .map((product, index) => {
-                        const stockStatus = getStockStatus(product.quantity);
-                        return (
-                          <tr
-                            key={product.id}
-                            className={`border-b border-gray-100 ${
-                              index % 2 !== 0 ? "bg-white" : "bg-gray-50"
-                            } hover:bg-gray-100 transition-colors duration-200 animate-fadeIn`}
-                            style={{ animationDelay: `${index * 50}ms` }}
-                          >
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {index + 1 + (currentPage - 1) * itemsPerPage}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.title}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.id.substring(0, 6)}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              ${parseFloat(product.price).toFixed(2)}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.specifications?.brand || "N/A"}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {product.condition.split(" (")[0] ||
-                                product.condition ||
-                                "N/A"}
-                            </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              {calculateDaysUntilExpiration(
-                                product.expiration_date
-                              ) || "N/A"}
-                            </td>
-                            <td className="py-3 border-r border-gray-100 px-4">
-                              <span
-                                className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getStockStatusStyle(
-                                  stockStatus
-                                )}`}
+                    {currentProducts.map((product, index) => {
+                      const stockStatus = getStockStatus(product.quantity);
+                      const rowNumber = getRowStartIndex() + index + 1;
+                      return (
+                        <tr
+                          key={product.id}
+                          className={`border-b border-gray-100 ${
+                            index % 2 !== 0 ? "bg-white" : "bg-gray-50"
+                          } hover:bg-gray-100 transition-colors duration-200 animate-fadeIn`}
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {rowNumber}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.title}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.id.substring(0, 6)}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            ${parseFloat(product.price).toFixed(2)}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.specifications?.brand || "N/A"}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {product.condition.split(" (")[0] ||
+                              product.condition ||
+                              "N/A"}
+                          </td>
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            {calculateDaysUntilExpiration(
+                              product.expiration_date
+                            ) || "N/A"}
+                          </td>
+                          <td className="py-3 border-r border-gray-100 px-4">
+                            <span
+                              className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getStockStatusStyle(
+                                stockStatus
+                              )}`}
+                            >
+                              {product.quantity}
+                            </span>
+                          </td>
+                          <td className="py-3 border-r border-gray-100 px-4">
+                            <span
+                              className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getListingStatusStyle(
+                                product.is_active
+                              )}`}
+                            >
+                              {getListingStatusText(product.is_active)}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex justify-center gap-2">
+                              <Link
+                                className="p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
+                                title="View Product"
+                                to={`/product-list/view/${product.id}`}
                               >
-                                {stockStatus}
-                              </span>
-                            </td>
-                            <td className="py-3 border-r border-gray-100 px-4">
-                              <span
-                                className={`px-2 py-1 w-25 text-center block capitalize rounded-md text-sm font-regular ${getListingStatusStyle(
-                                  product.is_active
-                                )}`}
+                                <ArrowUpRight className="h-4 w-4" />
+                              </Link>
+                              <Link
+                                className="p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
+                                title="Edit Product"
+                                to={`/product-list/edit/${product.id}`}
                               >
-                                {getListingStatusText(product.is_active)}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="flex justify-center gap-2">
-                                <Link
-                                  className="p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
-                                  title="View Product"
-                                  to={`/product-list/view/${product.id}`}
-                                >
-                                  <ArrowUpRight className="h-4 w-4" />
-                                </Link>
-                                <Link
-                                  className="p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
-                                  title="Edit Product"
-                                  to={`/product-list/edit/${product.id}`}
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                </Link>
-                                <button
-                                  className="p-2 border border-gray-200 cursor-pointer rounded hover:bg-gray-100 transition-colors duration-200"
-                                  title="Delete Product"
-                                  onClick={() => handleDeleteClick(product.id)}
-                                >
-                                  <Trash className="h-4 w-4" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                                <Pencil className="h-4 w-4" />
+                              </Link>
+                              <button
+                                className="p-2 border border-gray-200 cursor-pointer rounded hover:bg-gray-100 transition-colors duration-200"
+                                title="Delete Product"
+                                onClick={() => handleDeleteClick(product.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
 
               {/* Mobile/Tablet Card View */}
               <div className="lg:hidden space-y-4">
-                {products.map((product, index) => {
+                {currentProducts.map((product, index) => {
                   const stockStatus = getStockStatus(product.quantity);
                   return (
                     <div
@@ -406,7 +432,7 @@ export default function ListingInventoryProducts() {
                               stockStatus
                             )}`}
                           >
-                            {stockStatus}
+                            {product.quantity}
                           </span>
                         </div>
                       </div>
@@ -458,7 +484,7 @@ export default function ListingInventoryProducts() {
           )}
 
           {/* Pagination */}
-          {!loading && !error && products.length > 0 && (
+          {!loading && !error && totalItems > 0 && (
             <div className="mt-6 sm:mt-8 animate-fadeIn">
               {/* Items per page selector */}
               <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
@@ -468,8 +494,11 @@ export default function ListingInventoryProducts() {
                     <select
                       className="appearance-none border border-gray-200 rounded-lg text-gray-700 px-2 py-1 pr-8 text-sm"
                       value={itemsPerPage}
-                      onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                      onChange={(e) =>
+                        handleItemsPerPageChange(Number(e.target.value))
+                      }
                     >
+                      <option value={5}>5 per page</option>
                       <option value={10}>10 per page</option>
                       <option value={20}>20 per page</option>
                       <option value={50}>50 per page</option>
@@ -481,53 +510,60 @@ export default function ListingInventoryProducts() {
                 {/* Pagination Controls */}
                 <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
                   <div className="text-sm text-gray-500 text-center sm:text-left">
-                    {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}{" "}
-                    to {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
-                    {totalItems} results
+                    {totalItems > 0 ? (
+                      <>
+                        {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+                        {totalItems} results
+                      </>
+                    ) : (
+                      "0 to 0 of 0 results"
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <button
-                      className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors duration-200"
-                      disabled={currentPage === 1}
-                      onClick={() => handlePageChange(currentPage - 1)}
-                    >
-                      <ChevronDown className="h-4 w-4 text-gray-500 transform rotate-90" />
-                    </button>
+                  {totalPages > 1 && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                      >
+                        <ChevronDown className="h-4 w-4 text-gray-500 transform rotate-90" />
+                      </button>
 
-                    <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
-                      {getPaginationNumbers().map((page, index) =>
-                        page === "..." ? (
-                          <span
-                            key={`ellipsis-${index}`}
-                            className="px-2 text-sm"
-                          >
-                            ...
-                          </span>
-                        ) : (
-                          <button
-                            key={`page-${page}`}
-                            className={`w-8 h-8 flex items-center justify-center rounded transition-colors duration-200 text-sm ${
-                              currentPage === page
-                                ? "bg-blue-300 text-white"
-                                : "border border-gray-200 hover:bg-gray-100 text-gray-700"
-                            }`}
-                            onClick={() => handlePageChange(page)}
-                          >
-                            {page}
-                          </button>
-                        )
-                      )}
+                      <div className="flex items-center gap-1 max-w-xs overflow-x-auto">
+                        {getPaginationNumbers().map((page, index) =>
+                          page === "..." ? (
+                            <span
+                              key={`ellipsis-${index}`}
+                              className="px-2 text-sm text-gray-500"
+                            >
+                              ...
+                            </span>
+                          ) : (
+                            <button
+                              key={`page-${page}`}
+                              className={`w-8 h-8 flex items-center justify-center rounded transition-colors duration-200 text-sm ${
+                                currentPage === page
+                                  ? "bg-[#f47458] text-white"
+                                  : "border border-gray-200 hover:bg-gray-100 text-gray-700"
+                              }`}
+                              onClick={() => handlePageChange(page)}
+                            >
+                              {page}
+                            </button>
+                          )
+                        )}
+                      </div>
+
+                      <button
+                        className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                        disabled={currentPage === totalPages}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                      >
+                        <ChevronDown className="h-4 w-4 text-gray-500 transform -rotate-90" />
+                      </button>
                     </div>
-
-                    <button
-                      className="p-2 border border-gray-100 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors duration-200"
-                      disabled={currentPage === totalPages}
-                      onClick={() => handlePageChange(currentPage + 1)}
-                    >
-                      <ChevronDown className="h-4 w-4 text-gray-500 transform -rotate-90" />
-                    </button>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

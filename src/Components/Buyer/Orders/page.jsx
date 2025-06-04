@@ -19,6 +19,7 @@ import CubeLoader from "../../../utils/cubeLoader";
 import BuyerHeader from "../buyerHeader.jsx/buyerHeader";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { initiateChat } from "../../../services/chatServices";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -27,6 +28,7 @@ const BuyerOrderDetails = () => {
   const [allOrderItems, setAllOrderItems] = useState([]);
   const [selectedOrderItem, setSelectedOrderItem] = useState(null);
   const [showDispute, setShowDispute] = useState(false);
+  const [isMessageLoading, setMessageIsLoading] = useState(false);
   const [disputeItem, setDisputeItem] = useState(null);
   const [disputeForm, setDisputeForm] = useState({
     email: "",
@@ -37,7 +39,23 @@ const BuyerOrderDetails = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [submissionLoading, setSubmissionLoading] = useState(false);
   const userId = localStorage.getItem("userId");
+  const handleSendMessage = async (productId) => {
+    if (!userId || !productId) {
+      alert("User ID and Product ID are required");
+      return;
+    }
 
+    setMessageIsLoading(true);
+    try {
+      await initiateChat(userId, productId);
+      // Navigation happens automatically in the service function
+    } catch (error) {
+      console.error("Failed to initiate chat:", error.message);
+      toast.error(`Failed to start chat: ${error.message}`);
+    } finally {
+      setMessageIsLoading(false);
+    }
+  };
   // Check for mobile screen
   useEffect(() => {
     const checkMobile = () => {
@@ -586,12 +604,23 @@ const BuyerOrderDetails = () => {
                 <span className="text-gray-900 font-medium">
                   Need help with order?
                 </span>
-                <button
-                  onClick={() => handleDisputeClick(selectedOrderItem)}
-                  className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
-                >
-                  Open dispute
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDisputeClick(selectedOrderItem)}
+                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                  >
+                    Open dispute
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleSendMessage(selectedOrderItem.productId)
+                    }
+                    disabled={isMessageLoading}
+                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                  >
+                    {isMessageLoading ? "Starting Chat..." : "Chat with Seller"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>

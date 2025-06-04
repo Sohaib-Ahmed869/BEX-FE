@@ -109,6 +109,10 @@ const EditProduct = () => {
     description: "",
     condition: "",
     location: "",
+    weight: "",
+    length: "",
+    width: "",
+    height: "",
 
     // Media
     images: [],
@@ -146,6 +150,10 @@ const EditProduct = () => {
           price: data.price || "",
           quantity: data.quantity || "",
           description: data.description || "",
+          weight: data.weight || "",
+          length: data.length || "",
+          width: data.width || "",
+          height: data.height || "",
           retippingDetails: data.retippingDetails || [],
           condition: data.condition || "",
           location: data.location || "",
@@ -619,159 +627,7 @@ const EditProduct = () => {
       </div>
     );
   };
-  // const CoreBitRetippingComponent = () => {
-  //   // Handle diameter change
-  //   const handleDiameterChange = (e) => {
-  //     const selectedDiameter = e.target.value;
-  //     const diameterData = RETIPPING_PRICE_DATA[selectedDiameter];
 
-  //     handleRetippingChange({
-  //       diameter: selectedDiameter,
-  //       segments: diameterData?.segments,
-  //       totalPrice: diameterData?.price.toFixed(2),
-  //     });
-  //   };
-
-  //   // Handle segments change
-  //   const handleSegmentsChange = (e) => {
-  //     const segmentCount = Number.parseInt(e.target.value) || 0;
-  //     const perSegmentPrice =
-  //       Number.parseFloat(formData.retipping?.perSegmentPrice) || 0;
-  //     const totalPrice = (segmentCount * perSegmentPrice).toFixed(2);
-
-  //     handleRetippingChange({
-  //       segments: segmentCount,
-  //       totalPrice: totalPrice,
-  //     });
-  //   };
-
-  //   // Handle per-segment price change
-  //   const handlePerSegmentPriceChange = (e) => {
-  //     const price = e.target.value;
-  //     const segmentCount =
-  //       Number.parseInt(formData.retippingDetails?.segments) || 0;
-  //     const totalPrice = (segmentCount * Number.parseFloat(price)).toFixed(2);
-
-  //     handleRetippingChange({
-  //       perSegmentPrice: price,
-  //       totalPrice: totalPrice,
-  //     });
-  //   };
-
-  //   // Toggle DIY option
-  //   const handleDIYToggle = (e) => {
-  //     handleRetippingChange({
-  //       enableDIY: e.target.checked,
-  //     });
-  //   };
-
-  //   return (
-  //     <div className="bg-white border border-gray-100 rounded-lg p-6">
-  //       <div className="flex items-center justify-between mb-4">
-  //         <h2 className="text-lg font-semibold">
-  //           Core Bit Retipping Configuration
-  //         </h2>
-  //         <div className="relative group cursor-pointer">
-  //           <Info className="h-5 w-5 text-gray-400" />
-  //           <div className="absolute right-0 cursor-pointer bottom-full mb-2 hidden group-hover:block bg-black text-white text-sm p-4 rounded-xl w-64 z-10">
-  //             Retipping replaces worn diamond segments on core bits for
-  //             significant cost savings compared to buying new bits. BEX in-house
-  //             premium retipping service (Roy, UT).
-  //           </div>
-  //         </div>
-  //       </div>
-
-  //       <div className="mb-4">
-  //         <label
-  //           htmlFor="diameter"
-  //           className="block text-sm font-medium text-gray-700 mb-1"
-  //         >
-  //           Bit Diameter (inches)
-  //         </label>
-  //         <div className="relative">
-  //           <select
-  //             id="diameter"
-  //             value={formData.retippingDetails?.diameter}
-  //             onChange={handleDiameterChange}
-  //             className="w-full p-2 border border-gray-300 rounded-md appearance-none"
-  //           >
-  //             {Object.keys(RETIPPING_PRICE_DATA).map((diameter) => (
-  //               <option key={diameter} value={diameter}>
-  //                 {diameter} - $
-  //                 {RETIPPING_PRICE_DATA[diameter].price.toFixed(2)}
-  //               </option>
-  //             ))}
-  //           </select>
-  //           <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-  //         </div>
-  //       </div>
-
-  //       <div className="mb-4">
-  //         <label
-  //           htmlFor="segments"
-  //           className="block text-sm font-medium text-gray-700 mb-1"
-  //         >
-  //           Number of Segments
-  //         </label>
-  //         <input
-  //           type="number"
-  //           readOnly
-  //           id="segments"
-  //           value={formData.retippingDetails?.segments}
-  //           onChange={handleSegmentsChange}
-  //           className="w-full p-2 border border-gray-300 rounded-md"
-  //         />
-  //         <p className="text-xs text-gray-500 mt-1">
-  //           Standard segment count for {formData.retippingDetails?.diameter}{" "}
-  //           core bit:{" "}
-  //           {RETIPPING_PRICE_DATA[formData.retippingDetails?.diameter]
-  //             ?.segments || "N/A"}
-  //         </p>
-  //       </div>
-
-  //       <div className="mb-6">
-  //         <div className="border border-gray-200 rounded-md p-4 bg-gray-50">
-  //           <div className="flex justify-between mb-2">
-  //             <span className="text-sm font-medium">
-  //               Total Retipping Price:
-  //             </span>
-  //             <span className="text-lg font-bold">
-  //               {RETIPPING_PRICE_DATA[formData.retippingDetails?.price] ||
-  //                 "N/A"}
-  //             </span>
-  //           </div>
-  //           <p className="text-xs text-gray-500">
-  //             Price does not include shipping costs. Retipping performed at BEX
-  //             facility in Roy, UT.
-  //           </p>
-  //         </div>
-  //       </div>
-
-  //       <div className="flex items-start">
-  //         <input
-  //           type="checkbox"
-  //           id="enableDIY"
-  //           checked={formData.retippingDetails?.enable_diy}
-  //           onChange={handleDIYToggle}
-  //           className="mt-1 mr-2"
-  //         />
-  //         <div>
-  //           <label
-  //             htmlFor="enableDIY"
-  //             className="block text-sm font-medium text-gray-700"
-  //           >
-  //             Enable DIY segment purchasing option
-  //           </label>
-  //           <p className="text-xs text-gray-500">
-  //             Allow customers to purchase individual segments for DIY retipping
-  //           </p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
-  // Media Upload Component
   const MediaUploadComponent = () => {
     return (
       <div className="bg-white border border-gray-100 rounded-lg p-6 w-full max-w-full overflow-hidden">
@@ -1002,7 +858,7 @@ const EditProduct = () => {
               </div>
 
               <div className="flex items-center">
-                <label className="mr-2 text-gray-700">add to listing</label>
+                <label className="mr-2 text-gray-700">Add to listing</label>
                 <div
                   className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${
                     addedToListing ? "bg-orange-500" : "bg-gray-300"
@@ -1424,7 +1280,81 @@ const EditProduct = () => {
                       />
                     </div>
                   </div>
-
+                  <div className="mb-6">
+                    <label
+                      htmlFor="weight"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Product Weight (lbs)
+                    </label>
+                    <input
+                      required
+                      type="number"
+                      id="weight"
+                      value={formData.weight}
+                      onChange={(e) =>
+                        handleInputChange("weight", e.target.value)
+                      }
+                      placeholder="0"
+                      className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="mb-6">
+                      <label
+                        htmlFor="length"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Lenght (inches)
+                      </label>
+                      <input
+                        type="number"
+                        id="length"
+                        value={formData.length}
+                        onChange={(e) =>
+                          handleInputChange("length", e.target.value)
+                        }
+                        placeholder="0"
+                        className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label
+                        htmlFor="width"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Width (inches)
+                      </label>
+                      <input
+                        type="number"
+                        id="width"
+                        value={formData.width}
+                        onChange={(e) =>
+                          handleInputChange("width", e.target.value)
+                        }
+                        placeholder="0"
+                        className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <label
+                        htmlFor="height"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Height (inches)
+                      </label>
+                      <input
+                        type="number"
+                        id="height"
+                        value={formData.height}
+                        onChange={(e) =>
+                          handleInputChange("height", e.target.value)
+                        }
+                        placeholder="0"
+                        className="w-full p-2 border border-gray-300 rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    </div>
+                  </div>
                   <div className="mb-4">
                     <label
                       htmlFor="condition"
