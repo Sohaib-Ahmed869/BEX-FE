@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { ChatSkeleton, MessageSkeleton } from "./MessageSkeletonUi";
 import BuyerHeader from "../Buyer/buyerHeader.jsx/buyerHeader";
+import { unreadMessagesActions } from "../../store/message-slice";
+import { useDispatch } from "react-redux";
 
 // User avatar icons for differentiation
 const getIconComponent = (index) => {
@@ -538,7 +540,7 @@ const MessagingComponent = () => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeoutRef = useRef(null);
-
+  const dispatch = useDispatch();
   // Get current user data from localStorage
   const getCurrentUser = () => {
     const userId = localStorage.getItem("userId");
@@ -677,7 +679,14 @@ const MessagingComponent = () => {
                   const shouldIncrementUnread =
                     !isChatCurrentlySelected &&
                     message.sender_id !== currentUser.id;
-
+                  if (shouldIncrementUnread) {
+                    dispatch(
+                      unreadMessagesActions.incrementChatUnreadCount({
+                        chatId,
+                        increment: 1,
+                      })
+                    );
+                  }
                   const newUnreadCount = shouldIncrementUnread
                     ? (chat.unread_count || 0) + 1 // INCREMENT by 1, don't keep same value
                     : chat.unread_count || 0;
@@ -795,7 +804,11 @@ const MessagingComponent = () => {
               }))
             );
           }
-
+          dispatch(
+            unreadMessagesActions.clearChatUnreadCount({
+              chatId: data.chatId,
+            })
+          );
           // Always update chat unread count to 0 when messages are read
           setChats((prev) =>
             prev.map((chat) =>
@@ -872,7 +885,15 @@ const MessagingComponent = () => {
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages);
-
+        const chatCounts = {};
+        data.chats.forEach((chat) => {
+          chatCounts[chat.id] = chat.unread_count || 0;
+        });
+        dispatch(
+          unreadMessagesActions.updateMultipleChatUnreadCounts({
+            chatCounts,
+          })
+        );
         // Mark messages as read via socket AFTER messages are loaded
         setTimeout(() => {
           if (socketRef.current) {

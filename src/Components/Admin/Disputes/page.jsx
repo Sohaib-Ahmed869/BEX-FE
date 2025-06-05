@@ -87,7 +87,7 @@ const ResponseModal = ({ isOpen, onClose, onSend, isLoading }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
+    <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-60 animate-fadeIn">
       <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 animate-slideUp">
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
@@ -142,7 +142,6 @@ const ResponseModal = ({ isOpen, onClose, onSend, isLoading }) => {
     </div>
   );
 };
-
 const OrderDisputes = () => {
   const [disputes, setDisputes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -340,7 +339,7 @@ const OrderDisputes = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <p className="text-red-600 mb-4">{error}</p>
@@ -389,6 +388,17 @@ const OrderDisputes = () => {
           }
         }
 
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(100%);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         @keyframes scaleIn {
           from {
             opacity: 0;
@@ -412,6 +422,10 @@ const OrderDisputes = () => {
           animation: slideInRight 0.3s ease-out;
         }
 
+        .animate-slideInUp {
+          animation: slideInUp 0.3s ease-out;
+        }
+
         .animate-scaleIn {
           animation: scaleIn 0.2s ease-out;
         }
@@ -429,21 +443,44 @@ const OrderDisputes = () => {
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
+        @media (max-width: 768px) {
+          .mobile-details-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+          }
+
+          .mobile-details-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 51;
+          }
+        }
       `}</style>
 
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4">
             Disputes
           </h2>
-          <div className="flex gap-8">
+
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
             {/* Disputes List */}
             <div className="flex-1">
               <div className="bg-white rounded-xl shadow-sm">
-                <div className="p-6 border-b border-gray-200">
+                <div className="p-4 sm:p-6 border-b border-gray-200">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-gray-900">
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-900">
                       Active Disputes ({filteredDisputes.length})
                     </h2>
                   </div>
@@ -453,7 +490,7 @@ const OrderDisputes = () => {
                   {filteredDisputes.map((dispute) => (
                     <div
                       key={dispute.disputeId}
-                      className={`dispute-item p-6 cursor-pointer transition-colors ${
+                      className={`dispute-item p-4 sm:p-6 cursor-pointer transition-colors ${
                         selectedDispute?.disputeId === dispute.disputeId
                           ? "bg-blue-50 border-l-4 border-l-[#f47458] selected-dispute"
                           : "hover:bg-gray-50"
@@ -461,8 +498,8 @@ const OrderDisputes = () => {
                       onClick={() => setSelectedDispute(dispute)}
                     >
                       <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-3">
                             <div className="flex items-center space-x-2">
                               {getCategoryIcon(dispute.disputeCategory)}
                               <span className="text-sm font-medium text-gray-900 capitalize">
@@ -470,7 +507,7 @@ const OrderDisputes = () => {
                               </span>
                             </div>
                             <span
-                              className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(
+                              className={`px-2 py-1 text-xs font-medium rounded-full border w-fit ${getStatusColor(
                                 dispute.disputeStatus
                               )}`}
                             >
@@ -480,7 +517,7 @@ const OrderDisputes = () => {
                             </span>
                           </div>
 
-                          <h3 className="text-base font-semibold text-gray-900 mb-2">
+                          <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 line-clamp-2">
                             {dispute.orderItem.title}
                           </h3>
 
@@ -488,17 +525,19 @@ const OrderDisputes = () => {
                             {dispute.description}
                           </p>
 
-                          <div className="flex items-center space-x-4 text-xs text-gray-500">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-xs text-gray-500">
                             <div className="flex items-center space-x-1">
-                              <User className="w-3 h-3" />
-                              <span>{dispute.user.fullName}</span>
+                              <User className="w-3 h-3 flex-shrink-0" />
+                              <span className="truncate">
+                                {dispute.user.fullName}
+                              </span>
                             </div>
                             <div className="flex items-center space-x-1">
-                              <Calendar className="w-3 h-3" />
+                              <Calendar className="w-3 h-3 flex-shrink-0" />
                               <span>{formatDate(dispute.createdAt)}</span>
                             </div>
                             <div className="flex items-center space-x-1">
-                              <DollarSign className="w-3 h-3" />
+                              <DollarSign className="w-3 h-3 flex-shrink-0" />
                               <span>${dispute.order.totalAmount}</span>
                             </div>
                           </div>
@@ -508,7 +547,7 @@ const OrderDisputes = () => {
                           <img
                             src={dispute.product.image}
                             alt={dispute.orderItem.title}
-                            className="w-16 h-16 rounded-lg object-cover ml-4"
+                            className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover ml-3 sm:ml-4 flex-shrink-0"
                           />
                         )}
                       </div>
@@ -516,7 +555,7 @@ const OrderDisputes = () => {
                   ))}
 
                   {filteredDisputes.length === 0 && (
-                    <div className="p-12 text-center">
+                    <div className="p-8 sm:p-12 text-center">
                       <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-gray-500">No disputes found</p>
                     </div>
@@ -525,9 +564,9 @@ const OrderDisputes = () => {
               </div>
             </div>
 
-            {/* Dispute Details Sidebar */}
+            {/* Desktop Dispute Details Sidebar */}
             {selectedDispute && (
-              <div className="w-96 animate-slideInRight">
+              <div className="hidden lg:block w-96 animate-slideInRight">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-300 sticky top-8 animate-scaleIn">
                   <div className="p-6 border-b flex relative border-gray-300">
                     <h3 className="text-lg font-semibold text-gray-900">
@@ -718,25 +757,258 @@ const OrderDisputes = () => {
         </div>
       </div>
 
-      {/* Modals */}
-      <ConfirmationModal
-        isOpen={isConfirmModalOpen}
-        onClose={() => setIsConfirmModalOpen(false)}
-        onConfirm={handleResolveDispute}
-        title="Resolve Dispute"
-        message="Are you sure you want to mark this dispute as resolved? This action cannot be undone."
-        confirmText="Mark as Resolved"
-        isLoading={isProcessing}
-      />
+      {/* Mobile Dispute Details Overlay */}
+      {selectedDispute && (
+        <div className="lg:hidden z-40">
+          <div
+            className="mobile-details-overlay"
+            onClick={() => setSelectedDispute(null)}
+          />
+          <div className="mobile-details-panel animate-slideInUp">
+            <div className="bg-white rounded-t-xl shadow-lg border border-gray-300">
+              <div className="p-4 border-b flex items-center justify-between border-gray-300">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Dispute Details
+                </h3>
+                <button
+                  onClick={() => setSelectedDispute(null)}
+                  className="border border-gray-300 rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
 
-      <ResponseModal
-        isOpen={isResponseModalOpen}
-        onClose={() => setIsResponseModalOpen(false)}
-        onSend={handleSendResponse}
-        isLoading={isProcessing}
-      />
+              <div className="p-4 space-y-4 max-h-[calc(80vh-80px)] overflow-y-auto">
+                {/* Product Info */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    Product Information
+                  </h4>
+                  <div className="flex items-start space-x-3">
+                    {selectedDispute.product.image && (
+                      <img
+                        src={selectedDispute.product.image}
+                        alt={selectedDispute.orderItem.title}
+                        className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 text-sm">
+                        {selectedDispute.orderItem.title}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Price: ${selectedDispute.orderItem.price}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Quantity: {selectedDispute.orderItem.quantity}
+                      </p>
+                      <p className="text-sm text-gray-600 capitalize">
+                        Status: {selectedDispute.orderItem.orderStatus}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Customer Info */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    Customer Information
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="text-sm text-gray-900 truncate">
+                        {selectedDispute.user.fullName}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="text-sm text-gray-600 truncate">
+                        {selectedDispute.user.email}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seller Info */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    Seller Information
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="text-sm text-gray-900 truncate">
+                        {selectedDispute.product.seller.fullName}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Mail className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                      <span className="text-sm text-gray-600 truncate">
+                        {selectedDispute.product.seller.email}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Order Info */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    Order Information
+                  </h4>
+                  <div className="space-y-1">
+                    <p className="text-sm text-gray-600">
+                      Order ID: {selectedDispute.order.orderId?.slice(0, 8)}...
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Order Date: {formatDate(selectedDispute.order.orderDate)}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Total Amount: ${selectedDispute.order.totalAmount}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    Dispute Description
+                  </h4>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {selectedDispute.description}
+                  </p>
+                </div>
+
+                {/* Admin Response */}
+                {selectedDispute.adminResponse && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">
+                      Admin Response
+                    </h4>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-sm text-blue-800 leading-relaxed">
+                        {selectedDispute.adminResponse}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Timeline */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">
+                    Timeline
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          Dispute Created
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {formatDate(selectedDispute.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    {selectedDispute.resolvedAt && (
+                      <div className="flex items-start space-x-3">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            Dispute Resolved
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {formatDate(selectedDispute.resolvedAt)}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="space-y-3 pt-4 border-t border-gray-200 sticky bottom-0 bg-white ">
+                  <button
+                    onClick={() => {
+                      setIsResponseModalOpen(true);
+                    }}
+                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Send Response</span>
+                  </button>
+                  {selectedDispute.disputeStatus === "open" && (
+                    <button
+                      onClick={() => setIsConfirmModalOpen(true)}
+                      className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-md"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Mark as Resolved</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-60">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full animate-scaleIn">
+            <div className="p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Resolve Dispute
+                </h3>
+              </div>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to mark this dispute as resolved? This
+                action cannot be undone.
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setIsConfirmModalOpen(false)}
+                  disabled={isProcessing}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleResolveDispute}
+                  disabled={isProcessing}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
+                >
+                  {isProcessing ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <span>Resolve</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Response Modal */}
+      {isResponseModalOpen && (
+        <ResponseModal
+          isOpen={isResponseModalOpen}
+          onClose={() => setIsResponseModalOpen(false)}
+          onSend={handleSendResponse}
+          isProcessing={isProcessing}
+          existingResponse={selectedDispute?.adminResponse}
+        />
+      )}
     </>
   );
 };
-
 export default OrderDisputes;

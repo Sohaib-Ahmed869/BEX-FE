@@ -264,7 +264,7 @@ export default function SellerOrderItems() {
       );
     }
   };
-
+  const role = localStorage.getItem("role");
   // Modal Component
   const Modal = ({
     isOpen,
@@ -363,7 +363,7 @@ export default function SellerOrderItems() {
         <h1 className="text-2xl sm:text-3xl font-medium mb-2">Order Details</h1>
         <div className="text-sm text-gray-500 mb-6">
           <Link
-            to="/admin/orders"
+            to={role === "seller" ? "/orders" : "/admin/orders"}
             className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
           >
             <span>Orders /</span>{" "}
@@ -808,7 +808,6 @@ export default function SellerOrderItems() {
                       </div>
 
                       {/* Mobile Action Buttons */}
-                      {/* Mobile Action Buttons */}
                       {item.orderStatus.toLowerCase() ===
                         "pending approval" && (
                         <div className="flex justify-center gap-2 mt-3">
@@ -835,6 +834,13 @@ export default function SellerOrderItems() {
                           </button>
                         </div>
                       )}
+                      <Link
+                        to={`/orders/items/view/${item.orderItemId}`}
+                        className="flex-1 mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                        title="View Order Details"
+                      >
+                        <Eye className="h-4 w-4" /> View
+                      </Link>
                     </div>
                   );
                 })}

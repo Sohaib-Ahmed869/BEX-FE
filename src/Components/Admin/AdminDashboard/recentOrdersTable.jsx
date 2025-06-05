@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const RecentOrdersTable = ({ orders }) => {
   const [expandedOrders, setExpandedOrders] = useState(new Set());
@@ -58,9 +59,12 @@ const RecentOrdersTable = ({ orders }) => {
           <h3 className="text-lg font-semibold text-gray-800 animate-fade-in-right">
             Recent Orders
           </h3>
-          <button className="text-sm text-blue-600 hover:text-blue-800 transition-all duration-300 hover:scale-105 hover:bg-blue-50 px-3 py-1 rounded-lg transform animate-fade-in-left">
+          <Link
+            to="/admin/orders"
+            className="text-sm text-blue-600 hover:text-blue-800 transition-all duration-300 hover:scale-105 hover:bg-blue-50 px-3 py-1 rounded-lg transform animate-fade-in-left"
+          >
             Go to Orders Page →
-          </button>
+          </Link>
         </div>
         <div className="text-center text-gray-500 py-12">
           <div className="text-6xl mb-4 animate-bounce">📦</div>
@@ -83,9 +87,12 @@ const RecentOrdersTable = ({ orders }) => {
           <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200 animate-pulse hover:animate-bounce transform transition-transform duration-300 hover:scale-110">
             +{flattenedItems.length} items
           </span>
-          <button className="text-sm text-blue-600 hover:text-blue-800 transition-all duration-300 hover:bg-blue-50 px-2 py-1 rounded transform hover:scale-105 hover:-translate-y-0.5">
+          <Link
+            to="/admin/orders"
+            className="text-sm text-blue-600 hover:text-blue-800 transition-all duration-300 hover:scale-105 hover:bg-blue-50 px-3 py-1 rounded-lg transform animate-fade-in-left"
+          >
             Go to Orders Page →
-          </button>
+          </Link>
         </div>
       </div>
 

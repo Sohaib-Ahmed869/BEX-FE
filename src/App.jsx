@@ -37,141 +37,153 @@ import OrderDisputes from "./Components/Admin/Disputes/page";
 import MessagingComponent from "./Components/Messaging/page";
 import SellerOrders from "./Components/Seller/Orders/newPage";
 import SellerOrderItems from "./Components/Seller/Orders/viewOrderDetails";
+import useGlobalSocket from "./hooks/MessageSocketHook";
+import { useEffect } from "react";
+
+const AppWithSocket = () => {
+  // Initialize global socket connection
+  useGlobalSocket();
+
+  return (
+    <Routes>
+      {/* Auth routes */}
+      <Route
+        path="/login"
+        element={
+          <AuthRedirect>
+            <Login />
+          </AuthRedirect>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <AuthRedirect>
+            <Signup />
+          </AuthRedirect>
+        }
+      />
+      {/* Protected routes with SideBar as the parent layout */}
+      <Route
+        path="/"
+        element={
+          <TokenGuard>
+            <SideBar />
+          </TokenGuard>
+        }
+      >
+        {/* Default redirect to dashboard */}
+        <Route index element={<Navigate to="/login" replace />} />
+
+        {/* Seller routes */}
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="inventory" element={<Inventory />} />
+        <Route path="product-list" element={<ProductList />} />
+        <Route path="listing" element={<Listing />} />
+        <Route path="listing/add" element={<AddListing />} />
+        <Route
+          path="listing/inventory/:listingId"
+          element={<ListingInventoryProducts />}
+        />
+        <Route
+          path="listing/addInventory/:listingId"
+          element={<NewProduct />}
+        />
+        <Route path="product-list/edit/:id" element={<EditProduct />} />
+        <Route path="product-list/view/:id" element={<ViewProduct />} />
+        <Route path="orders" element={<SellerOrders />} />
+        <Route path="orders/items/:orderId" element={<SellerOrderItems />} />
+        <Route
+          path="orders/items/view/:itemId"
+          element={<SellerOrderDetailsPage />}
+        />
+
+        {/* General menu routes */}
+        <Route path="chats" element={<MessagingComponent />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="support" element={<Support />} />
+      </Route>
+      {/* Buyer routes */}
+      <Route
+        path="/products"
+        element={
+          <TokenGuard>
+            <Products />
+          </TokenGuard>
+        }
+      />
+      <Route
+        path="/products/:productId"
+        element={
+          <TokenGuard>
+            <ProductDetailsPage />
+          </TokenGuard>
+        }
+      />
+      <Route
+        path="/products/checkout"
+        element={
+          <TokenGuard>
+            <Checkout />
+          </TokenGuard>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <TokenGuard>
+            <BuyerProfile />
+          </TokenGuard>
+        }
+      />
+      <Route
+        path="/myorders"
+        element={
+          <TokenGuard>
+            <BuyerOrderDetails />
+          </TokenGuard>
+        }
+      />
+      <Route
+        path="/user/chats"
+        element={
+          <TokenGuard>
+            <MessagingComponent />
+          </TokenGuard>
+        }
+      />
+
+      {/* Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <TokenGuard>
+            <AdminSideBar />
+          </TokenGuard>
+        }
+      >
+        {/* Default redirect to dashboard */}
+        <Route index element={<Navigate to="/login" replace />} />
+
+        {/* Admin routes */}
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="users/insights/:userId" element={<UserInsights />} />
+        <Route path="orders" element={<OrdersOverviewTable />} />
+        <Route path="orders/orderItems/:orderId" element={<OrderItems />} />
+        <Route path="products" element={<AdminProductsTable />} />
+        <Route path="products/view/:id" element={<ViewProduct />} />
+        <Route path="commission" element={<CommissionManagement />} />
+        <Route path="disputes" element={<OrderDisputes />} />
+      </Route>
+    </Routes>
+  );
+};
+
 const App = () => {
   return (
     <Router>
-      <Routes>
-        {/* Auth routes */}
-        <Route
-          path="/login"
-          element={
-            <AuthRedirect>
-              <Login />
-            </AuthRedirect>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <AuthRedirect>
-              <Signup />
-            </AuthRedirect>
-          }
-        />
-        {/* Protected routes with SideBar as the parent layout */}
-        <Route
-          path="/"
-          element={
-            <TokenGuard>
-              <SideBar />
-            </TokenGuard>
-          }
-        >
-          {/* Default redirect to dashboard */}
-          <Route index element={<Navigate to="/login" replace />} />
-
-          {/* Seller routes */}
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="inventory" element={<Inventory />} />
-          <Route path="product-list" element={<ProductList />} />
-          <Route path="listing" element={<Listing />} />
-          <Route path="listing/add" element={<AddListing />} />
-          <Route
-            path="listing/inventory/:listingId"
-            element={<ListingInventoryProducts />}
-          />
-          <Route
-            path="listing/addInventory/:listingId"
-            element={<NewProduct />}
-          />
-          <Route path="product-list/edit/:id" element={<EditProduct />} />
-          <Route path="product-list/view/:id" element={<ViewProduct />} />
-          <Route path="orders" element={<SellerOrders />} />
-          <Route path="orders/items/:orderId" element={<SellerOrderItems />} />
-          <Route
-            path="orders/items/view/:itemId"
-            element={<SellerOrderDetailsPage />}
-          />
-
-          {/* General menu routes */}
-          <Route path="chats" element={<MessagingComponent />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="support" element={<Support />} />
-        </Route>
-        {/* Buyer routes */}
-        <Route
-          path="/products"
-          element={
-            <TokenGuard>
-              <Products />
-            </TokenGuard>
-          }
-        />
-        <Route
-          path="/products/:productId"
-          element={
-            <TokenGuard>
-              <ProductDetailsPage />
-            </TokenGuard>
-          }
-        />
-        <Route
-          path="/products/checkout"
-          element={
-            <TokenGuard>
-              <Checkout />
-            </TokenGuard>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <TokenGuard>
-              <BuyerProfile />
-            </TokenGuard>
-          }
-        />
-        <Route
-          path="/myorders"
-          element={
-            <TokenGuard>
-              <BuyerOrderDetails />
-            </TokenGuard>
-          }
-        />
-        <Route
-          path="/user/chats"
-          element={
-            <TokenGuard>
-              <MessagingComponent />
-            </TokenGuard>
-          }
-        />
-
-        {/* Admin Routes */}
-        <Route
-          path="/admin"
-          element={
-            <TokenGuard>
-              <AdminSideBar />
-            </TokenGuard>
-          }
-        >
-          {/* Default redirect to dashboard */}
-          <Route index element={<Navigate to="/login" replace />} />
-
-          {/* Admin routes */}
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="users" element={<UserManagement />} />
-          <Route path="users/insights/:userId" element={<UserInsights />} />
-          <Route path="orders" element={<OrdersOverviewTable />} />
-          <Route path="orders/orderItems/:orderId" element={<OrderItems />} />
-          <Route path="products" element={<AdminProductsTable />} />
-          <Route path="products/view/:id" element={<ViewProduct />} />
-          <Route path="commission" element={<CommissionManagement />} />
-          <Route path="disputes" element={<OrderDisputes />} />
-        </Route>
-      </Routes>
+      <AppWithSocket />
     </Router>
   );
 };

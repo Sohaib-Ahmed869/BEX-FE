@@ -534,14 +534,14 @@ export default function Listing() {
                               <Eye className="h-4 w-4" />
                             </Link>
                             <Link
-                              to={`/product-list/new/${listing.id}`}
+                              to={`/listing/addInventory/${listing.id}`}
                               className={`p-2 border border-gray-200 rounded hover:bg-gray-100 ${
                                 !listing.Product_Name
                                   ? "pointer-events-none opacity-50"
                                   : ""
                               }`}
                             >
-                              <Pencil className="h-4 w-4" />
+                              <PlusIcon className="h-4 w-4" />
                             </Link>
                           </div>
                         </div>

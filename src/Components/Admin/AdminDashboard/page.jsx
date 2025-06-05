@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import AdminDateFilter from "./AdminDateFilter";
 import AdminStatsCards from "./AdminStatsCards";
 import PaymentsTable from "./paymentTable";
-import AverageOrderChart from "./averageOrdersChart";
 import RecentOrdersTable from "./recentOrdersTable";
 import TopCompaniesChart from "./topCompaniesChart";
 import SalesSummaryChart from "./SalesSummaryChart";
 import CubeLoader from "../../../utils/cubeLoader";
 import { AdminDashboardSkeleton } from "./AdminDashboardSkeletonUi";
+import DynamicAnalyticsChart from "./averageOrdersChart";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
               mounted ? "translate-x-0 opacity-100" : "translate-x-12 opacity-0"
             }`}
           >
-            <AverageOrderChart data={dashboardData.analyticsData} />
+            <DynamicAnalyticsChart />
           </div>
         </div>
 
@@ -166,7 +166,7 @@ const AdminDashboard = () => {
             mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
           }`}
         >
-          {/* <SalesSummaryChart data={dashboardData.analyticsData} /> */}
+          <SalesSummaryChart data={dashboardData.analyticsData} />
         </div>
       </div>
 

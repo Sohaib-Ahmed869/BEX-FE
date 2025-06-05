@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, ShoppingCart, ChevronDown, User, Menu, X } from "lucide-react";
+import {
+  Heart,
+  ShoppingCart,
+  ChevronDown,
+  User,
+  Menu,
+  X,
+  MessageCircle,
+  MessageCircleHeart,
+  Bell,
+} from "lucide-react";
 import logo from "../../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
@@ -10,6 +20,9 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const unreadMessages = useSelector(
+    (state) => state.unreadMessages.totalUnreadCount
+  );
   const cartCount = useSelector((state) => state.cart.productsCount);
   const wishlistCount = useSelector((state) => state.wishlist.totalItems);
   const role = localStorage.getItem("role");
@@ -117,6 +130,25 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
             >
               {cartCount || "0"}
             </motion.div>
+          </motion.div>
+          <motion.div
+            className="relative flex items-center cursor-pointer"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => toggleCart(true)}
+          >
+            <Link to="/user/chats">
+              <Bell size={20} className=" mr-4  text-gray-700" />
+
+              <motion.div
+                className="absolute -top-2 left-4 bg-[#e06449] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500 }}
+              >
+                {unreadMessages || "0"}
+              </motion.div>
+            </Link>
           </motion.div>
 
           {/* User profile */}
@@ -241,6 +273,27 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
             )}
           </motion.div>
 
+          {/* Mobile Notifications */}
+          <motion.div
+            className="relative cursor-pointer p-2"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Link to="/user/chats">
+              <Bell size={20} className="text-gray-700" />
+              {unreadMessages > 0 && (
+                <motion.div
+                  className="absolute -top-1 -right-1 bg-[#e06449] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500 }}
+                >
+                  {unreadMessages}
+                </motion.div>
+              )}
+            </Link>
+          </motion.div>
+
           {/* Mobile Menu Button */}
           <motion.button
             className="p-2 cursor-pointer mobile-menu-container"
@@ -301,26 +354,90 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
 
               {/* Mobile Menu Items */}
               <motion.div className="space-y-1">
-                <motion.div
-                  className="flex items-center justify-between py-3 px-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                <motion.button
+                  onClick={() => {
+                    navigate("/profile");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="flex items-center justify-between w-full py-3 px-2 rounded-lg hover:bg-gray-50 cursor-pointer"
                   whileHover={{ backgroundColor: "#f9fafb" }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <span className="text-sm text-gray-700">Profile</span>
                   <ChevronDown size={16} className="text-gray-400 rotate-270" />
+                </motion.button>
+
+                {role === "seller" && (
+                  <motion.button
+                    onClick={() => {
+                      navigate("/dashboard");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center justify-between w-full py-3 px-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                    whileHover={{ backgroundColor: "#f9fafb" }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="text-sm text-gray-700">
+                      Seller Dashboard
+                    </span>
+                    <ChevronDown
+                      size={16}
+                      className="text-gray-400 rotate-270"
+                    />
+                  </motion.button>
+                )}
+
+                {role === "admin" && (
+                  <motion.button
+                    onClick={() => {
+                      navigate("/admin/dashboard");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center justify-between w-full py-3 px-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                    whileHover={{ backgroundColor: "#f9fafb" }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <span className="text-sm text-gray-700">
+                      Admin Dashboard
+                    </span>
+                    <ChevronDown
+                      size={16}
+                      className="text-gray-400 rotate-270"
+                    />
+                  </motion.button>
+                )}
+
+                <motion.div
+                  className="flex items-center justify-between py-3 px-2 rounded-lg hover:bg-gray-50 cursor-pointer"
+                  whileHover={{ backgroundColor: "#f9fafb" }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    navigate("/myorders");
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  <span className="text-sm text-gray-700">My Orders</span>
+                  <ChevronDown size={16} className="text-gray-400 rotate-270" />
                 </motion.div>
 
                 <motion.div
                   className="flex items-center justify-between py-3 px-2 rounded-lg hover:bg-gray-50 cursor-pointer"
                   whileHover={{ backgroundColor: "#f9fafb" }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    navigate("/user/chats");
+                    setIsMobileMenuOpen(false);
+                  }}
                 >
-                  <span className="text-sm text-gray-700">Settings</span>
+                  <span className="text-sm text-gray-700">Chats</span>
                   <ChevronDown size={16} className="text-gray-400 rotate-270" />
                 </motion.div>
 
                 <motion.button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    handleLogout();
+                    setIsMobileMenuOpen(false);
+                  }}
                   className="flex items-center justify-between w-full py-3 px-2 rounded-lg hover:bg-red-50 cursor-pointer"
                   whileHover={{ backgroundColor: "#fef2f2" }}
                   whileTap={{ scale: 0.98 }}

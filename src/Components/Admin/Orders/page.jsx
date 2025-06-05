@@ -493,15 +493,13 @@ const OrdersOverviewTable = () => {
                         <div className="text-lg font-medium text-gray-900">
                           {formatCurrency(order.amounts.orderTotal)}
                         </div>
-                        <button
-                          onClick={() => {
-                            /* Navigate to order details */
-                          }}
+                        <Link
+                          to={`/admin/orders/orderItems/${order.orderId}`}
                           className="flex items-center gap-1 px-3 py-1 text-blue-600 border border-blue-200 rounded hover:bg-blue-50"
                         >
                           <Eye className="h-4 w-4" />
                           View
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   ))}
