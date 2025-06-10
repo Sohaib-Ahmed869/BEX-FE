@@ -217,6 +217,12 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
                   >
                     Chats
                   </Link>
+                  <Link
+                    className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"
+                    to="/orderDisputes"
+                  >
+                    Order Disputes
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"

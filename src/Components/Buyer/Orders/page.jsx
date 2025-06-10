@@ -605,6 +605,12 @@ const BuyerOrderDetails = () => {
                   Need help with order?
                 </span>
                 <div className="flex gap-2">
+                  <Link
+                    to="/orderDisputes"
+                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                  >
+                    View disputes
+                  </Link>
                   <button
                     onClick={() => handleDisputeClick(selectedOrderItem)}
                     className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"

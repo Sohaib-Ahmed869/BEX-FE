@@ -10,12 +10,15 @@ import {
   MoreVertical,
   AlertCircle,
   Flag,
+  StarOff,
+  Star,
 } from "lucide-react";
 import CubeLoader from "../../../utils/cubeLoader";
 import { Link } from "react-router-dom";
 import FlagProductModal from "./FlagProductModal";
 import UnflagProductModal from "./unFlagProductModal";
 import { toast } from "react-toastify";
+import FeatureProductModal from "./featureProductModal";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -32,6 +35,9 @@ function AdminProductsTable() {
   // Flag/Unflag modal states
   const [showFlagModal, setShowFlagModal] = useState(false);
   const [showUnflagModal, setShowUnflagModal] = useState(false);
+  const [showFeatureModal, setShowFeatureModal] = useState(false);
+  const [featureActionType, setFeatureActionType] = useState("feature"); // "feature" or "unfeature"
+
   const [flagFormData, setFlagFormData] = useState({
     flagging_reason: "Incorrect specification",
     severity_level: "High",
@@ -110,10 +116,69 @@ function AdminProductsTable() {
         status: "RESOLVED",
         notes: "",
       });
+    } else if (action === "unfeature") {
+      setFeatureActionType("unfeature");
+      setShowFeatureModal(true);
+    } else if (action === "feature") {
+      setFeatureActionType("feature");
+      setShowFeatureModal(true);
     }
   };
 
+  // Add the close function
+  const closeFeatureModal = () => {
+    setShowFeatureModal(false);
+    setSelectedProduct(null);
+    setFeatureActionType("feature");
+  };
   // Handle flag submission
+  const handleFeatureSubmit = async () => {
+    if (!selectedProduct || !selectedProduct.id) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(
+        `${URL}/api/products/${selectedProduct.id}/toggle-feature`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            is_featured: featureActionType === "feature",
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Update the product in the local state
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id === selectedProduct.id
+              ? { ...product, is_featured: featureActionType === "feature" }
+              : product
+          )
+        );
+        setShowFeatureModal(false);
+        setSelectedProduct(null);
+        toast.success(
+          `Product ${
+            featureActionType === "feature" ? "featured" : "unfeatured"
+          } successfully`
+        );
+      } else {
+        console.error(`Failed to ${featureActionType} product:`, data.message);
+        toast.error(data.message || `Failed to ${featureActionType} product`);
+      }
+    } catch (error) {
+      console.error(`Error ${featureActionType}ing product:`, error);
+      toast.error(`Error ${featureActionType}ing product`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const handleFlagSubmit = async () => {
     if (!selectedProduct) return;
 
@@ -363,21 +428,21 @@ function AdminProductsTable() {
     return <CubeLoader />;
   }
 
-  if (error) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="text-center text-red-500">
-          <p>Error: {error}</p>
-          <button
-            onClick={fetchProducts}
-            className="mt-4 px-4 py-2 bg-[#f47458]-500 text-white rounded hover:bg-blue-600"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="bg-white rounded-lg shadow-sm p-6">
+  //       <div className="text-center text-red-500">
+  //         <p>Error: {error}</p>
+  //         <button
+  //           onClick={fetchProducts}
+  //           className="mt-4 px-4 py-2 bg-[#f47458]-500 text-white rounded hover:bg-blue-600"
+  //         >
+  //           Try Again
+  //         </button>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const ActionDropdown = ({ product, isOpen, onToggle }) => {
     const isflagged = product.is_flagged;
@@ -411,6 +476,22 @@ function AdminProductsTable() {
               >
                 <AlertCircle className="h-4 w-4" />
                 {product.is_flagged ? "Unflag Product" : "Flag Product"}
+              </button>
+              <button
+                onClick={() =>
+                  handleDropdownAction(
+                    product.is_featured ? "unfeature" : "feature",
+                    product
+                  )
+                }
+                className="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-50 flex items-center gap-2"
+              >
+                {product.is_featured ? (
+                  <StarOff className="h-4 w-4" />
+                ) : (
+                  <Star className="h-4 w-4" />
+                )}
+                {product.is_featured ? "Unfeature Product" : "Feature Product"}
               </button>
             </div>
           </div>
@@ -499,6 +580,9 @@ function AdminProductsTable() {
                                   {product.title || "N/A"}
                                   {product.is_flagged && (
                                     <Flag className="h-4 w-4 text-red-500" />
+                                  )}
+                                  {product.is_featured && (
+                                    <Star className="h-4 w-4 text-yellow-500" />
                                   )}
                                 </div>
                                 {product.id && (
@@ -650,6 +734,9 @@ function AdminProductsTable() {
                               {product.title || "N/A"}
                               {product.is_flagged && (
                                 <Flag className="h-4 w-4 text-red-500" />
+                              )}
+                              {product.is_featured && (
+                                <Star className="h-4 w-4 text-yellow-500" />
                               )}
                             </h3>
                             <p className="text-sm text-gray-500">
@@ -911,6 +998,14 @@ function AdminProductsTable() {
         setFormData={setUnflagFormData}
         isSubmitting={isSubmitting}
         selectedProduct={selectedProduct}
+      />
+      <FeatureProductModal
+        isOpen={showFeatureModal}
+        onClose={closeFeatureModal}
+        onSubmit={handleFeatureSubmit}
+        isSubmitting={isSubmitting}
+        selectedProduct={selectedProduct}
+        actionType={featureActionType}
       />
     </div>
   );

@@ -18,7 +18,7 @@ import {
   AlertTriangle,
   AlertCircle,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CubeLoader from "../../../utils/cubeLoader";
 import { toast } from "react-toastify";
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
@@ -209,7 +209,7 @@ const UserInsights = () => {
   const getUserStatus = (user) => {
     if (user.is_suspended) {
       return { text: "Suspended", className: "bg-red-500" };
-    } else if (user.is_active) {
+    } else if (user.status === "Active profile") {
       return { text: "Active", className: "bg-green-500" };
     } else {
       return { text: "Inactive", className: "bg-gray-500" };
@@ -510,9 +510,12 @@ const UserInsights = () => {
               {isSeller ? "Dispute performance" : "Category preferences"}
             </h3>
             {isSeller && (
-              <button className="text-blue-600 text-sm hover:text-blue-800">
+              <Link
+                to="/admin/disputes"
+                className="text-blue-600 cursor-pointer text-sm hover:text-blue-800"
+              >
                 View disputes
-              </button>
+              </Link>
             )}
           </div>
 

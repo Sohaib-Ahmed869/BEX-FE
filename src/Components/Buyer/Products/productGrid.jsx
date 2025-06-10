@@ -53,6 +53,14 @@ const ProductGrid = ({ products }) => {
     let sorted = [...filteredProducts];
 
     switch (value) {
+      case "Featured":
+        // Sort to show featured products first, then non-featured
+        sorted.sort((a, b) => {
+          if (a.is_featured && !b.is_featured) return -1;
+          if (!a.is_featured && b.is_featured) return 1;
+          return 0; // Keep original order for products with same featured status
+        });
+        break;
       case "Price: Low to High":
         sorted.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
         break;
@@ -63,7 +71,7 @@ const ProductGrid = ({ products }) => {
         sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         break;
       default:
-        // Featured - can use some custom logic or leave as is
+        // "Sort by" - keep original order or you could sort by created_at
         break;
     }
 

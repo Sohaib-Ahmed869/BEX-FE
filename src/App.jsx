@@ -39,6 +39,7 @@ import SellerOrders from "./Components/Seller/Orders/newPage";
 import SellerOrderItems from "./Components/Seller/Orders/viewOrderDetails";
 import useGlobalSocket from "./hooks/MessageSocketHook";
 import { useEffect } from "react";
+import BuyerDisputesPage from "./Components/Buyer/Disputes/page";
 
 const AppWithSocket = () => {
   // Initialize global socket connection
@@ -149,6 +150,14 @@ const AppWithSocket = () => {
         element={
           <TokenGuard>
             <MessagingComponent />
+          </TokenGuard>
+        }
+      />
+      <Route
+        path="/orderDisputes"
+        element={
+          <TokenGuard>
+            <BuyerDisputesPage />
           </TokenGuard>
         }
       />

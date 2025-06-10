@@ -51,6 +51,7 @@ export default function UserManagement() {
 
   // Modal states
   const [showActionModal, setShowActionModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
   const [suspendReason, setSuspendReason] = useState("");
@@ -202,10 +203,11 @@ export default function UserManagement() {
     if (action === "suspend" || action === "unsuspend") {
       setSelectedUser(user);
       setShowActionModal(true);
+    } else if (action === "verify") {
+      setSelectedUser(user);
+      setShowVerificationModal(true);
     } else if (action === "insights") {
       navigate(`/admin/users/insights/${user.id}`);
-      // Handle user insights action
-      // toast.info("User insights feature coming soon!");
     }
   };
 
@@ -310,6 +312,8 @@ export default function UserManagement() {
   // Action Dropdown Component
   const ActionDropdown = ({ user, isOpen, onToggle }) => {
     const isSuspended = user.is_suspended;
+    const canVerify =
+      !user.email_verified || (user.role === "seller" && !user.seller_verified);
 
     return (
       <div className="relative">
@@ -332,6 +336,15 @@ export default function UserManagement() {
                 <Eye className="h-4 w-4" />
                 User Insights
               </Link>
+              {canVerify && (
+                <button
+                  onClick={() => handleDropdownAction("verify", user)}
+                  className="w-full cursor-pointer text-left px-4 py-2 text-sm text-blue-600 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <Check className="h-4 w-4" />
+                  Verify User
+                </button>
+              )}
               <button
                 onClick={() =>
                   handleDropdownAction(
@@ -349,6 +362,229 @@ export default function UserManagement() {
             </div>
           </div>
         )}
+      </div>
+    );
+  };
+  const VerificationModal = ({ isOpen, user, onClose, onConfirm }) => {
+    const [verificationType, setVerificationType] = useState("email");
+    const [modalLoading, setModalLoading] = useState(false);
+
+    if (!isOpen || !user) return null;
+
+    const handleVerification = async () => {
+      setModalLoading(true);
+      try {
+        const response = await fetch(`${URL}/api/user/verify/${user.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            verificationType: verificationType,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Update the user verification status in state
+          setUsers((prevUsers) =>
+            prevUsers.map((u) =>
+              u.id === user.id
+                ? {
+                    ...u,
+                    ...(verificationType === "email"
+                      ? { email_verified: true }
+                      : {
+                          seller_verified: true,
+                          seller_approval_status: "approved",
+                        }),
+                  }
+                : u
+            )
+          );
+
+          toast.success(
+            `User ${verificationType} verification completed successfully`
+          );
+          onClose();
+        } else {
+          toast.error(data.message || "Failed to verify user");
+        }
+      } catch (error) {
+        console.error("Error verifying user:", error);
+        toast.error("Error verifying user");
+      } finally {
+        setModalLoading(false);
+      }
+    };
+
+    const canVerifyEmail = !user.email_verified;
+    const canVerifySeller = user.role === "seller" && !user.seller_verified;
+    const hasVerificationOptions = canVerifyEmail || canVerifySeller;
+
+    // If no verification options available
+    if (!hasVerificationOptions) {
+      return (
+        <div className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center mb-4">
+                <Check className="h-5 w-5 sm:h-6 sm:w-6 mr-3 text-green-500 flex-shrink-0" />
+                <h3 className="text-lg font-semibold">User Already Verified</h3>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-700 text-sm sm:text-base">
+                  This user has already been verified for all applicable
+                  verification types.
+                </p>
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <span className="text-sm text-gray-600">
+                      Email: {user.email_verified ? "Verified" : "Not Verified"}
+                    </span>
+                  </div>
+                  {user.role === "seller" && (
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span className="text-sm text-gray-600">
+                        Seller:{" "}
+                        {user.seller_verified ? "Verified" : "Not Verified"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+          <div className="p-4 sm:p-6">
+            <div className="flex items-center mb-4">
+              <Check className="h-5 w-5 sm:h-6 sm:w-6 mr-3 text-green-500 flex-shrink-0" />
+              <h3 className="text-lg font-semibold">Verify User</h3>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-700 mb-4 text-sm sm:text-base">
+                Select the type of verification to apply to this user:
+              </p>
+
+              {/* Verification Type Selection */}
+              <div className="space-y-3">
+                {canVerifyEmail && (
+                  <label className="flex items-start sm:items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="verificationType"
+                      value="email"
+                      checked={verificationType === "email"}
+                      onChange={(e) => setVerificationType(e.target.value)}
+                      className="text-blue-600 mt-1 sm:mt-0 flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900 text-sm sm:text-base">
+                        Email Verification
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-500 break-words">
+                        Mark the user's email address as verified
+                      </div>
+                    </div>
+                    <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
+                  </label>
+                )}
+
+                {canVerifySeller && (
+                  <label className="flex items-start sm:items-center gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="verificationType"
+                      value="seller"
+                      checked={verificationType === "seller"}
+                      onChange={(e) => setVerificationType(e.target.value)}
+                      className="text-blue-600 mt-1 sm:mt-0 flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900 text-sm sm:text-base">
+                        Seller Verification
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-500 break-words">
+                        Approve the seller's account and business details
+                      </div>
+                    </div>
+                    <Building className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 flex-shrink-0" />
+                  </label>
+                )}
+              </div>
+
+              {/* Verification Details */}
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2 text-sm sm:text-base">
+                  {verificationType === "email"
+                    ? "Email Verification"
+                    : "Seller Verification"}{" "}
+                  Details:
+                </h4>
+                <ul className="text-xs sm:text-sm text-blue-800 space-y-1">
+                  {verificationType === "email" ? (
+                    <>
+                      <li>• User's email will be marked as verified</li>
+                      <li>
+                        • User will gain access to email-verified features
+                      </li>
+                      <li>• This action cannot be undone easily</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>• Seller account will be approved and verified</li>
+                      <li>• Seller Products will be marked as verified</li>
+                      <li>
+                        • Seller approval status will be set to "approved"
+                      </li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <button
+                onClick={onClose}
+                disabled={modalLoading}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors order-2 sm:order-1 md:w-1/2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleVerification}
+                disabled={modalLoading}
+                className="px-4 py-2 rounded-md text-white bg-green-500 hover:bg-green-600 disabled:opacity-50 transition-colors order-1 sm:order-2 md:w-1/2"
+              >
+                {modalLoading
+                  ? "Processing..."
+                  : `Verify ${
+                      verificationType === "email" ? "Email" : "Seller"
+                    }`}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -870,6 +1106,15 @@ export default function UserManagement() {
         user={selectedUser}
         onClose={() => {
           setShowActionModal(false);
+          setSelectedUser(null);
+        }}
+        onConfirm={handleToggleUserStatus}
+      />
+      <VerificationModal
+        isOpen={showVerificationModal}
+        user={selectedUser}
+        onClose={() => {
+          setShowVerificationModal(false);
           setSelectedUser(null);
         }}
         onConfirm={handleToggleUserStatus}

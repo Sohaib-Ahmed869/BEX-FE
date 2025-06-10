@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ShoppingCart, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import {
+  ShoppingCart,
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Star,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { addToCart } from "../../../store/cart-actions";
 import {
@@ -309,13 +315,21 @@ const ProductItem = ({ product }) => {
             {product.category}
           </span>
         </div>
-
         {/* Bottom left - verified badge */}
-        <div className="absolute bottom-3 left-3">
-          <span className=" text-[#F47458] border-1 border-[#F47458] text-xs font-semibold px-2.5 py-1 rounded-full flex items-center shadow-sm backdrop-blur-sm">
-            Verified ✓
-          </span>
-        </div>
+        {product.is_verified && (
+          <div className="absolute bottom-3 left-3">
+            <span className=" text-[#F47458] border-1 border-[#F47458] text-xs font-semibold px-2.5 py-1 rounded-full flex items-center shadow-sm backdrop-blur-sm">
+              Verified ✓
+            </span>
+          </div>
+        )}
+        {product.is_featured && (
+          <div className="absolute bottom-3 right-3">
+            <span className=" text-[#F47458] border-1 border-[#F47458] text-xs font-semibold px-2.5 py-1 rounded-full flex items-center shadow-sm backdrop-blur-sm">
+              <Star size={16} className="mr-1" /> Featured
+            </span>
+          </div>
+        )}
 
         {/* Wishlist Heart Icon - Top Right */}
         <button

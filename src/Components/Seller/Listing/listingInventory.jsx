@@ -7,6 +7,7 @@ import {
   Trash,
   Menu,
   X,
+  Flag,
 } from "lucide-react";
 import SellerHeader from "../sellerHeader/page";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -50,7 +51,7 @@ export default function ListingInventoryProducts() {
     setLoading(true);
     try {
       const response = await fetchListingSpecificProducts(listingId);
-
+      console.log(response);
       if (response.success) {
         setAllProducts(response.data);
       } else {
@@ -302,8 +303,11 @@ export default function ListingInventoryProducts() {
                           <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                             {rowNumber}
                           </td>
-                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                          <td className="py-3 flex items-center gap-1 px-4 border-r border-gray-100 text-gray-600">
                             {product.title}
+                            {product.is_flagged && (
+                              <Flag className="h-4 w-4 text-red-500" />
+                            )}
                           </td>
                           <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                             {product.id.substring(0, 6)}

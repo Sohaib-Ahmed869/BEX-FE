@@ -8,6 +8,7 @@ import { Bounce, toast, ToastContainer } from "react-toastify";
 import MediaViewComponent from "./ViewProductComponents/viewProductImages";
 import ProductInfoViewComponent from "./ViewProductComponents/viewProductDescription";
 import ProductSpecifications from "./ViewProductComponents/viewProductSpecs";
+import FlaggingDetails from "./ViewProductComponents/ViewFlaggingDetails";
 
 const ViewProduct = () => {
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,7 @@ const ViewProduct = () => {
     is_featured: false,
     is_active: true,
     specs: {},
+    flaggingDetails: {},
   });
   useEffect(() => {
     console.log("updates", formData);
@@ -88,9 +90,11 @@ const ViewProduct = () => {
           is_featured: data.is_featured || false,
           is_active: data.is_active || true,
           specifications: data.specifications || {},
+          is_flagged: data.is_flagged,
           expiration_date: data.expiration_date,
           created_at: data.created_at,
           updated_at: data.updated_at,
+          flaggingDetails: data.flaggingDetails || {},
         });
 
         setAddedToListing(data.list_for_selling);
@@ -400,6 +404,18 @@ const ViewProduct = () => {
             >
               Media
             </button>
+            {formData.is_flagged && (
+              <button
+                className={`px-6 py-3 text-sm font-medium ${
+                  activeTab === "Flagging Details"
+                    ? "border-b-2 border-[#FCE1CD] bg-white text-black"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+                onClick={() => setActiveTab("Flagging Details")}
+              >
+                Flagging Details
+              </button>
+            )}
           </div>
 
           {/* Content based on active tab */}
@@ -412,6 +428,9 @@ const ViewProduct = () => {
                 specifications={formData?.specifications}
               />
             </>
+          )}
+          {activeTab === "Flagging Details" && (
+            <FlaggingDetails flaggingDetails={formData.flaggingDetails} />
           )}
           {activeTab === "retipping" &&
             formData.category === "Core Drill Bits" && (
