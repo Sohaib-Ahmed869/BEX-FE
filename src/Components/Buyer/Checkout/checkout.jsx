@@ -240,6 +240,8 @@ const CheckoutForm = ({
                 id: result.paymentIntent.id,
                 amount: total,
                 status: "completed",
+                commissionFee: commissionFee,
+                tax: tax,
               },
             }),
           }
