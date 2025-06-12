@@ -40,6 +40,7 @@ import SellerOrderItems from "./Components/Seller/Orders/viewOrderDetails";
 import useGlobalSocket from "./hooks/MessageSocketHook";
 import { useEffect } from "react";
 import BuyerDisputesPage from "./Components/Buyer/Disputes/page";
+import UserPermissionsDashboard from "./Components/Admin/UserPermissions/page";
 
 const AppWithSocket = () => {
   // Initialize global socket connection
@@ -184,6 +185,7 @@ const AppWithSocket = () => {
         <Route path="products/view/:id" element={<ViewProduct />} />
         <Route path="commission" element={<CommissionManagement />} />
         <Route path="disputes" element={<OrderDisputes />} />
+        <Route path="settings" element={<UserPermissionsDashboard />} />
       </Route>
     </Routes>
   );
