@@ -395,7 +395,7 @@ export default function NewProduct() {
         description: false,
         media: false,
       });
-      navigate("/product-list");
+      navigate("/seller/product-list");
     }
   };
 
@@ -493,7 +493,7 @@ export default function NewProduct() {
       if (response.success) {
         toast.success("Product successfully added!");
         setIsLoading(false);
-        navigate("/product-list");
+        navigate("/seller/product-list");
         // navigate("/products");
       } else {
         toast.error(response.error?.message || "Failed to add product");
@@ -619,7 +619,7 @@ export default function NewProduct() {
         <h1 className="text-3xl font-medium mb-2">Add Inventory</h1>
         <div className="text-sm text-gray-500 mb-6">
           <Link
-            to="/listing"
+            to="/seller/listing"
             className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
           >
             <span>Product list /</span>{" "}

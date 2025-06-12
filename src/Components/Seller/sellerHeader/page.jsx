@@ -35,7 +35,7 @@ const SellerHeader = () => {
           {/* Notification Icons */}
           <div className="flex items-center gap-2">
             <Link
-              to={"/chats"}
+              to={"/seller/chats"}
               className="relative bg-white p-1.5 sm:p-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 group"
             >
               <Bell

@@ -57,7 +57,7 @@ const useGoogleAuth = () => {
       if (userData.role === "buyer") {
         navigate("/products");
       } else if (userData.role === "seller") {
-        navigate("/dashboard");
+        navigate("/seller/dashboard");
       }
     } catch (error) {
       toast.error("Failed to get user information");

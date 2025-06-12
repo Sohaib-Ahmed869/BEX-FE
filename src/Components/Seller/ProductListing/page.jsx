@@ -218,7 +218,7 @@ export default function ProductList() {
                 No Inventory found. Create your first listing and add inventory.
               </p>
               <Link
-                to={"/listing/add"}
+                to={"/seller/listing/add"}
                 className="mt-4 px-4 py-2 inline-block bg-[#F47458] text-white rounded-md hover:bg-[#ee6a4c] transition-colors text-sm sm:text-base"
               >
                 Add Listing
@@ -322,14 +322,14 @@ export default function ProductList() {
                               <Link
                                 className="p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
                                 title="View Product"
-                                to={`/product-list/view/${product.id}`}
+                                to={`/seller/product-list/view/${product.id}`}
                               >
                                 <ArrowUpRight className="h-4 w-4" />
                               </Link>
                               <Link
                                 className="p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
                                 title="Edit Product"
-                                to={`/product-list/edit/${product.id}`}
+                                to={`/seller/product-list/edit/${product.id}`}
                               >
                                 <Pencil className="h-4 w-4" />
                               </Link>
@@ -431,14 +431,14 @@ export default function ProductList() {
                           <Link
                             className="flex-1 sm:flex-none p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200 text-center"
                             title="View Product"
-                            to={`/product-list/view/${product.id}`}
+                            to={`/seller/product-list/view/${product.id}`}
                           >
                             <ArrowUpRight className="h-4 w-4 mx-auto" />
                           </Link>
                           <Link
                             className="flex-1 sm:flex-none p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200 text-center"
                             title="Edit Product"
-                            to={`/product-list/edit/${product.id}`}
+                            to={`/seller/product-list/edit/${product.id}`}
                           >
                             <Pencil className="h-4 w-4 mx-auto" />
                           </Link>

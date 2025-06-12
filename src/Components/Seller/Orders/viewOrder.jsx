@@ -128,7 +128,7 @@ const SellerOrderDetailsPage = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="text-sm ml-6 text-gray-500 mb-6">
               <Link
-                to="/orders"
+                to="/seller/orders"
                 className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
               >
                 <span>Orders /</span>{" "}

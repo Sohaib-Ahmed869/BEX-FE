@@ -345,7 +345,7 @@ const ViewProduct = () => {
       )}
       <div className="text-sm text-gray-500 mb-6">
         <Link
-          to={role === "admin" ? "/admin/products" : "/product-list"}
+          to={role === "admin" ? "/admin/products" : "/seller/product-list"}
           className=" hover:text-orange-500 transition-all ease-in-out duration-300 hover:ease-in-out"
         >
           <span>Product list /</span>{" "}

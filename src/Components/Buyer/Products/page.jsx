@@ -251,7 +251,7 @@ const Products = () => {
             <div className="flex items-center justify-between">
               <div className="text-base">
                 <div className="flex items-center my-2 ">
-                  <a href="/" className="text-gray-500 hover:text-gray-700">
+                  <a href="/home" className="text-gray-500 hover:text-gray-700">
                     Home
                   </a>
                   <span className="mx-2 text-gray-500">/</span>

@@ -57,32 +57,35 @@ export default function SideBar() {
       id: "dashboard",
       label: "Dashboard",
       icon: <RiHome7Fill size={24} />,
-      path: "/dashboard",
+      path: "/seller/dashboard",
     },
     {
       id: "inventory",
       label: "Inventory",
       icon: <BiPieChartAlt size={24} />,
-      path: "/product-list",
+      path: "/seller/product-list",
       childPaths: [
-        "/product-list/new",
-        "/product-list/edit/",
-        "/product-list/view/",
+        "/seller/product-list/new",
+        "/seller/product-list/edit/",
+        "/seller/product-list/view/",
       ],
     },
     {
       id: "product-list",
       label: "Product List",
       icon: <MdOutlineInventory2 size={24} />,
-      path: "/listing",
-      childPaths: ["/listing/inventory/", "/listing/addInventory/"],
+      path: "/seller/listing",
+      childPaths: [
+        "/seller/listing/inventory/",
+        "/seller/listing/addInventory/",
+      ],
     },
     {
       id: "orders",
       label: "Orders",
       icon: <ShoppingCart size={24} />,
-      path: "/orders",
-      childPaths: ["/orders/items/", "/orders/items/view"],
+      path: "/seller/orders",
+      childPaths: ["/seller/orders/items/", "/seller/orders/items/view"],
     },
   ];
 
@@ -91,19 +94,19 @@ export default function SideBar() {
       id: "messages",
       label: "Messages",
       icon: <MessageSquare size={24} />,
-      path: "/chats",
+      path: "/seller/chats",
     },
     {
       id: "settings",
       label: "Settings",
       icon: <IoSettingsSharp size={24} />,
-      path: "/settings",
+      path: "/seller/settings",
     },
     {
       id: "support",
       label: "Support",
       icon: <BsExclamationCircleFill size={23} />,
-      path: "/support",
+      path: "/seller/support",
     },
   ];
 

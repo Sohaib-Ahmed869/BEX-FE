@@ -217,7 +217,7 @@ export default function AddListing({ onSuccess, onCancel }) {
             </div>
             <div className="text-sm text-gray-500 my-3">
               <Link
-                to="/listing"
+                to="/seller/listing"
                 className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
               >
                 <span>Product listing /</span>{" "}
@@ -452,7 +452,7 @@ export default function AddListing({ onSuccess, onCancel }) {
               </button>
               <Link
                 type="button"
-                to="/listing"
+                to="/seller/listing"
                 className="px-8 py-4 border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 hover:shadow-lg transform hover:-translate-y-0.5"
               >
                 Cancel

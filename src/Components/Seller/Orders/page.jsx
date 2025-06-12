@@ -489,7 +489,7 @@ export default function Orders() {
                             <td className="py-3 px-4">
                               <div className="flex justify-center gap-2">
                                 <Link
-                                  to={`/orders/details/${order.orderItemId}`}
+                                  to={`/seller/orders/details/${order.orderItemId}`}
                                   className="p-2 border border-gray-200 rounded hover:bg-gray-100"
                                   title="View Order Details"
                                 >
@@ -618,7 +618,7 @@ export default function Orders() {
                         <div className="flex justify-between items-center">
                           <div className="flex gap-2">
                             <Link
-                              to={`/orders/details/${order.orderId}`}
+                              to={`/seller/orders/details/${order.orderId}`}
                               className="p-2 border border-gray-200 rounded hover:bg-gray-100"
                               title="View Order Details"
                             >

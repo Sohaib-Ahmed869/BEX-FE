@@ -222,7 +222,7 @@ export default function ListingInventoryProducts() {
         </h1>
         <div className="text-sm text-gray-500 mb-6">
           <Link
-            to="/listing"
+            to="/seller/listing"
             className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
           >
             <span>Product list /</span>{" "}
@@ -351,14 +351,14 @@ export default function ListingInventoryProducts() {
                               <Link
                                 className="p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
                                 title="View Product"
-                                to={`/product-list/view/${product.id}`}
+                                to={`/seller/product-list/view/${product.id}`}
                               >
                                 <ArrowUpRight className="h-4 w-4" />
                               </Link>
                               <Link
                                 className="p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200"
                                 title="Edit Product"
-                                to={`/product-list/edit/${product.id}`}
+                                to={`/seller/product-list/edit/${product.id}`}
                               >
                                 <Pencil className="h-4 w-4" />
                               </Link>
@@ -460,14 +460,14 @@ export default function ListingInventoryProducts() {
                           <Link
                             className="flex-1 sm:flex-none p-2 border bg-white border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200 text-center"
                             title="View Product"
-                            to={`/product-list/view/${product.id}`}
+                            to={`/seller/product-list/view/${product.id}`}
                           >
                             <ArrowUpRight className="h-4 w-4 mx-auto" />
                           </Link>
                           <Link
                             className="flex-1 sm:flex-none p-2 border border-gray-200 rounded hover:bg-gray-100 transition-colors duration-200 text-center"
                             title="Edit Product"
-                            to={`/product-list/edit/${product.id}`}
+                            to={`/seller/product-list/edit/${product.id}`}
                           >
                             <Pencil className="h-4 w-4 mx-auto" />
                           </Link>

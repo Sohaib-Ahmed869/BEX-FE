@@ -41,6 +41,7 @@ import useGlobalSocket from "./hooks/MessageSocketHook";
 import { useEffect } from "react";
 import BuyerDisputesPage from "./Components/Buyer/Disputes/page";
 import UserPermissionsDashboard from "./Components/Admin/UserPermissions/page";
+import LandingPage from "./Components/LandingPage/page";
 
 const AppWithSocket = () => {
   // Initialize global socket connection
@@ -48,6 +49,8 @@ const AppWithSocket = () => {
 
   return (
     <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<LandingPage />} />
       {/* Auth routes */}
       <Route
         path="/login"
@@ -67,7 +70,7 @@ const AppWithSocket = () => {
       />
       {/* Protected routes with SideBar as the parent layout */}
       <Route
-        path="/"
+        path="/seller"
         element={
           <TokenGuard>
             <SideBar />

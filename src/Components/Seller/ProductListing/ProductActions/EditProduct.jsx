@@ -383,7 +383,7 @@ const EditProduct = () => {
       console.log("Product updated:", result.data);
       setIsEditing(false);
       setLoading(false);
-      navigate("/product-list");
+      navigate("/seller/product-list");
     } else {
       // Handle error
       toast.error("Failed to update product");
@@ -1092,7 +1092,7 @@ const EditProduct = () => {
       )}
       <div className="text-sm text-gray-500 mb-6">
         <Link
-          to="/product-list"
+          to="/seller/product-list"
           className=" hover:text-orange-500 transition-all ease-in-out  hover:ease-in-out duration-300"
         >
           <span>Product list /</span>{" "}

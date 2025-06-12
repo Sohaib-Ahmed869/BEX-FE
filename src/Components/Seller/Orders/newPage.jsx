@@ -428,7 +428,7 @@ const SellerOrders = () => {
                             </td>
                             <td className="py-3 px-4">
                               <Link
-                                to={`/orders/items/${order.orderId}`}
+                                to={`/seller/orders/items/${order.orderId}`}
                                 className="p-2 inline-block border cursor-pointer border-gray-200 rounded hover:bg-gray-100"
                               >
                                 <Eye className="h-4 w-4" />
@@ -498,7 +498,7 @@ const SellerOrders = () => {
                             {formatCurrency(order.amounts.orderTotal)}
                           </div>
                           <Link
-                            to={`/orders/items/${order.orderId}`}
+                            to={`/seller/orders/items/${order.orderId}`}
                             className="p-2 inline-block border cursor-pointer border-gray-200 rounded hover:bg-gray-100"
                           >
                             <Eye className="h-4 w-4" />

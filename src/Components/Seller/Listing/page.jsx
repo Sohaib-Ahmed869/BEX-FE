@@ -206,7 +206,7 @@ export default function Listing() {
         </h1>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-between mb-6">
           <Link
-            to={"/listing/add"}
+            to={"/seller/listing/add"}
             className="group flex items-center justify-center w-full sm:w-auto sm:min-w-[240px] lg:w-60 bg-white gap-2 px-4 py-3 sm:py-2.5 lg:py-3 border border-[#F47458] rounded-md cursor-pointer text-[#F47458] hover:bg-[#F47458] hover:text-white transition-all duration-300 ease-in-out"
           >
             <Plus className="h-4 w-4 text-[#F47458] group-hover:text-white transition-colors duration-300" />
@@ -231,7 +231,7 @@ export default function Listing() {
               <div className="text-center py-10">
                 <p className="text-gray-500 mb-4">No listings found</p>
                 <Link
-                  to={"/listing/add"}
+                  to={"/seller/listing/add"}
                   className="px-4 py-2 bg-[#f47458] text-white rounded hover:bg-[e0e0e0] transition-all duration-300 ease-in-out"
                 >
                   Add New Listing +
@@ -394,13 +394,13 @@ export default function Listing() {
                             <td className="py-3 px-4 flex justify-end">
                               <div className="flex justify-center gap-2">
                                 <Link
-                                  to={`/listing/inventory/${listing.id}`}
+                                  to={`/seller/listing/inventory/${listing.id}`}
                                   className="p-2 border border-gray-200 rounded hover:bg-gray-100"
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Link>
                                 <Link
-                                  to={`/listing/addInventory/${listing.id}`}
+                                  to={`/seller/listing/addInventory/${listing.id}`}
                                   className={`p-2 border border-gray-200 rounded hover:bg-gray-100 ${
                                     !listing.Product_Name
                                       ? "pointer-events-none opacity-50"
@@ -528,13 +528,13 @@ export default function Listing() {
                           </span>
                           <div className="flex gap-2">
                             <Link
-                              to={`/listing/inventory/${listing.id}`}
+                              to={`/seller/listing/inventory/${listing.id}`}
                               className="p-2 border border-gray-200 rounded hover:bg-gray-100"
                             >
                               <Eye className="h-4 w-4" />
                             </Link>
                             <Link
-                              to={`/listing/addInventory/${listing.id}`}
+                              to={`/seller/listing/addInventory/${listing.id}`}
                               className={`p-2 border border-gray-200 rounded hover:bg-gray-100 ${
                                 !listing.Product_Name
                                   ? "pointer-events-none opacity-50"

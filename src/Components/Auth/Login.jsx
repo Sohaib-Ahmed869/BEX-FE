@@ -42,7 +42,7 @@ const Login = () => {
       if (response.user.role === "buyer") {
         navigate("/products");
       } else if (response.user.role === "seller") {
-        navigate("/dashboard");
+        navigate("/seller/dashboard");
       } else if (response.user.role === "admin") {
         navigate("/admin/dashboard");
       }

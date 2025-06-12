@@ -190,7 +190,7 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
                   </button>
                   {role === "seller" && (
                     <button
-                      onClick={() => navigate("/dashboard")}
+                      onClick={() => navigate("/seller/dashboard")}
                       className="px-4 py-2 block w-full text-sm text-left text-gray-700 hover:bg-gray-100 cursor-pointer"
                     >
                       Seller Dashboard
@@ -376,7 +376,7 @@ export default function BuyerHeader({ toggleCart, toggleWishlist }) {
                 {role === "seller" && (
                   <motion.button
                     onClick={() => {
-                      navigate("/dashboard");
+                      navigate("/seller/dashboard");
                       setIsMobileMenuOpen(false);
                     }}
                     className="flex items-center justify-between w-full py-3 px-2 rounded-lg hover:bg-gray-50 cursor-pointer"

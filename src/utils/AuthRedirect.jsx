@@ -7,7 +7,8 @@ const AuthRedirect = ({ children }) => {
 
   if (token) {
     // Redirect based on user role
-    const redirectPath = role === "seller" ? "/product-list" : "/products";
+    const redirectPath =
+      role === "seller" ? "/seller/product-list" : "/products";
     return <Navigate to={redirectPath} replace />;
   }
 
