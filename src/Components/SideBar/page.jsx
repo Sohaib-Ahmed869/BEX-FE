@@ -8,13 +8,16 @@ import logo from "../../assets/logo.png";
 import { useNavigate, Link, useLocation, Outlet } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 export default function SideBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-
+  const unreadMessagesCount = useSelector(
+    (state) => state.unreadMessages.totalUnreadCount
+  );
   // Check if screen is mobile size
   useEffect(() => {
     const checkScreenSize = () => {
@@ -93,7 +96,22 @@ export default function SideBar() {
     {
       id: "messages",
       label: "Messages",
-      icon: <MessageSquare size={24} />,
+      icon: (
+        <span className="relative">
+          <MessageSquare size={24} />
+          {unreadMessagesCount > 0 && (
+            <span
+              className={`absolute top-[-10px] left-4 w-6 h-6 animate-bounce rounded-full flex items-center justify-center text-xs ${
+                window.location.pathname === "/seller/chats"
+                  ? "bg-gray-100 text-black "
+                  : "bg-[#f47459] text-white"
+              }`}
+            >
+              {unreadMessagesCount}
+            </span>
+          )}
+        </span>
+      ),
       path: "/seller/chats",
     },
     {

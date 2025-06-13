@@ -15,6 +15,7 @@ import CubeLoader from "../../../utils/cubeLoader";
 import SellerHeader from "../sellerHeader/page";
 import { Link } from "react-router-dom";
 import PricingGuidanceModal from "../ProductListing/ProductActions/pricingGuidanceModal";
+import EditListingModal from "./editListingModal";
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 export default function Listing() {
@@ -30,7 +31,9 @@ export default function Listing() {
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImages, setModalImages] = useState([]);
   const [modalCurrentIndex, setModalCurrentIndex] = useState(0);
-
+  // Add these to your existing state declarations
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState(null);
   const userId = localStorage.getItem("userId");
 
   // Calculate pagination values
@@ -39,7 +42,22 @@ export default function Listing() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentListings = listings.slice(startIndex, endIndex);
+  // Function to open edit modal
+  const openEditModal = (listing) => {
+    setSelectedListing(listing);
+    setIsEditModalOpen(true);
+  };
 
+  // Function to close edit modal
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedListing(null);
+  };
+
+  // Function to handle listing update
+  const handleListingUpdate = () => {
+    fetchListings(); // Refresh the listings
+  };
   // Fetch listings from API
   const fetchListings = async () => {
     setLoading(true);
@@ -257,11 +275,9 @@ export default function Listing() {
                           Manufacturer
                         </th>
                         <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
-                          Stock
+                          Inventory
                         </th>
-                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
-                          Status
-                        </th>
+
                         <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
                           Images
                         </th>
@@ -296,7 +312,10 @@ export default function Listing() {
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                               <div>
                                 <div className="font-medium text-gray-900">
-                                  {listing.Product_Name}
+                                  <span className="capitalize">
+                                    {" "}
+                                    {listing.Product_Name}
+                                  </span>
                                 </div>
                                 {listing.Description && (
                                   <div className="text-sm text-gray-500 truncate max-w-[200px]">
@@ -314,13 +333,7 @@ export default function Listing() {
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                               {listing.Stock}
                             </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
-                              <span
-                                className={`px-2 py-1 rounded text-sm font-medium ${stockStatus.className}`}
-                              >
-                                {stockStatus.text}
-                              </span>
-                            </td>
+
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                               <div className="flex gap-1 items-center">
                                 {hasImages ? (
@@ -393,6 +406,12 @@ export default function Listing() {
                             </td>
                             <td className="py-3 px-4 flex justify-end">
                               <div className="flex justify-center gap-2">
+                                <button
+                                  className="p-2 border border-gray-200 rounded hover:bg-gray-100"
+                                  onClick={() => openEditModal(listing)}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </button>
                                 <Link
                                   to={`/seller/listing/inventory/${listing.id}`}
                                   className="p-2 border border-gray-200 rounded hover:bg-gray-100"
@@ -434,18 +453,13 @@ export default function Listing() {
                       >
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex-1">
-                            <h3 className="font-medium text-gray-900">
+                            <h3 className="font-medium text-gray-900 capitalize">
                               {listing.Product_Name}
                             </h3>
                             <p className="text-sm text-gray-500">
                               {listing.Category}
                             </p>
                           </div>
-                          <span
-                            className={`px-2 py-1 rounded text-sm font-medium ${stockStatus.className}`}
-                          >
-                            {stockStatus.text}
-                          </span>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-sm mb-3">
@@ -456,7 +470,7 @@ export default function Listing() {
                             </p>
                           </div>
                           <div>
-                            <span className="text-gray-500">Stock:</span>
+                            <span className="text-gray-500">Inventory:</span>
                             <p className="text-gray-900">{listing.Stock}</p>
                           </div>
                         </div>
@@ -527,6 +541,12 @@ export default function Listing() {
                             {new Date(listing.created_at).toLocaleDateString()}
                           </span>
                           <div className="flex gap-2">
+                            <button
+                              className="p-2 border border-gray-200 rounded hover:bg-gray-100"
+                              onClick={() => openEditModal(listing)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
                             <Link
                               to={`/seller/listing/inventory/${listing.id}`}
                               className="p-2 border border-gray-200 rounded hover:bg-gray-100"
@@ -664,7 +684,15 @@ export default function Listing() {
           </div>
         </div>
       )}
-
+      {/* Add this before the closing </div> of your main component */}
+      {isEditModalOpen && (
+        <EditListingModal
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          listing={selectedListing}
+          onUpdate={handleListingUpdate}
+        />
+      )}
       {showPricingModal && (
         <PricingGuidanceModal
           isOpen={showPricingModal}

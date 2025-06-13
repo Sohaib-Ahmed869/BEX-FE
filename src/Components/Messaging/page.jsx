@@ -655,6 +655,89 @@ const MessagingComponent = () => {
         });
 
         // FIXED: Single state update for new messages to prevent unread count override
+        // socket.on("new_message", (data) => {
+        //   const { message, chatId } = data;
+
+        //   console.log("New message received:", {
+        //     chatId,
+        //     message,
+        //     selectedChatId: selectedChat?.id,
+        //   });
+
+        //   // Update chats state with proper unread count logic
+        //   setChats((prevChats) => {
+        //     return prevChats
+        //       .map((chat) => {
+        //         if (chat.id === chatId) {
+        //           // Check if this chat is currently selected AND visible
+        //           const isChatCurrentlySelected =
+        //             selectedChat && selectedChat.id === chatId;
+
+        //           // Only increment unread count if:
+        //           // 1. Chat is not currently selected, AND
+        //           // 2. Message is not from current user
+        //           const shouldIncrementUnread =
+        //             !isChatCurrentlySelected &&
+        //             message.sender_id !== currentUser.id;
+        //           if (shouldIncrementUnread) {
+        //             dispatch(
+        //               unreadMessagesActions.incrementChatUnreadCount({
+        //                 chatId,
+        //                 increment: 1,
+        //               })
+        //             );
+        //           }
+        //           const newUnreadCount = shouldIncrementUnread
+        //             ? (chat.unread_count || 0) + 1 // INCREMENT by 1, don't keep same value
+        //             : chat.unread_count || 0;
+
+        //           console.log(`Chat ${chatId} unread update:`, {
+        //             isChatCurrentlySelected,
+        //             shouldIncrementUnread,
+        //             oldCount: chat.unread_count || 0,
+        //             newCount: newUnreadCount,
+        //             messageFromCurrentUser:
+        //               message.sender_id === currentUser.id,
+        //           });
+
+        //           return {
+        //             ...chat,
+        //             last_message: message.message,
+        //             last_message_at: message.created_at,
+        //             unread_count: newUnreadCount,
+        //           };
+        //         }
+        //         return chat;
+        //       })
+        //       .sort(
+        //         (a, b) =>
+        //           new Date(b.last_message_at) - new Date(a.last_message_at)
+        //       );
+        //   });
+
+        //   // Add message to current chat if it's selected
+        //   if (selectedChat && selectedChat.id === chatId) {
+        //     setMessages((prev) => [...prev, message]);
+
+        //     // Mark as read immediately if chat is active and message is not from current user
+        //     if (message.sender_id !== currentUser.id) {
+        //       setTimeout(() => {
+        //         socket.emit("mark_messages_read", { chatId });
+        //       }, 100);
+        //     }
+        //   }
+        // });
+        const sortChats = (chats) => {
+          return chats.sort((a, b) => {
+            // Get the timestamp to compare for each chat
+            // Use last_message_at if available, otherwise use created_at
+            const timestampA = a.last_message_at || a.created_at;
+            const timestampB = b.last_message_at || b.created_at;
+
+            // Sort in descending order (newest first)
+            return new Date(timestampB) - new Date(timestampA);
+          });
+        };
         socket.on("new_message", (data) => {
           const { message, chatId } = data;
 
@@ -666,53 +749,52 @@ const MessagingComponent = () => {
 
           // Update chats state with proper unread count logic
           setChats((prevChats) => {
-            return prevChats
-              .map((chat) => {
-                if (chat.id === chatId) {
-                  // Check if this chat is currently selected AND visible
-                  const isChatCurrentlySelected =
-                    selectedChat && selectedChat.id === chatId;
+            const updatedChats = prevChats.map((chat) => {
+              if (chat.id === chatId) {
+                // Check if this chat is currently selected AND visible
+                const isChatCurrentlySelected =
+                  selectedChat && selectedChat.id === chatId;
 
-                  // Only increment unread count if:
-                  // 1. Chat is not currently selected, AND
-                  // 2. Message is not from current user
-                  const shouldIncrementUnread =
-                    !isChatCurrentlySelected &&
-                    message.sender_id !== currentUser.id;
-                  if (shouldIncrementUnread) {
-                    dispatch(
-                      unreadMessagesActions.incrementChatUnreadCount({
-                        chatId,
-                        increment: 1,
-                      })
-                    );
-                  }
-                  const newUnreadCount = shouldIncrementUnread
-                    ? (chat.unread_count || 0) + 1 // INCREMENT by 1, don't keep same value
-                    : chat.unread_count || 0;
+                // Only increment unread count if:
+                // 1. Chat is not currently selected, AND
+                // 2. Message is not from current user
+                const shouldIncrementUnread =
+                  !isChatCurrentlySelected &&
+                  message.sender_id !== currentUser.id;
 
-                  console.log(`Chat ${chatId} unread update:`, {
-                    isChatCurrentlySelected,
-                    shouldIncrementUnread,
-                    oldCount: chat.unread_count || 0,
-                    newCount: newUnreadCount,
-                    messageFromCurrentUser:
-                      message.sender_id === currentUser.id,
-                  });
-
-                  return {
-                    ...chat,
-                    last_message: message.message,
-                    last_message_at: message.created_at,
-                    unread_count: newUnreadCount,
-                  };
+                if (shouldIncrementUnread) {
+                  // dispatch(
+                  //   unreadMessagesActions.incrementChatUnreadCount({
+                  //     chatId,
+                  //     increment: 1,
+                  //   })
+                  // );
                 }
-                return chat;
-              })
-              .sort(
-                (a, b) =>
-                  new Date(b.last_message_at) - new Date(a.last_message_at)
-              );
+
+                const newUnreadCount = shouldIncrementUnread
+                  ? (chat.unread_count || 0) + 1
+                  : chat.unread_count || 0;
+
+                console.log(`Chat ${chatId} unread update:`, {
+                  isChatCurrentlySelected,
+                  shouldIncrementUnread,
+                  oldCount: chat.unread_count || 0,
+                  newCount: newUnreadCount,
+                  messageFromCurrentUser: message.sender_id === currentUser.id,
+                });
+
+                return {
+                  ...chat,
+                  last_message: message.message,
+                  last_message_at: message.created_at,
+                  unread_count: newUnreadCount,
+                };
+              }
+              return chat;
+            });
+
+            // Apply the improved sorting
+            return sortChats(updatedChats);
           });
 
           // Add message to current chat if it's selected
@@ -836,6 +918,45 @@ const MessagingComponent = () => {
   }, [selectedChat, currentUser.id]);
 
   // Fetch user's chats
+  // const fetchChats = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const token = localStorage.getItem("token");
+  //     const URL = import.meta.env.VITE_REACT_BACKEND_URL;
+
+  //     const response = await fetch(`${URL}/api/chat/${currentUser.id}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       console.log("Chats fetched:", data.chats);
+  //       setChats(data.chats);
+  //     } else if (response.status === 401) {
+  //       console.error("Unauthorized access - token may be expired");
+  //     } else {
+  //       console.error("Failed to fetch chats");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching chats:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  const sortChats = (chats) => {
+    return chats.sort((a, b) => {
+      // Get the timestamp to compare for each chat
+      // Use last_message_at if available, otherwise use created_at
+      const timestampA = a.last_message_at || a.created_at;
+      const timestampB = b.last_message_at || b.created_at;
+
+      // Sort in descending order (newest first)
+      return new Date(timestampB) - new Date(timestampA);
+    });
+  };
   const fetchChats = async () => {
     try {
       setLoading(true);
@@ -852,7 +973,10 @@ const MessagingComponent = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("Chats fetched:", data.chats);
-        setChats(data.chats);
+
+        // Apply sorting before setting state
+        const sortedChats = sortChats(data.chats);
+        setChats(sortedChats);
       } else if (response.status === 401) {
         console.error("Unauthorized access - token may be expired");
       } else {
@@ -864,7 +988,6 @@ const MessagingComponent = () => {
       setLoading(false);
     }
   };
-
   // Fetch messages for selected chat - DON'T clear unread count immediately
   const fetchMessages = async (chatId) => {
     try {

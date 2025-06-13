@@ -68,6 +68,18 @@ const useGlobalSocket = () => {
           );
         });
 
+        socket.on("new_message", (data) => {
+          const { chatId, message } = data;
+          console.log("New message globally:", { chatId, message });
+
+          // Only increment unread count if the message is from someone else
+          if (message.sender_id !== currentUser.id) {
+            dispatch(
+              unreadMessagesActions.incrementChatUnreadCount({ chatId })
+            );
+          }
+        });
+
         socket.on("error", (error) => {
           console.error("Global socket error:", error);
           dispatch(unreadMessagesActions.setError(error.message));

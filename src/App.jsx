@@ -7,7 +7,6 @@ import Dashboard from "./Components/Seller/Dashboard/page";
 import Inventory from "./Components/Seller/Inventory/page";
 import ProductList from "./Components/Seller/ProductListing/page";
 import Orders from "./Components/Seller/Orders/page";
-import Messages from "./Components/Seller/Messages/pages";
 import Settings from "./Components/Seller/Settings/page";
 import Support from "./Components/Seller/Support/Support";
 import { Navigate } from "react-router-dom";
@@ -45,6 +44,7 @@ import LandingPage from "./Components/LandingPage/page";
 
 const AppWithSocket = () => {
   // Initialize global socket connection
+
   useGlobalSocket();
 
   return (

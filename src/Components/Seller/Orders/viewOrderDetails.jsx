@@ -45,7 +45,9 @@ export default function SellerOrderItems() {
   const fetchOrderData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${URL}/api/orders/${orderId}/items`);
+      const response = await fetch(
+        `${URL}/api/orders/${orderId}/sellers/${userId}/items`
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -393,8 +395,10 @@ export default function SellerOrderItems() {
           <div className="flex items-center gap-3">
             <DollarSign className="h-8 w-8 text-[#F47458]" />
             <div>
-              <p className="text-sm text-gray-500">Total Amount</p>
-              <p className="font-medium">${orderInfo.totalAmount.toFixed(2)}</p>
+              <p className="text-sm text-gray-500"> Total Amount</p>
+              <p className="font-medium">
+                ${summary.totalAmount + orderInfo.platformFee}
+              </p>
             </div>
           </div>
         </div>
@@ -869,7 +873,7 @@ export default function SellerOrderItems() {
           <div className="flex justify-between border-t border-gray-300 pt-2">
             <span className="text-gray-900 font-medium">Total:</span>
             <span className="font-bold text-lg">
-              ${orderInfo.totalAmount.toFixed(2)}
+              ${summary.totalAmount + orderInfo.platformFee}
             </span>
           </div>
         </div>

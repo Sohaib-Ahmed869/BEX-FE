@@ -45,7 +45,7 @@ const unreadMessagesSlice = createSlice({
     incrementChatUnreadCount(state, action) {
       const { chatId, increment = 1 } = action.payload;
       const currentCount = state.chatUnreadCounts[chatId] || 0;
-      state.chatUnreadCounts[chatId] = currentCount + increment;
+      state.chatUnreadCounts[chatId] = currentCount + 1;
 
       // Update total count
       state.totalUnreadCount += increment;
