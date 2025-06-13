@@ -6,7 +6,7 @@ const DrillServiceSelector = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   return (
-    <div className="flex gap-6 p-8  py-30 items-center justify-center">
+    <div className="flex  flex-wrap gap-y-10 gap-6 p-8  py-30 items-center justify-center">
       {/* Looking for a Drill Card */}
       <div
         className={`relative  rounded-2xl p-8 w-80 h-66 transition-all duration-300 ease-out cursor-pointer ${

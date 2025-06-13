@@ -9,6 +9,7 @@ import {
   Heart,
 } from "lucide-react";
 import ProductDetailModal from "./productDetailModal";
+const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState([]);
@@ -21,35 +22,34 @@ const FeaturedProducts = () => {
   const [autoSlideInterval, setAutoSlideInterval] = useState(null);
 
   // Fetch products from API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/products/getFeaturedProducts"
-        );
-        const data = await response.json();
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${URL}/api/products/getFeaturedProducts`);
+      const data = await response.json();
 
-        if (data.success) {
-          setProducts(data.data);
-          // Initialize image indexes for each product
-          const initialIndexes = {};
-          data.data.forEach((product) => {
-            initialIndexes[product.id] = 0;
-          });
-          setImageIndexes(initialIndexes);
-        } else {
-          setError("Failed to fetch products");
-        }
-      } catch (err) {
-        setError("Error fetching products: " + err.message);
-      } finally {
-        setLoading(false);
+      if (data.success) {
+        setProducts(data.data);
+        // Initialize image indexes for each product
+        const initialIndexes = {};
+        data.data.forEach((product) => {
+          initialIndexes[product.id] = 0;
+        });
+        setImageIndexes(initialIndexes);
+      } else {
+        setError("Failed to fetch products");
       }
-    };
-
+    } catch (err) {
+      setError("Error fetching products: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchProducts();
   }, []);
-
+  useEffect(() => {
+    fetchProducts();
+  }, [error]);
   // Auto-slide functionality
   useEffect(() => {
     if (products.length > 4) {
@@ -144,11 +144,7 @@ const FeaturedProducts = () => {
   }
 
   if (error) {
-    return (
-      <div className="text-center py-8 text-red-500">
-        Error loading products
-      </div>
-    );
+    return <div className="text-center py-8 text-red-500"></div>;
   }
 
   const maxSlide = Math.max(0, products.length - 4);
