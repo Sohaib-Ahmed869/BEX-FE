@@ -9,8 +9,10 @@ import { MdOutlineShoppingBag } from "react-icons/md";
 import { Search, SlidersHorizontal } from "lucide-react";
 import ShoppingCart from "../Cart/cart";
 import WishlistModal from "../wishlist/wishlistModal";
+import useGlobalSocket from "../../../hooks/MessageSocketHook";
 
 const Products = () => {
+  useGlobalSocket();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(false);

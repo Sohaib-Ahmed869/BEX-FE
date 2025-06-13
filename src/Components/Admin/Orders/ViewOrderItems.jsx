@@ -65,6 +65,8 @@ export default function OrderItems() {
   // Get order status styling
   const getOrderStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
+      case "approved":
+        return { text: "Approved", className: "bg-green-100 text-green-700" };
       case "completed":
         return { text: "Completed", className: "bg-green-100 text-green-700" };
       case "pending":
@@ -421,7 +423,7 @@ export default function OrderItems() {
                           </td>
                           <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                             <span
-                              className={`px-2 py-1 rounded text-sm font-medium ${orderStatus.className}`}
+                              className={`px-2 py-1 rounded text-sm  capitalize font-medium ${orderStatus.className}`}
                             >
                               {orderStatus.text}
                             </span>

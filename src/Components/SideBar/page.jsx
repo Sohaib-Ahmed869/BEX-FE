@@ -9,8 +9,10 @@ import { useNavigate, Link, useLocation, Outlet } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import useGlobalSocket from "../../hooks/MessageSocketHook";
 
 export default function SideBar() {
+  useGlobalSocket();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -114,18 +116,18 @@ export default function SideBar() {
       ),
       path: "/seller/chats",
     },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: <IoSettingsSharp size={24} />,
-      path: "/seller/settings",
-    },
-    {
-      id: "support",
-      label: "Support",
-      icon: <BsExclamationCircleFill size={23} />,
-      path: "/seller/support",
-    },
+    // {
+    //   id: "settings",
+    //   label: "Settings",
+    //   icon: <IoSettingsSharp size={24} />,
+    //   path: "/seller/settings",
+    // },
+    // {
+    //   id: "support",
+    //   label: "Support",
+    //   icon: <BsExclamationCircleFill size={23} />,
+    //   path: "/seller/support",
+    // },
   ];
 
   // Helper function to check if a path is active

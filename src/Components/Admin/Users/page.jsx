@@ -319,7 +319,7 @@ export default function UserManagement() {
       <div className="relative">
         <button
           onClick={onToggle}
-          className="p-2 border border-gray-200 rounded hover:bg-gray-100 flex items-center gap-1"
+          className="p-2 border border-gray-200 rounded hover:bg-gray-100 flex items-center gap-1 "
           title="Actions"
         >
           <MoreVertical className="h-4 w-4" />
@@ -327,7 +327,7 @@ export default function UserManagement() {
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <div className="absolute right-0 bottom-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-60">
             <div className="py-1">
               <Link
                 to={`/admin/users/insights/${user.id}`}
@@ -839,7 +839,7 @@ export default function UserManagement() {
             ) : (
               <>
                 {/* Desktop Table */}
-                <div className="hidden lg:block overflow-x-auto">
+                <div className="hidden lg:block ">
                   <table className="w-full border-collapse bg-white">
                     <thead>
                       <tr className="bg-white border-b border-gray-100">

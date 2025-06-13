@@ -283,7 +283,18 @@ function CommissionManagement() {
   const [updateFormData, setUpdateFormData] = useState({
     commission_rate: "",
   });
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".relative")) {
+        setOpenDropdown(null);
+      }
+    };
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   // Fetch commissions from API (mocked for demo)
   const fetchCommissions = async () => {
     setLoading(true);
@@ -540,7 +551,7 @@ function CommissionManagement() {
             ) : (
               <>
                 {/* Desktop Table */}
-                <div className="hidden lg:block overflow-x-auto">
+                <div className="hidden lg:block ">
                   <table className="w-full border-collapse bg-white">
                     <thead>
                       <tr className="bg-white border-b border-gray-100">
