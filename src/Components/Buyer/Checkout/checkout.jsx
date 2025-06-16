@@ -25,6 +25,9 @@ import {
   removeRetipFromCartItem,
 } from "../../../store/cart-actions";
 import axios from "axios";
+import ShoppingCart from "../Cart/cart";
+import WishlistModal from "../wishlist/wishlistModal";
+import CubeLoader from "../../../utils/cubeLoader";
 const StripePublisherKey = import.meta.env.VITE_STRIPE_PUBLISHER_KEY;
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 const stripePromise = loadStripe(StripePublisherKey);
@@ -584,6 +587,15 @@ export default function Checkout() {
   const [commissions, setCommissions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showCart, setShowCart] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
+
+  const toggleWishlist = () => {
+    setShowWishlist(!showWishlist);
+  };
   const fetchCommissions = async () => {
     setLoading(true);
     try {
@@ -625,7 +637,43 @@ export default function Checkout() {
     cardName: "",
   });
   const userId = localStorage.getItem("userId");
+  const fetchUserShippingDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${URL}/api/orders/recent-shipping-address/${userId}`
+      );
+      const data = response.data; // Remove 'await' here - response.data is not a promise
+      console.log(data);
 
+      // Fix the setFormData call - use spread operator correctly
+      setFormData((prevFormData) => ({
+        ...prevFormData, // Spread the previous state first
+        email: data.data.formattedAddress?.email,
+        firstName:
+          data.data.formattedAddress?.recipientName?.split(" ")[0] || "", // Extract first name from recipientName
+        lastName:
+          data.data.formattedAddress?.recipientName
+            ?.split(" ")
+            .slice(1)
+            .join(" ") || "", // Extract last name
+        address1: data.data?.formattedAddress?.addressLine1, // Use correct property name
+        address2: data.data?.formattedAddress?.addressLine2, // Use correct property name
+        city: data.data?.formattedAddress?.city,
+        state: data.data?.formattedAddress?.state,
+        postalCode: data.data?.formattedAddress?.postalCode, // Use correct property name
+        country: data.data?.formattedAddress?.country,
+      }));
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      const errorMessage = err.message || "An error occurred";
+      console.error(errorMessage);
+    }
+  };
+  useEffect(() => {
+    fetchUserShippingDetails();
+  }, []);
   // Handle opening retip modal
   const handleOpenRetipModal = (item) => {
     setSelectedItem(item);
@@ -676,7 +724,8 @@ export default function Checkout() {
 
   return (
     <>
-      <BuyerHeader />
+      {loading && <CubeLoader />}
+      <BuyerHeader toggleCart={toggleCart} toggleWishlist={toggleWishlist} />
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Order summary - Shows first on mobile, second on desktop */}
@@ -904,6 +953,8 @@ export default function Checkout() {
       {showSuccessModal && (
         <OrderSuccessModal isOpen={showSuccessModal} orderId={orderId} />
       )}
+      <ShoppingCart isOpen={showCart} setIsOpen={setShowCart} />
+      <WishlistModal isOpen={showWishlist} setIsOpen={setShowWishlist} />
     </>
   );
 }

@@ -37,6 +37,7 @@ const SellerOrders = () => {
 
   // Fetch orders from API
   const fetchOrders = async () => {
+    setError(null);
     setLoading(true);
     try {
       const queryParams = new URLSearchParams({
@@ -381,11 +382,11 @@ const SellerOrders = () => {
                                 {order.itemsSummary.totalItemsCount} total items
                               </div>
                             </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                               <div className="font-regular text-gray-900">
                                 {formatCurrency(order.amounts.orderTotal)}
                               </div>
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-gray-500 ">
                                 Items:{" "}
                                 {formatCurrency(order.amounts.itemsTotal)}
                                 {order.amounts.retipTotal > 0 && (
@@ -408,7 +409,7 @@ const SellerOrders = () => {
                               {order.status.itemsOrderStatus}
                             </span>
                           </td> */}
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                               <span
                                 className={`px-4 text-center py-2 block rounded text-sm font-medium ${getPaymentStatusStyle(
                                   order.status.orderPaymentCompleted
@@ -421,7 +422,7 @@ const SellerOrders = () => {
                                   : "Mixed"}
                               </span>
                             </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                               <div className="text-sm">
                                 {formatDate(order.orderDate)}
                               </div>

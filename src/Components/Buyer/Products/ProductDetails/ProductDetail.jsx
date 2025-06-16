@@ -255,6 +255,8 @@ const ProductInfo = ({
   // Get cart state from Redux
   const cartItems = useSelector((state) => state.cart.items);
   const [isMessageLoading, setMessageIsLoading] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
 
   const formatPrice = (price) => {
     return `$${parseFloat(price).toFixed(2)}`;
@@ -802,6 +804,12 @@ const ProductDetailsPage = () => {
   const userId = localStorage.getItem("userId");
   const wishlistItems = useSelector((state) => state.wishlist.items);
 
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
+  const toggleWishlist = () => {
+    setShowWishlist(!showWishlist);
+  };
   // Simulate product fetch
   useEffect(() => {
     const fetchProduct = async () => {
@@ -912,10 +920,8 @@ const ProductDetailsPage = () => {
 
   return (
     <>
-      <BuyerHeader
-        toggleWishlist={() => setShowWishlist(!showWishlist)}
-        toggleCart={() => setShowCart(!showCart)}
-      />
+      <BuyerHeader toggleCart={toggleCart} toggleWishlist={toggleWishlist} />
+
       <ShoppingCart isOpen={showCart} setIsOpen={setShowCart} />
       <WishlistModal isOpen={showWishlist} setIsOpen={setShowWishlist} />
       {isLoading && <CubeLoader />}

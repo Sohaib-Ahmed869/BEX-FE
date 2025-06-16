@@ -598,25 +598,27 @@ export default function UserManagement() {
     const actionText = isSuspended ? "Unsuspend" : "Suspend";
 
     return (
-      <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6  w-1/3 mx-4">
+      <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl">
           <div className="flex items-center mb-4">
             <AlertCircle
-              className={`h-6 w-6 mr-3 ${
+              className={`h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 flex-shrink-0 ${
                 isSuspended ? "text-green-500" : "text-red-500"
               }`}
             />
-            <h3 className="text-lg font-semibold">{actionText} user</h3>
+            <h3 className="text-base sm:text-lg font-semibold">
+              {actionText} user
+            </h3>
           </div>
 
           {!isSuspended ? (
             // Suspend user content
             <div className="mb-6">
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-700 mb-4 text-sm sm:text-base">
                 You're about to suspend this user from accessing the platform.
                 While suspended, the user will:
               </p>
-              <ul className="text-gray-700 mb-4 ml-4">
+              <ul className="text-gray-700 mb-4 ml-4 text-sm sm:text-base">
                 <li className="mb-1">
                   • Be unable to log in or perform any actions
                 </li>
@@ -624,7 +626,7 @@ export default function UserManagement() {
                   • Lose access to all company modules and data
                 </li>
               </ul>
-              <p className="text-gray-700">
+              <p className="text-gray-700 text-sm sm:text-base">
                 This action does not delete the account, and access can be
                 restored later by reactivating the user.
               </p>
@@ -632,11 +634,11 @@ export default function UserManagement() {
           ) : (
             // Unsuspend user content
             <div className="mb-6">
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-700 mb-4 text-sm sm:text-base">
                 You're about to unsuspend this user and restore their access to
                 the platform. Once unsuspended, the user will:
               </p>
-              <ul className="text-gray-700 mb-4 ml-4">
+              <ul className="text-gray-700 mb-4 ml-4 text-sm sm:text-base">
                 <li className="mb-1">
                   • Be able to log in and perform actions
                 </li>
@@ -644,25 +646,25 @@ export default function UserManagement() {
                   • Regain access to all company modules and data
                 </li>
               </ul>
-              <p className="text-gray-700">
+              <p className="text-gray-700 text-sm sm:text-base">
                 The user will be immediately able to access their account and
                 resume normal activities.
               </p>
             </div>
           )}
 
-          <div className="flex justify-center gap-3">
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
             <button
               onClick={onClose}
               disabled={modalLoading}
-              className="px-4 py-2 border w-1/2 border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 text-sm sm:text-base order-2 sm:order-1 sm:w-1/2"
             >
               Cancel
             </button>
             <button
               onClick={() => onConfirm(user.id, user.is_suspended)}
               disabled={modalLoading}
-              className={`px-4 py-2 w-1/2 rounded-md text-white disabled:opacity-50 ${
+              className={`px-4 py-2 rounded-md text-white disabled:opacity-50 text-sm sm:text-base order-1 sm:order-2 sm:w-1/2 ${
                 isSuspended
                   ? "bg-green-500 hover:bg-green-600"
                   : "bg-red-500 hover:bg-red-600"
@@ -731,7 +733,7 @@ export default function UserManagement() {
         {showFilters && (
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-              {/* <div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Search
                 </label>
@@ -739,13 +741,13 @@ export default function UserManagement() {
                   <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search users..."
+                    placeholder="Search users by name"
                     value={searchInput}
                     onChange={(e) => handleSearchInputChange(e.target.value)}
                     className="pl-10 w-full border border-gray-200 rounded px-3 py-2 text-sm"
                   />
                 </div>
-              </div> */}
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -829,7 +831,7 @@ export default function UserManagement() {
         )}
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-white rounded-lg shadow-sm overflow-auto">
           <div className="p-6 my-10">
             {users.length === 0 ? (
               <div className="text-center py-10">
@@ -839,7 +841,7 @@ export default function UserManagement() {
             ) : (
               <>
                 {/* Desktop Table */}
-                <div className="hidden lg:block ">
+                <div className="hidden lg:block">
                   <table className="w-full border-collapse bg-white">
                     <thead>
                       <tr className="bg-white border-b border-gray-100">
@@ -852,13 +854,13 @@ export default function UserManagement() {
                         <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
                           Email
                         </th>
-                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
+                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500 text-nowrap">
                           User created on
                         </th>
-                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
+                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500 text-nowrap">
                           Company name
                         </th>
-                        <th className="py-3 px-4 text-center font-medium text-sm text-gray-500">
+                        <th className="py-3 px-4 text-center font-medium text-sm text-gray-500 text-nowrap">
                           Role assigned
                         </th>
                         <th className="py-3 px-4 text-center font-medium text-sm text-gray-500">

@@ -234,10 +234,10 @@ export default function ProductList() {
                       <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
                         #
                       </th>
-                      <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
+                      <th className="py-3 px-4 text-left font-medium text-sm text-gray-500 text-nowrap">
                         Inventory Name
                       </th>
-                      <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
+                      <th className="py-3 px-4 text-left font-medium text-sm text-gray-500 text-nowrap">
                         Inventory Code
                       </th>
                       <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
@@ -249,7 +249,7 @@ export default function ProductList() {
                       <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
                         Condition
                       </th>
-                      <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
+                      <th className="py-3 px-4 text-left font-medium text-sm text-gray-500 text-nowrap">
                         Expires in
                       </th>
                       <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
@@ -289,7 +289,7 @@ export default function ProductList() {
                           <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                             {product.specifications?.brand || "N/A"}
                           </td>
-                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                             {product.condition.split(" (")[0] ||
                               product.condition ||
                               "N/A"}

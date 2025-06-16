@@ -294,7 +294,7 @@ const OrdersOverviewTable = () => {
         )}
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-white rounded-lg shadow-sm ">
           <div className="p-6 my-10">
             {orders.length === 0 ? (
               <div className="text-center py-10">
@@ -307,7 +307,7 @@ const OrdersOverviewTable = () => {
             ) : (
               <>
                 {/* Desktop Table */}
-                <div className="hidden lg:block overflow-x-auto">
+                <div className="hidden lg:block overflow-x-auto ">
                   <table className="w-full border-collapse bg-white">
                     <thead>
                       <tr className="bg-white border-b border-gray-100">
@@ -417,7 +417,7 @@ const OrdersOverviewTable = () => {
                                 : "Mixed"}
                             </span>
                           </td>
-                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                          <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                             <div className="text-sm">
                               {formatDate(order.orderDate)}
                             </div>

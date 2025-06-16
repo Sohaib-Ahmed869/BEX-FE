@@ -324,7 +324,7 @@ export default function Listing() {
                                 )}
                               </div>
                             </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                               {listing.Category}
                             </td>
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">

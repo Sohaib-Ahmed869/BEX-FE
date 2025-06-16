@@ -16,14 +16,24 @@ import { fetchUserDetails } from "../../../services/userServices";
 import BuyerHeader from "../buyerHeader.jsx/buyerHeader";
 import CubeLoader from "../../../utils/cubeLoader";
 import UpgradeToSellerModal from "./upgradeToSeller"; // Import your separate modal component
+import ShoppingCart from "../Cart/cart";
+import WishlistModal from "../wishlist/wishlistModal";
 
 const BuyerProfile = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
   const userId = localStorage.getItem("userId");
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
 
+  const toggleWishlist = () => {
+    setShowWishlist(!showWishlist);
+  };
   useEffect(() => {
     const loadUserDetails = async () => {
       if (!userId) {
@@ -156,7 +166,7 @@ const BuyerProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <BuyerHeader />
+      <BuyerHeader toggleCart={toggleCart} toggleWishlist={toggleWishlist} />
       <div className="max-w-4xl my-10 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
@@ -416,6 +426,8 @@ const BuyerProfile = () => {
         onClose={() => setShowUpgradeModal(false)}
         onUpgradeSuccess={handleUpgradeSuccess}
       />
+      <ShoppingCart isOpen={showCart} setIsOpen={setShowCart} />
+      <WishlistModal isOpen={showWishlist} setIsOpen={setShowWishlist} />
     </div>
   );
 };

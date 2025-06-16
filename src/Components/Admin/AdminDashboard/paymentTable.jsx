@@ -146,20 +146,20 @@ const PaymentsTable = ({ data }) => {
           </div>
 
           <div className="overflow-hidden">
-            <div className="max-h-96 overflow-y-auto overflow-x-auto scroll-smooth">
-              <table className="w-full min-w-[600px]">
+            <div className=" overflow-y-auto overflow-x-auto scroll-smooth">
+              <table className="w-full ">
                 <thead className="bg-gray-50 sticky top-0 z-10 animate-slide-down">
                   <tr>
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 min-w-[100px] transition-colors duration-300 hover:text-gray-700">
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3  transition-colors duration-300 hover:text-gray-700">
                       Amount
                     </th>
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 min-w-[120px] transition-colors duration-300 hover:text-gray-700">
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 transition-colors duration-300 hover:text-gray-700">
                       Date
                     </th>
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[200px] transition-colors duration-300 hover:text-gray-700">
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase  py-3 px-2 transition-colors duration-300 hover:text-gray-700">
                       Description
                     </th>
-                    <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[100px] transition-colors duration-300 hover:text-gray-700">
+                    <th className="text-left text-xs font-medium text-gray-500 uppercase py-3 px-2  transition-colors duration-300 hover:text-gray-700">
                       Status
                     </th>
                   </tr>
@@ -174,12 +174,12 @@ const PaymentsTable = ({ data }) => {
                         animationFillMode: "forwards",
                       }}
                     >
-                      <td className="py-3 px-3 transition-all duration-300 min-w-[100px]">
+                      <td className="py-3 px-3 transition-all duration-300 ">
                         <div className="text-sm font-semibold text-gray-900 hover:text-green-600 transition-colors duration-300 transform hover:scale-105">
                           {formatCurrency(payment.amount)}
                         </div>
                       </td>
-                      <td className="py-3 px-3 transition-all duration-300 min-w-[120px]">
+                      <td className="py-3 px-3 transition-all duration-300 text-nowrap">
                         <div className="text-xs text-gray-900 leading-tight hover:text-blue-600 transition-colors duration-300">
                           {new Date(payment.date).toLocaleDateString("en-US", {
                             month: "short",
@@ -191,7 +191,7 @@ const PaymentsTable = ({ data }) => {
                           </span>
                         </div>
                       </td>
-                      <td className="py-3 px-2 transition-all duration-300 min-w-[200px]">
+                      <td className="py-3 px-2 transition-all duration-300 ">
                         <div
                           className="text-sm text-gray-900 hover:text-blue-600 transition-colors duration-300 truncate"
                           title={payment.description}
@@ -199,7 +199,7 @@ const PaymentsTable = ({ data }) => {
                           {payment.description}
                         </div>
                       </td>
-                      <td className="py-3 px-2 transition-all duration-300 min-w-[100px]">
+                      <td className="py-3 px-2 transition-all duration-300 ">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border transition-all duration-300 transform hover:scale-105 hover:shadow-sm ${getStatusColor(
                             payment.status

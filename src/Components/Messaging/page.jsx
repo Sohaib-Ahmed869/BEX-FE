@@ -24,6 +24,8 @@ import { ChatSkeleton, MessageSkeleton } from "./MessageSkeletonUi";
 import BuyerHeader from "../Buyer/buyerHeader.jsx/buyerHeader";
 import { unreadMessagesActions } from "../../store/message-slice";
 import { useDispatch } from "react-redux";
+import ShoppingCart from "../Buyer/Cart/cart";
+import WishlistModal from "../Buyer/wishlist/wishlistModal";
 
 // User avatar icons for differentiation
 const getIconComponent = (index) => {
@@ -121,11 +123,10 @@ const ChatHeader = ({
       <div className="flex items-center">
         <button
           onClick={onBackClick}
-          className=" mr-3 p-2 cursor-pointer hover:bg-opacity-20 rounded-full transition-all duration-200"
+          className="ml-12 mr-3 md:ml-0 p-2 cursor-pointer hover:bg-opacity-20 rounded-full transition-all duration-200"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-
         {/* <UserAvatar user={otherUser} isOnline={isOnline} size="lg" /> */}
 
         <div className="ml-4">
@@ -537,10 +538,20 @@ const MessagingComponent = () => {
   const [typingUsers, setTypingUsers] = useState(new Set());
   const [onlineUsers, setOnlineUsers] = useState(new Set());
   const [messageFilter, setMessageFilter] = useState("all");
+  const [showCart, setShowCart] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const dispatch = useDispatch();
+
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
+
+  const toggleWishlist = () => {
+    setShowWishlist(!showWishlist);
+  };
   // Get current user data from localStorage
   const getCurrentUser = () => {
     const userId = localStorage.getItem("userId");
@@ -1180,7 +1191,10 @@ const MessagingComponent = () => {
     <>
       {userRole === "buyer" && (
         <div className="mb-1">
-          <BuyerHeader />
+          <BuyerHeader
+            toggleCart={toggleCart}
+            toggleWishlist={toggleWishlist}
+          />
         </div>
       )}
       <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -1364,6 +1378,8 @@ const MessagingComponent = () => {
           )}
         </div>
       </div>
+      <ShoppingCart isOpen={showCart} setIsOpen={setShowCart} />
+      <WishlistModal isOpen={showWishlist} setIsOpen={setShowWishlist} />
     </>
   );
 };

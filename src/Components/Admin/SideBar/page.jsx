@@ -103,6 +103,7 @@ export default function AdminSideBar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    sessionStorage.removeItem("jwtToken");
     localStorage.removeItem("userId");
     localStorage.removeItem("userName");
     toast.success("Logged out successfully");

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import CubeLoader from "../../../utils/cubeLoader";
-import { toast } from "react-toastify";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 const UserInsights = () => {
@@ -57,7 +57,9 @@ const UserInsights = () => {
         // Update the user status in state
         setUserInfo((prevUserInfo) => ({
           ...prevUserInfo,
-          is_suspended: !currentIsSuspended,
+
+          isSuspended: !currentIsSuspended,
+          status: !currentIsSuspended ? "Suspended" : "Active profile",
           is_active: currentIsSuspended, // When unsuspending, user becomes active; when suspending, user becomes inactive
         }));
         toast.success(
@@ -207,7 +209,7 @@ const UserInsights = () => {
 
   // Get user status styling
   const getUserStatus = (user) => {
-    if (user.is_suspended) {
+    if (user.isSuspended) {
       return { text: "Suspended", className: "bg-red-500" };
     } else if (user.status === "Active profile") {
       return { text: "Active", className: "bg-green-500" };
@@ -220,8 +222,7 @@ const UserInsights = () => {
   const ActionModal = ({ isOpen, user, onClose, onConfirm }) => {
     if (!isOpen || !user) return null;
 
-    const isSuspended = user.is_suspended;
-    const action = isSuspended ? "unsuspend" : "suspend";
+    const isSuspended = user.isSuspended;
     const actionText = isSuspended ? "Unsuspend" : "Suspend";
 
     return (
@@ -287,7 +288,7 @@ const UserInsights = () => {
               Cancel
             </button>
             <button
-              onClick={() => onConfirm(user.id, user.is_suspended)}
+              onClick={() => onConfirm(user.id, user.isSuspended)}
               disabled={modalLoading}
               className={`px-4 py-2 w-1/2 rounded-md text-white disabled:opacity-50 ${
                 isSuspended
@@ -309,6 +310,12 @@ const UserInsights = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen p-6">
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        transition={Bounce}
+        newestOnTop={true}
+      />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -322,12 +329,12 @@ const UserInsights = () => {
                 setShowActionModal(true);
               }}
               className={`px-4 py-2 rounded-lg text-white transition-colors ${
-                userInfo.is_suspended
+                userInfo.isSuspended
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-red-600 hover:bg-red-700"
               }`}
             >
-              {userInfo.is_suspended ? "Unsuspend user" : "Suspend user"}
+              {userInfo.isSuspended ? "Unsuspend user" : "Suspend user"}
             </button>
           </div>
         </div>

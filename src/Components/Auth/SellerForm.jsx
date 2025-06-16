@@ -5,12 +5,23 @@ import { registerSeller } from "../../services/AuthServices";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import countryList from "react-select-country-list";
 import { motion } from "framer-motion";
+import Select, { components } from "react-select";
 
 const SellerForm = ({ formData, updateFormData }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const countries = countryList().getData();
+  const CountryOption = (props) => {
+    return (
+      <components.Option {...props}>
+        <div className="flex items-center gap-2">
+          <span>{props.data.flag}</span>
+          <span>{props.data.label}</span>
+        </div>
+      </components.Option>
+    );
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -213,23 +224,42 @@ const SellerForm = ({ formData, updateFormData }) => {
               >
                 Country of registration *
               </label>
-              <select
+              <Select
                 id="country"
-                className="w-full py-2.5 sm:py-3 lg:py-3.5 px-4 text-gray-700 rounded-lg bg-white border-gray-300 border-2 text-sm focus:border-[#F47458] focus:outline-none transition-colors"
-                value={formData.countryOfRegistration}
-                onChange={(e) =>
-                  updateFormData("countryOfRegistration", e.target.value)
+                options={countries.map((country) => ({
+                  value: country.label,
+                  label: country.label,
+                  flag: country.flag,
+                }))}
+                value={
+                  countries.find(
+                    (c) => c.label === formData.countryOfRegistration
+                  ) || null
                 }
-              >
-                <option value="" disabled>
-                  -- Select a Country --
-                </option>
-                {countries.map((country) => (
-                  <option key={country.label} value={country.label}>
-                    {country.flag} {country.value} {country.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(selectedOption) =>
+                  updateFormData(
+                    "countryOfRegistration",
+                    selectedOption?.value || ""
+                  )
+                }
+                placeholder="Search and select a country..."
+                isSearchable
+                components={{ Option: CountryOption }}
+                className="w-full"
+                classNamePrefix="select"
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    minHeight: "44px", // Match your py-2.5
+                    border: "2px solid #d1d5db",
+                    borderColor: state.isFocused ? "#F47458" : "#d1d5db",
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: state.isFocused ? "#F47458" : "#d1d5db",
+                    },
+                  }),
+                }}
+              />
             </div>
           </motion.div>
           <motion.div

@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import PasswordStrengthBar from "react-password-strength-bar";
 
 const InitialScreen = ({ updateFormData, setInitialFilled, formData }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -167,6 +168,10 @@ const InitialScreen = ({ updateFormData, setInitialFilled, formData }) => {
                 />
               )}
             </div>
+            <PasswordStrengthBar
+              className="mt-4 w-[95%] mx-auto "
+              password={formData.password}
+            />
           </motion.div>
 
           <motion.div
@@ -183,7 +188,10 @@ const InitialScreen = ({ updateFormData, setInitialFilled, formData }) => {
               htmlFor="isSeller"
               className="text-xs sm:text-sm font-medium"
             >
-              I am a Seller
+              I am a Seller{"   "}
+              <span className="text-gray-400 font-xs">
+                (Leave unchecked if you are a Buyer)
+              </span>
             </label>
           </motion.div>
 

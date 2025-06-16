@@ -33,7 +33,7 @@ const DrillServiceSelector = () => {
 
           <div className="flex items-end justify-between">
             <Link
-              to="/products"
+              to="/signup"
               className={`bg-orange-500 bottom-[-10px] relative hover:bg-orange-600  text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 hoveredCard === "looking" ? "transform scale-105" : ""
               }`}
@@ -78,7 +78,7 @@ const DrillServiceSelector = () => {
 
           <div className="flex items-end justify-between">
             <Link
-              to={"/products"}
+              to={"/signup"}
               className={`bg-blue-900 hover:bg-blue-800 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 hoveredCard === "selling" ? "transform scale-105" : ""
               }`}

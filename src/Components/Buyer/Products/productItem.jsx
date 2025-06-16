@@ -14,7 +14,7 @@ import {
   removeFromWishlist,
   checkWishlistItem,
 } from "../../../store/wishlist-actions";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { retipPricing } from "../../../utils/retipPricingInformation";
 
 const LazyImage = ({ src, alt, className }) => {
@@ -90,7 +90,7 @@ const ProductItem = ({ product }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
-
+  const navigate = useNavigate();
   // Get userId from localStorage
   const userId = localStorage.getItem("userId");
 
@@ -253,8 +253,10 @@ const ProductItem = ({ product }) => {
       : "/api/placeholder/400/400";
 
   return (
-    <div className="bg-white rounded-xl cursor-pointer shadow-sm border border-gray-200 overflow-hidden w-full sm:w-72 md:w-80 lg:w-96 block group hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-      {" "}
+    <div
+      onClick={() => navigate(`/products/${product.id}`)}
+      className="bg-white rounded-xl cursor-pointer shadow-sm border border-gray-200 overflow-hidden w-full sm:w-72 md:w-80 lg:w-96 block group hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+    >
       <div
         className="relative aspect-square overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
@@ -334,6 +336,7 @@ const ProductItem = ({ product }) => {
         {/* Wishlist Heart Icon - Top Right */}
         <button
           onClick={toggleWishlist}
+          title="Wishlist"
           disabled={isAddingToWishlist}
           className={`absolute top-12 right-3 w-8 h-8 bg-white shadow-md rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 z-10 ${
             isAddingToWishlist ? "animate-pulse" : ""

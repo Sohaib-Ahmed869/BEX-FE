@@ -1,4 +1,12 @@
-import { User, Menu, X } from "lucide-react";
+import {
+  User,
+  Menu,
+  X,
+  ShoppingBag,
+  LayoutDashboardIcon,
+  GitGraphIcon,
+  PieChartIcon,
+} from "lucide-react";
 import { useState } from "react";
 import logo from "../../assets/mainLogo.png";
 import bannerImg from "../../assets/banner.png";
@@ -6,7 +14,8 @@ import { Link } from "react-router-dom";
 
 const Banner = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
   return (
     <div className="relative min-h-screen overflow-hidden">
       {/* Background Image with Overlay */}
@@ -40,8 +49,32 @@ const Banner = () => {
                 to={"/login"}
                 className="flex items-center text-white hover:text-orange-400 transition-all duration-300 px-4 py-2   hover:bg-opacity-10"
               >
-                <User className="mr-2 h-4 w-4" />
-                Sign In
+                {" "}
+                {!token ? (
+                  <>
+                    <User className="mr-2 h-4 w-4" />
+                    Sign In
+                  </>
+                ) : (
+                  <>
+                    {role === "buyer" ? (
+                      <>
+                        <ShoppingBag className="mr-2 h-4 w-4" /> Browse Products
+                      </>
+                    ) : role === "seller" || role === "admin" ? (
+                      <>
+                        <PieChartIcon className="mr-2 h-4 w-4" /> Continue to
+                        Dashboard
+                      </>
+                    ) : (
+                      <>
+                        {" "}
+                        <User className="mr-2 h-4 w-4" />
+                        Sign in
+                      </>
+                    )}{" "}
+                  </>
+                )}
               </Link>
             </li>
           </ul>

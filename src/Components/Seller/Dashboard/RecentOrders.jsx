@@ -124,25 +124,25 @@ const RecentOrders = ({ orders }) => {
           <table className="w-full">
             <thead className="sticky top-0 bg-white z-10">
               <tr className="border-b border-gray-200">
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left  text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-3 text-nowrap bg-white">
                   Order ID
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider p-3 bg-white">
                   Item
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider p-3 bg-white">
                   Qty
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left text-xs  text-nowrap font-medium text-gray-500 uppercase tracking-wider p-3 bg-white">
                   Order Date
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left text-xs text-nowrap font-medium text-gray-500 uppercase tracking-wider p-3 bg-white">
                   Item Price
                 </th>
-                <th className="text-left text-xs px-4 font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left text-xs px-4  text-nowrap font-medium text-gray-500 uppercase tracking-wider p-3 bg-white">
                   Order Status
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 bg-white">
+                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider p-3 bg-white">
                   Payment
                 </th>
               </tr>
@@ -164,7 +164,7 @@ const RecentOrders = ({ orders }) => {
                     {item.orderId.substring(0, 8).toUpperCase()}
                   </td>
                   <td className="py-3 text-sm text-gray-900">
-                    <div className="hover:text-blue-600 transition-colors duration-150">
+                    <div className="hover:text-blue-600 transition-colors duration-150 text-nowrap">
                       {item.title}
                     </div>
                   </td>
@@ -173,7 +173,7 @@ const RecentOrders = ({ orders }) => {
                       {item.quantity}
                     </span>
                   </td>
-                  <td className="py-3 text-sm text-gray-900 hover:text-blue-600 transition-colors duration-150">
+                  <td className="py-3 text-sm text-gray-900 hover:text-blue-600 transition-colors duration-150 text-nowrap mx-5">
                     {formatDate(item.orderDate)}
                   </td>
                   <td className="py-3 text-sm text-gray-900 font-semibold hover:text-green-600 transition-colors duration-150">

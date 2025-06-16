@@ -518,7 +518,7 @@ function AdminProductsTable() {
         <h1 className="text-2xl sm:text-3xl font-regular mb-4">All Products</h1>
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-white rounded-lg shadow-sm overflow-auto">
           <div className="p-6 my-10">
             {products.length === 0 ? (
               <div className="text-center py-10">
@@ -546,10 +546,10 @@ function AdminProductsTable() {
                         <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
                           Price
                         </th>
-                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
+                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500 text-nowrap">
                           Listing Status
                         </th>
-                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
+                        <th className="py-3 px-4 text-left font-medium text-sm text-gray-500 text-nowrap">
                           Stock Status
                         </th>
                         <th className="py-3 px-4 text-left font-medium text-sm text-gray-500">
@@ -587,7 +587,7 @@ function AdminProductsTable() {
                             </td>
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                               <div>
-                                <div className="font-medium text-gray-900 flex items-center gap-2">
+                                <div className="font-medium text-gray-900 flex items-center gap-2 text-nowrap">
                                   {product.title || "N/A"}
                                   {product.is_flagged && (
                                     <Flag className="h-4 w-4 text-red-500" />
@@ -603,7 +603,7 @@ function AdminProductsTable() {
                                 )}
                               </div>
                             </td>
-                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
+                            <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                               {product.category || "N/A"}
                             </td>
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
@@ -625,7 +625,7 @@ function AdminProductsTable() {
                             </td>
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600">
                               <span
-                                className={`px-2 py-1 rounded text-sm font-medium ${stockStatus.className}`}
+                                className={`px-2 py-1 rounded text-sm font-medium text-nowrap ${stockStatus.className}`}
                               >
                                 {stockStatus.text}
                               </span>

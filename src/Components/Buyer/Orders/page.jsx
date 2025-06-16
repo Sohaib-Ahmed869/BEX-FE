@@ -20,6 +20,8 @@ import BuyerHeader from "../buyerHeader.jsx/buyerHeader";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { initiateChat } from "../../../services/chatServices";
+import ShoppingCart from "../Cart/cart";
+import WishlistModal from "../wishlist/wishlistModal";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -36,9 +38,18 @@ const BuyerOrderDetails = () => {
     description: "",
   });
   const [loading, setLoading] = useState(true);
+  const [showCart, setShowCart] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [submissionLoading, setSubmissionLoading] = useState(false);
   const userId = localStorage.getItem("userId");
+  const toggleCart = () => {
+    setShowCart(!showCart);
+  };
+
+  const toggleWishlist = () => {
+    setShowWishlist(!showWishlist);
+  };
   const handleSendMessage = async (productId) => {
     if (!userId || !productId) {
       alert("User ID and Product ID are required");
@@ -418,7 +429,7 @@ const BuyerOrderDetails = () => {
 
   return (
     <div className="min-h-screen  bg-gray-50">
-      <BuyerHeader />
+      <BuyerHeader toggleCart={toggleCart} toggleWishlist={toggleWishlist} />
       <div className="max-w-7xl my-7 mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex mb-6" aria-label="Breadcrumb">
@@ -845,6 +856,8 @@ const BuyerOrderDetails = () => {
           animation: scale-up 0.3s ease-out;
         }
       `}</style>
+      <ShoppingCart isOpen={showCart} setIsOpen={setShowCart} />
+      <WishlistModal isOpen={showWishlist} setIsOpen={setShowWishlist} />
     </div>
   );
 };

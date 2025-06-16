@@ -120,7 +120,7 @@ const RecentOrdersTable = ({ orders }) => {
                 <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[150px] transition-colors duration-300 hover:text-gray-700">
                   Buyer
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[120px] transition-colors duration-300 hover:text-gray-700">
+                <th className="text-left text-xs font-medium text-nowrap text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[120px] transition-colors duration-300 hover:text-gray-700">
                   Order Date
                 </th>
                 <th className="text-left text-xs font-medium text-gray-500 uppercase tracking-wider py-3 px-2 min-w-[100px] transition-colors duration-300 hover:text-gray-700">
