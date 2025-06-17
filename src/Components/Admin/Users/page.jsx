@@ -995,12 +995,7 @@ export default function UserManagement() {
                               {user.company_name || "N/A"}
                             </p>
                           </div>
-                          <div>
-                            <span className="text-gray-500">Access Level:</span>
-                            <p className="text-gray-900 text-xs">
-                              {getAccessLevel(user.role)}
-                            </p>
-                          </div>
+
                           <div className="col-span-2">
                             <span className="text-gray-500 flex items-center gap-1">
                               <Calendar className="h-3 w-3" />

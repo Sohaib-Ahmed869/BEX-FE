@@ -445,7 +445,7 @@ const OrdersOverviewTable = () => {
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <h3 className="font-medium text-gray-900">
-                            Order #{order.orderId.slice(0, 8)}...
+                            Order #{order.orderId.slice(0, 8)}
                           </h3>
                           <p className="text-sm text-gray-500">
                             {formatDate(order.orderDate)}
@@ -468,7 +468,7 @@ const OrdersOverviewTable = () => {
                               ? "Paid"
                               : order.status.orderPaymentCompleted === false
                               ? "Pending"
-                              : "Mixed"}
+                              : ""}
                           </span>
                         </div>
                       </div>
@@ -484,8 +484,7 @@ const OrdersOverviewTable = () => {
                           {order.itemsSummary.itemsPreview}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
-                          {order.itemsSummary.totalItemsCount} items (
-                          {order.itemsSummary.totalUniqueItems} unique)
+                          {order.itemsSummary.totalItemsCount} items{" "}
                         </div>
                       </div>
 

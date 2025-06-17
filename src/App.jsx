@@ -289,7 +289,7 @@ const UserPermissionsDashboard = lazy(() =>
   import("./Components/Admin/UserPermissions/page")
 );
 const LandingPage = lazy(() => import("./Components/LandingPage/page"));
-const NotFound = lazy(() => import("./utils/fallbackroute404.JSX"));
+const NotFound = lazy(() => import("./utils/fallbackroute404"));
 
 const AppWithSocket = () => {
   // Initialize global socket connection
