@@ -610,21 +610,21 @@ const BuyerOrderDetails = () => {
             </div>
 
             {/* Help Section */}
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-900 font-medium">
+            <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <span className="text-gray-900 font-medium text-sm sm:text-base">
                   Need help with order?
                 </span>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
                   <Link
                     to="/orderDisputes"
-                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                    className="px-4 sm:px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium text-center text-sm sm:text-base"
                   >
                     View disputes
                   </Link>
                   <button
                     onClick={() => handleDisputeClick(selectedOrderItem)}
-                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                    className="px-4 sm:px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium text-sm sm:text-base"
                   >
                     Open dispute
                   </button>
@@ -633,7 +633,7 @@ const BuyerOrderDetails = () => {
                       handleSendMessage(selectedOrderItem.productId)
                     }
                     disabled={isMessageLoading}
-                    className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                    className="px-4 sm:px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium text-sm sm:text-base disabled:opacity-50"
                   >
                     {isMessageLoading ? "Starting Chat..." : "Chat with Seller"}
                   </button>

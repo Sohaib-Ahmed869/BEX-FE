@@ -46,7 +46,13 @@ const Banner = () => {
           <ul className="flex items-center space-x-8">
             <li>
               <Link
-                to={"/login"}
+                to={
+                  token && role === "admin"
+                    ? "/admin/dashboard"
+                    : token && role === "seller"
+                    ? "/seller/dashboard"
+                    : "/login "
+                }
                 className="flex items-center text-white hover:text-orange-400 transition-all duration-300 px-4 py-2   hover:bg-opacity-10"
               >
                 {" "}
