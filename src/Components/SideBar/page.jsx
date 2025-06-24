@@ -1,6 +1,6 @@
 import { ShoppingCart, MessageSquare, LogOut, Menu, X } from "lucide-react";
 import { MdOutlineInventory2 } from "react-icons/md";
-import { BiPieChartAlt } from "react-icons/bi";
+import { BiMoneyWithdraw, BiPieChartAlt } from "react-icons/bi";
 import { RiHome7Fill } from "react-icons/ri";
 import { IoSettingsSharp } from "react-icons/io5";
 import { BsExclamationCircleFill } from "react-icons/bs";
@@ -116,12 +116,12 @@ export default function SideBar() {
       ),
       path: "/seller/chats",
     },
-    // {
-    //   id: "settings",
-    //   label: "Settings",
-    //   icon: <IoSettingsSharp size={24} />,
-    //   path: "/seller/settings",
-    // },
+    {
+      id: "stripe-connect",
+      label: "Stripe Onboarding",
+      icon: <BiMoneyWithdraw size={24} />,
+      path: "/seller/onboarding",
+    },
     // {
     //   id: "support",
     //   label: "Support",

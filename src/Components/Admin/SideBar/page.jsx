@@ -5,12 +5,14 @@ import {
   Menu,
   X,
   User,
+  Check,
+  CheckCircle,
 } from "lucide-react";
 import { MdOutlineInventory2 } from "react-icons/md";
-import { BiMoney, BiPieChartAlt } from "react-icons/bi";
+import { BiMoney, BiMoneyWithdraw, BiPieChartAlt } from "react-icons/bi";
 import { RiHome7Fill } from "react-icons/ri";
 import { IoSettingsSharp } from "react-icons/io5";
-import { BsExclamationCircleFill } from "react-icons/bs";
+import { BsExclamationCircleFill, BsTruck } from "react-icons/bs";
 import logo from "../../../assets/logo.png";
 import { useNavigate, Link, useLocation, Outlet } from "react-router-dom";
 import { Bounce, toast, ToastContainer } from "react-toastify";
@@ -140,6 +142,30 @@ export default function AdminSideBar() {
       permissionKey: "orders",
     },
     {
+      id: "rejected-orders",
+      label: "Rejected Orders",
+      icon: <BsExclamationCircleFill size={24} />,
+      path: "/admin/rejected-orders",
+      childPaths: [],
+      permissionKey: "rejected_orders",
+    },
+    {
+      id: "refunded-orders",
+      label: "Refunded Orders",
+      icon: <CheckCircle size={24} />,
+      path: "/admin/refunded-orders",
+      childPaths: [],
+      permissionKey: "refunded_orders",
+    },
+    {
+      id: "shipped-orders",
+      label: "Shipped Orders",
+      icon: <BsTruck size={24} />,
+      path: "/admin/shipped-orders",
+      childPaths: [],
+      permissionKey: "shipped_orders",
+    },
+    {
       id: "product-list",
       label: "Product List",
       icon: <MdOutlineInventory2 size={24} />,
@@ -166,6 +192,13 @@ export default function AdminSideBar() {
   ];
 
   const allGeneralItems = [
+    {
+      id: "payout",
+      label: "Seller Payouts",
+      icon: <BiMoneyWithdraw size={24} />,
+      path: "/admin/payouts",
+      permissionKey: "seller_payouts",
+    },
     {
       id: "settings",
       label: "Settings",

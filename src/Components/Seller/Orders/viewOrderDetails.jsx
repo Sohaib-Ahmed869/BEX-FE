@@ -164,7 +164,7 @@ export default function SellerOrderItems() {
           ...prevData,
           orderItems: prevData.orderItems.map((item) =>
             item.orderItemId === selectedOrderItem.orderItemId
-              ? { ...item, orderStatus: "cancelled" }
+              ? { ...item, orderStatus: "Rejected" }
               : item
           ),
         }));
@@ -199,6 +199,8 @@ export default function SellerOrderItems() {
         };
       case "approved":
         return { text: "Approved", className: "bg-blue-100 text-blue-600" };
+      case "refunded":
+        return { text: "Refunded", className: "bg-green-100 text-green-600" };
       case "shipped":
         return { text: "Shipped", className: "bg-green-100 text-green-600" };
       case "delivered":

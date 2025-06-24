@@ -19,6 +19,8 @@ import {
 import CubeLoader from "../../../utils/cubeLoader";
 import { toast } from "react-toastify";
 import { Bounce, ToastContainer } from "react-toastify";
+import { BsTruck } from "react-icons/bs";
+import { BiMoney } from "react-icons/bi";
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 const UserPermissionsDashboard = () => {
@@ -39,6 +41,10 @@ const UserPermissionsDashboard = () => {
     dashboard: { label: "Dashboard", icon: LayoutDashboard },
     users: { label: "Users", icon: Users },
     orders: { label: "Orders", icon: ShoppingCart },
+    rejected_orders: { label: "Rejected Orders", icon: AlertCircle },
+    refunded_orders: { label: "Refunded Orders", icon: CheckCircle },
+    shipped_orders: { label: "Shipped Orders", icon: BsTruck },
+    seller_payouts: { label: "Payouts", icon: BiMoney },
     product_list: { label: "Products", icon: Package },
     commission: { label: "Commission", icon: DollarSign },
     disputes: { label: "Disputes", icon: MessageSquare },
@@ -230,7 +236,7 @@ const UserPermissionsDashboard = () => {
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#ee6f5c] rounded-full animate-pulse"></div>
             </div>
             <div>
-              <h1 className="text-4xl font-medium text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text">
+              <h1 className="text-4xl font-regular text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text">
                 User Permissions
               </h1>
               <p className="text-gray-600 mt-1">

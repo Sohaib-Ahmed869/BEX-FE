@@ -68,6 +68,9 @@ export default function OrderItems() {
       case "approved":
         return { text: "Approved", className: "bg-green-100 text-green-700" };
       case "completed":
+      case "refunded":
+        return { text: "Refunded", className: "bg-green-100 text-green-700" };
+      case "completed":
         return { text: "Completed", className: "bg-green-100 text-green-700" };
       case "pending":
         return { text: "Pending", className: "bg-yellow-100 text-yellow-700" };

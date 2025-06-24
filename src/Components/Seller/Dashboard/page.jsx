@@ -13,6 +13,7 @@ import {
   SkeletonList,
   SkeletonTable,
 } from "./DashboardskeletonUi";
+import SellerHeader from "../sellerHeader/page";
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 const Dashboard = () => {
@@ -139,6 +140,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <SellerHeader />
       <div className="max-w-full   lg:mx-10 md:mx-10">
         {/* Header */}
         <div
