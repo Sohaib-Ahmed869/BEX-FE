@@ -11,6 +11,8 @@ import {
   Download,
   X,
   Search,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import CubeLoader from "../../../utils/cubeLoader";
 import { Link, Navigate } from "react-router-dom";
@@ -65,7 +67,7 @@ const OrdersOverviewTable = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [currentPage, itemsPerPage, filters]);
+  }, [currentPage, itemsPerPage, filters.endDate]);
 
   // Get status styling
   const getStatusStyle = (status) => {
@@ -222,7 +224,7 @@ const OrdersOverviewTable = () => {
                 </select>
               </div> */}
 
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Payment Status
                 </label>
@@ -237,7 +239,7 @@ const OrdersOverviewTable = () => {
                   <option value="true">Paid</option>
                   <option value="false">Pending</option>
                 </select>
-              </div>
+              </div> */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -275,6 +277,13 @@ const OrdersOverviewTable = () => {
               >
                 <X className="h-4 w-4" />
                 Clear Filters
+              </button>
+              <button
+                onClick={() => setShowFilters(false)}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+              >
+                <ChevronUp className="h-4 w-4" />
+                Hide Filters
               </button>
             </div>
           </div>

@@ -16,7 +16,10 @@ import { calculateDaysUntilExpiration } from "../../../utils/calculateDaysLeft";
 import RemoveProductModal from "./ProductActions/DeleteProduct";
 import { toast } from "react-toastify";
 import PricingGuidanceModal from "./ProductActions/pricingGuidanceModal";
-import { fetchSellerProducts } from "../../../services/productsServices";
+import {
+  deleteProduct,
+  fetchSellerProducts,
+} from "../../../services/productsServices";
 
 export default function ProductList() {
   const navigate = useNavigate();
@@ -55,9 +58,22 @@ export default function ProductList() {
     fetchProducts();
   }, [userId]);
 
-  const handleProductDeleted = () => {
-    toast.success("Product deleted successfully");
-    fetchProducts();
+  const handleProductDeleted = async () => {
+    try {
+      const response = await deleteProduct(selectedProductId);
+      console.log(response.success);
+      if (response.success) {
+        toast.success("Product deleted successfully");
+        await fetchProducts();
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to delete product");
+      if (err.response && err.response.status === 404) {
+        toast.error("Product not found");
+      }
+    } finally {
+      setIsDeleteModalOpen(false);
+    }
   };
 
   // Filter products (exclude archived ones)

@@ -929,15 +929,14 @@ const ShippedOrdersTable = () => {
                   )}
                 </div>
               </div>
-            </div>
-
-            <div className="bg-gray-50 px-6 py-4 flex justify-end">
-              <button
-                onClick={closeModal}
-                className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200"
-              >
-                Close
-              </button>
+              <div className="bg-gray-50 px-6 py-4 flex justify-end">
+                <button
+                  onClick={closeModal}
+                  className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

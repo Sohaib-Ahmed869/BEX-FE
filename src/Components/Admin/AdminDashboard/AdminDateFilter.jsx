@@ -79,6 +79,12 @@ const AdminDateFilter = ({ onDateRangeChange }) => {
           >
             Last 90 days
           </button>
+          <button
+            onClick={() => setPresetRange(365)}
+            className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+          >
+            This year
+          </button>
         </div>
 
         <button

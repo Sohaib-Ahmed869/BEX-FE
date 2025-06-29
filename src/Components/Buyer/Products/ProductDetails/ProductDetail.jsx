@@ -803,6 +803,30 @@ const ProductDetailsPage = () => {
   const [showWishlist, setShowWishlist] = useState(false);
   const userId = localStorage.getItem("userId");
   const wishlistItems = useSelector((state) => state.wishlist.items);
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (!userId || !product.id) return;
+
+      // Check if product is in wishlist by looking through wishlist items
+      const inWishlist = wishlistItems.some(
+        (item) => item.product_id === productId
+      );
+      setIsWishlisted(inWishlist);
+
+      // Alternative: Check with API if you need server verification
+      try {
+        // You can use this approach if you want to verify with the server
+        const response = await dispatch(
+          checkWishlistItem(userId, productId)
+        ).unwrap();
+        setIsWishlisted(response.inWishlist);
+      } catch (error) {
+        console.error("Error checking wishlist status:", error);
+      }
+    };
+
+    checkWishlistStatus();
+  }, [userId, productId, wishlistItems, dispatch]);
 
   const toggleCart = () => {
     setShowCart(!showCart);

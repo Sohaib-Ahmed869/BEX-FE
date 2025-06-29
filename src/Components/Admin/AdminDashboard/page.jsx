@@ -24,7 +24,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchAllData();
-  }, [dateRange.endDate]);
+  }, [dateRange]);
 
   useEffect(() => {
     // Trigger mount animation after data loads

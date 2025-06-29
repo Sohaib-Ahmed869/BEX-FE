@@ -18,6 +18,7 @@ import RemoveProductModal from "../ProductListing/ProductActions/DeleteProduct";
 import { toast } from "react-toastify";
 import PricingGuidanceModal from "../ProductListing/ProductActions/pricingGuidanceModal";
 import { fetchListingSpecificProducts } from "../../../services/listingServices";
+import { deleteProduct } from "../../../services/productsServices";
 
 export default function ListingInventoryProducts() {
   const navigate = useNavigate();
@@ -82,17 +83,27 @@ export default function ListingInventoryProducts() {
     }
   }, [currentPage, totalPages]);
 
-  const handleProductDeleted = () => {
-    toast.success("Product deleted successfully");
-    // Refresh the products list
-    fetchProducts();
+  const handleProductDeleted = async () => {
+    try {
+      const response = await deleteProduct(selectedProductId);
+      console.log(response.success);
+      if (response.success) {
+        toast.success("Product deleted successfully");
+        await fetchProducts();
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to delete product");
+      if (err.response && err.response.status === 404) {
+        toast.error("Product not found");
+      }
+    } finally {
+      // If we're on the last page and it becomes empty, go to previous page
+      const remainingItems = totalItems - 1;
+      const newTotalPages = Math.ceil(remainingItems / itemsPerPage);
 
-    // If we're on the last page and it becomes empty, go to previous page
-    const remainingItems = totalItems - 1;
-    const newTotalPages = Math.ceil(remainingItems / itemsPerPage);
-
-    if (currentPage > newTotalPages && newTotalPages > 0) {
-      setCurrentPage(newTotalPages);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      }
     }
   };
 

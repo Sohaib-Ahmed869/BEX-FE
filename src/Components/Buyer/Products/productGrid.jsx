@@ -23,7 +23,25 @@ const ProductGrid = ({ products }) => {
 
   // Items per page options
   const itemsPerPageOptions = [10, 20, 30, 50];
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        // Tailwind's md breakpoint
+        setViewMode("list");
+      } else {
+        setViewMode("grid");
+      }
+    };
 
+    // Check on mount
+    handleResize();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   useEffect(() => {
     // Simulate loading data
     setIsLoading(true);

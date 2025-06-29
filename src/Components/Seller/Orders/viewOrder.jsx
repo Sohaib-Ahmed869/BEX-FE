@@ -360,26 +360,26 @@ const SellerOrderDetailsPage = () => {
                 )} */}
 
                 {/* Order Summary */}
-                <div className="mt-6 pt-4 border-t border-gray-200">
+                {/* <div className="mt-6 pt-4 border-t border-gray-200">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Subtotal</span>
                       <span>${orderData.itemTotal}</span>
                     </div>
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                       <span className="text-gray-600">Shipping</span>
                       <span>$65.00</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tax</span>
                       <span>$0.00</span>
-                    </div>
+                    </div> 
                     <div className="flex justify-between font-bold text-lg border-t border-gray-200 pt-2 mt-2">
                       <span>Total</span>
-                      <span>${orderData.grandTotal}</span>
+                      <span>${orderData.itemTotal}</span>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

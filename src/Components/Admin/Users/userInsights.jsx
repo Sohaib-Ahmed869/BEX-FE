@@ -226,8 +226,8 @@ const UserInsights = () => {
     const actionText = isSuspended ? "Unsuspend" : "Suspend";
 
     return (
-      <div className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 w-1/3 mx-4">
+      <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md sm:max-w-lg mx-4">
           <div className="flex items-center mb-4">
             <AlertCircle
               className={`h-6 w-6 mr-3 ${
@@ -240,11 +240,11 @@ const UserInsights = () => {
           {!isSuspended ? (
             // Suspend user content
             <div className="mb-6">
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-700 mb-4 text-sm sm:text-base">
                 You're about to suspend this user from accessing the platform.
                 While suspended, the user will:
               </p>
-              <ul className="text-gray-700 mb-4 ml-4">
+              <ul className="text-gray-700 mb-4 ml-4 text-sm sm:text-base">
                 <li className="mb-1">
                   • Be unable to log in or perform any actions
                 </li>
@@ -252,7 +252,7 @@ const UserInsights = () => {
                   • Lose access to all company modules and data
                 </li>
               </ul>
-              <p className="text-gray-700">
+              <p className="text-gray-700 text-sm sm:text-base">
                 This action does not delete the account, and access can be
                 restored later by reactivating the user.
               </p>
@@ -260,11 +260,11 @@ const UserInsights = () => {
           ) : (
             // Unsuspend user content
             <div className="mb-6">
-              <p className="text-gray-700 mb-4">
+              <p className="text-gray-700 mb-4 text-sm sm:text-base">
                 You're about to unsuspend this user and restore their access to
                 the platform. Once unsuspended, the user will:
               </p>
-              <ul className="text-gray-700 mb-4 ml-4">
+              <ul className="text-gray-700 mb-4 ml-4 text-sm sm:text-base">
                 <li className="mb-1">
                   • Be able to log in and perform actions
                 </li>
@@ -272,25 +272,25 @@ const UserInsights = () => {
                   • Regain access to all company modules and data
                 </li>
               </ul>
-              <p className="text-gray-700">
+              <p className="text-gray-700 text-sm sm:text-base">
                 The user will be immediately able to access their account and
                 resume normal activities.
               </p>
             </div>
           )}
 
-          <div className="flex justify-center gap-3">
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
             <button
               onClick={onClose}
               disabled={modalLoading}
-              className="px-4 py-2 border w-1/2 border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="px-4 py-2 border w-full sm:w-1/2 border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50 text-sm sm:text-base"
             >
               Cancel
             </button>
             <button
               onClick={() => onConfirm(user.id, user.isSuspended)}
               disabled={modalLoading}
-              className={`px-4 py-2 w-1/2 rounded-md text-white disabled:opacity-50 ${
+              className={`px-4 py-2 w-full sm:w-1/2 rounded-md text-white disabled:opacity-50 text-sm sm:text-base ${
                 isSuspended
                   ? "bg-green-500 hover:bg-green-600"
                   : "bg-red-500 hover:bg-red-600"
@@ -309,7 +309,7 @@ const UserInsights = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
+    <div className="bg-gray-50 min-h-screen p-3 sm:p-6">
       <ToastContainer
         position="top-right"
         autoClose={4000}
@@ -318,9 +318,9 @@ const UserInsights = () => {
       />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-900">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
               User Insight
             </h1>
             <button
@@ -328,7 +328,7 @@ const UserInsights = () => {
                 setSelectedUser(userInfo);
                 setShowActionModal(true);
               }}
-              className={`px-4 py-2 rounded-lg text-white transition-colors ${
+              className={`px-4 py-2 rounded-lg text-white transition-colors text-sm sm:text-base w-full sm:w-auto ${
                 userInfo.isSuspended
                   ? "bg-green-600 hover:bg-green-700"
                   : "bg-red-600 hover:bg-red-700"
@@ -340,44 +340,49 @@ const UserInsights = () => {
         </div>
 
         {/* User Profile Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center">
-                <User className="w-8 h-8 text-orange-600" />
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full lg:w-auto">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <User className="w-6 h-6 sm:w-8 sm:h-8 text-orange-600" />
               </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 break-words">
                   {userInfo.name}
-                  <span className="text-sm font-normal text-gray-500 ml-2">
+                  <span className="block sm:inline text-sm font-normal text-gray-500 sm:ml-2">
                     ({isSeller ? "Sales manager" : "Buyer"})
                   </span>
                 </h2>
-                <p className="text-gray-600">{userInfo.email}</p>
+                <p className="text-gray-600 text-sm sm:text-base break-all">
+                  {userInfo.email}
+                </p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-8 text-sm">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 text-sm w-full lg:w-auto">
               <div className="flex items-center space-x-2">
-                <Building2 className="w-4 h-4 text-gray-500" />
-                <div>
+                <Building2 className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
                   <p className="text-gray-500">Company name:</p>
-                  <p className="font-medium">{userInfo.companyName || "N/A"}</p>
+                  <p className="font-medium truncate">
+                    {userInfo.companyName || "N/A"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
                 <div
-                  className={`w-4 h-4 rounded-full ${
+                  className={`w-4 h-4 rounded-full flex-shrink-0 ${
                     getUserStatus(userInfo).className
                   }`}
                 ></div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-gray-500">Status:</p>
                   <p className="font-medium">{getUserStatus(userInfo).text}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <Calendar className="w-4 h-4 text-gray-500" />
-                <div>
+                <Calendar className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
                   <p className="text-gray-500">Joining date:</p>
                   <p className="font-medium">{formatDate(userInfo.joinDate)}</p>
                 </div>
@@ -387,17 +392,19 @@ const UserInsights = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
           {/* Overview Section */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
               {isSeller ? "Listing overview" : "Order overview"}
             </h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {getOverviewStats().map((stat, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
-                  <p className={`text-sm ${stat.color} mb-1`}>{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                <div key={index} className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                  <p className={`text-xs sm:text-sm ${stat.color} mb-1`}>
+                    {stat.label}
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
                     {stat.value}
                   </p>
                 </div>
@@ -406,11 +413,11 @@ const UserInsights = () => {
           </div>
 
           {/* Sales/Spending Overview Chart */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
               {isSeller ? "Sales overview" : "Spending overview"}
             </h3>
-            <div className="h-64">
+            <div className="h-48 sm:h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={getChartData()}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -418,12 +425,13 @@ const UserInsights = () => {
                     dataKey="month"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: "#666" }}
+                    tick={{ fontSize: 10, fill: "#666" }}
+                    interval="preserveStartEnd"
                   />
                   <YAxis
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: "#666" }}
+                    tick={{ fontSize: 10, fill: "#666" }}
                     tickFormatter={(value) => `$${value / 1000}k`}
                   />
                   <Line
@@ -431,8 +439,8 @@ const UserInsights = () => {
                     dataKey={getChartValueKey()}
                     stroke="#ef4444"
                     strokeWidth={2}
-                    dot={{ fill: "#ef4444", strokeWidth: 0, r: 4 }}
-                    activeDot={{ r: 6, fill: "#ef4444" }}
+                    dot={{ fill: "#ef4444", strokeWidth: 0, r: 3 }}
+                    activeDot={{ r: 5, fill: "#ef4444" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -441,24 +449,24 @@ const UserInsights = () => {
         </div>
 
         {/* Transaction History / Purchase History */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
             {isSeller ? "Transaction history" : "Purchase history"}
           </h3>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-full">
               <thead className="border-b border-gray-200">
                 <tr className="text-left">
-                  <th className="pb-3 text-sm font-medium text-gray-500">
+                  <th className="pb-3 text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
                     Amount
                   </th>
-                  <th className="pb-3 text-sm font-medium text-gray-500">
+                  <th className="pb-3 text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
                     Date
                   </th>
-                  <th className="pb-3 text-sm font-medium text-gray-500">
+                  <th className="pb-3 text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
                     {isSeller ? "Buyer" : "Product"}
                   </th>
-                  <th className="pb-3 text-sm font-medium text-gray-500">
+                  <th className="pb-3 text-xs sm:text-sm font-medium text-gray-500 whitespace-nowrap">
                     Status
                   </th>
                 </tr>
@@ -470,21 +478,23 @@ const UserInsights = () => {
                 )
                   .slice(0, 5)
                   .map((transaction, index) => (
-                    <tr key={index} className="text-sm">
-                      <td className="py-3 font-medium text-gray-900">
+                    <tr key={index} className="text-xs sm:text-sm">
+                      <td className="py-3 font-medium text-gray-900 whitespace-nowrap">
                         {formatCurrency(transaction.amount)}
                       </td>
-                      <td className="py-3 text-gray-600">
+                      <td className="py-3 text-gray-600 whitespace-nowrap">
                         {formatDate(transaction.date)}
                       </td>
-                      <td className="py-3 text-gray-900">
-                        {isSeller
-                          ? transaction.buyer
-                          : transaction.productTitle}
+                      <td className="py-3 text-gray-900 max-w-0">
+                        <div className="truncate">
+                          {isSeller
+                            ? transaction.buyer
+                            : transaction.productTitle}
+                        </div>
                       </td>
                       <td className="py-3">
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          className={`inline-flex items-center px-2 py-1 sm:px-2.5 sm:py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${
                             transaction.status === "approved" ||
                             transaction.status === "completed"
                               ? "bg-green-100 text-green-800"
@@ -511,15 +521,15 @@ const UserInsights = () => {
         </div>
 
         {/* Bottom Section - Dispute Performance for Sellers, Category Preferences for Buyers */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
               {isSeller ? "Dispute performance" : "Category preferences"}
             </h3>
             {isSeller && (
               <Link
                 to="/admin/disputes"
-                className="text-blue-600 cursor-pointer text-sm hover:text-blue-800"
+                className="text-blue-600 cursor-pointer text-sm hover:text-blue-800 whitespace-nowrap"
               >
                 View disputes
               </Link>
@@ -528,26 +538,30 @@ const UserInsights = () => {
 
           {isSeller ? (
             // Seller Dispute Performance
-            <div className="grid grid-cols-2 gap-8">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <p className="text-sm text-gray-500 mb-1">Total disputes</p>
-                  <p className="text-2xl font-bold text-gray-900">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+                  <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                    Total disputes
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
                     {insights.disputePerformance?.totalDisputes || 0}
                   </p>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <p className="text-sm text-gray-500 mb-1">Resolved vs Open</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+                  <p className="text-xs sm:text-sm text-gray-500 mb-1">
+                    Resolved vs Open
+                  </p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
                     {insights.disputePerformance?.resolutionRatio || "0:0"}
                   </p>
                 </div>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-500 mb-2">
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+                <p className="text-xs sm:text-sm text-gray-500 mb-2">
                   Most common dispute
                 </p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-base sm:text-lg font-semibold text-gray-900 break-words">
                   {insights.disputePerformance?.commonDispute || "N/A"}
                 </p>
               </div>
@@ -558,18 +572,24 @@ const UserInsights = () => {
               {insights.categoryPreferences?.map((category, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg gap-3"
                 >
-                  <div className="flex items-center space-x-3">
-                    <Package className="w-5 h-5 text-gray-400" />
-                    <span className="font-medium text-gray-900">
+                  <div className="flex items-center space-x-3 min-w-0 flex-1">
+                    <Package className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                    <span className="font-medium text-gray-900 text-sm sm:text-base truncate">
                       {category.category}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-6 text-sm text-gray-600">
-                    <span>Total: {formatCurrency(category.totalSpent)}</span>
-                    <span>Orders: {category.orderCount}</span>
-                    <span>Items: {category.itemsPurchased}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-6 text-xs sm:text-sm text-gray-600 w-full sm:w-auto">
+                    <span className="whitespace-nowrap">
+                      Total: {formatCurrency(category.totalSpent)}
+                    </span>
+                    <span className="whitespace-nowrap">
+                      Orders: {category.orderCount}
+                    </span>
+                    <span className="whitespace-nowrap">
+                      Items: {category.itemsPurchased}
+                    </span>
                   </div>
                 </div>
               ))}

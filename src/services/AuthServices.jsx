@@ -9,6 +9,7 @@ export const authenticate = async (email, password) => {
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("role", response.data.user.role);
     localStorage.setItem("userId", response.data.user.id);
+    localStorage.setItem("UserEmail", response.data.user.email);
     localStorage.setItem("userName", response.data.user.first_name);
     sessionStorage.setItem("jwtToken", response.data.token);
 
@@ -39,6 +40,7 @@ export const registerBuyer = async (buyerData) => {
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("role", response.data.user.role);
     localStorage.setItem("userId", response.data.user.id);
+    localStorage.setItem("UserEmail", response.data.user.email);
     localStorage.setItem("userName", response.data.user.first_name);
     sessionStorage.setItem("jwtToken", response.token);
 
@@ -108,6 +110,7 @@ export const registerSeller = async (sellerData) => {
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("role", response.data.user.role);
     localStorage.setItem("userId", response.data.user.id);
+    localStorage.setItem("UserEmail", response.data.user.email);
     localStorage.setItem("userName", response.data.user.first_name);
     sessionStorage.setItem("jwtToken", response.data.token); // Fixed: was response.token
 

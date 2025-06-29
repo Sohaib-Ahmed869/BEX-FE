@@ -32,8 +32,9 @@ const BuyerOrderDetails = () => {
   const [showDispute, setShowDispute] = useState(false);
   const [isMessageLoading, setMessageIsLoading] = useState(false);
   const [disputeItem, setDisputeItem] = useState(null);
+  const userEmail = localStorage.getItem("UserEmail");
   const [disputeForm, setDisputeForm] = useState({
-    email: "",
+    email: userEmail,
     category: "",
     description: "",
   });

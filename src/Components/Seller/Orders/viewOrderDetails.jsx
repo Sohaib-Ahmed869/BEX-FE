@@ -398,9 +398,7 @@ export default function SellerOrderItems() {
             <DollarSign className="h-8 w-8 text-[#F47458]" />
             <div>
               <p className="text-sm text-gray-500"> Total Amount</p>
-              <p className="font-medium">
-                ${summary.totalAmount + orderInfo.platformFee}
-              </p>
+              <p className="font-medium">${summary.totalAmount}</p>
             </div>
           </div>
         </div>
@@ -866,17 +864,15 @@ export default function SellerOrderItems() {
               ${summary.totalAmount.toFixed(2)}
             </span>
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <span className="text-gray-600">Platform Fee:</span>
             <span className="font-medium">
               ${orderInfo.platformFee.toFixed(2)}
             </span>
-          </div>
+          </div> */}
           <div className="flex justify-between border-t border-gray-300 pt-2">
             <span className="text-gray-900 font-medium">Total:</span>
-            <span className="font-bold text-lg">
-              ${summary.totalAmount + orderInfo.platformFee}
-            </span>
+            <span className="font-bold text-lg">${summary.totalAmount}</span>
           </div>
         </div>
       </div>

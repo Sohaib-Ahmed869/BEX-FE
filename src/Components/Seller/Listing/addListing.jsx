@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import CubeLoader from "../../../utils/cubeLoader";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 export default function AddListing({ onSuccess, onCancel }) {
@@ -29,6 +29,7 @@ export default function AddListing({ onSuccess, onCancel }) {
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
   // Categories - you can customize these based on your needs
   const categories = [
     "Core Drill Bits",
@@ -181,8 +182,7 @@ export default function AddListing({ onSuccess, onCancel }) {
         });
         setImages([]);
         setImagePreviews([]);
-
-        onSuccess?.();
+        navigate("/seller/listing");
       } else {
         toast.error(data.message || "Failed to create listing");
       }

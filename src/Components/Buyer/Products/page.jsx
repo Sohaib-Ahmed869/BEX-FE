@@ -42,7 +42,25 @@ const Products = () => {
   useEffect(() => {
     loadProducts();
   }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        // Tailwind's md breakpoint
+        setFiltersVisible(false);
+      } else {
+        setFiltersVisible(true);
+      }
+    };
 
+    // Check on mount
+    handleResize();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   useEffect(() => {
     // Apply both search and filters whenever either changes
     applyFiltersAndSearch();

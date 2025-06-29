@@ -170,17 +170,18 @@ const BuyerProfile = () => {
       <div className="max-w-4xl my-10 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
-          <div className="bg-[#F47458] px-6 py-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="bg-white p-3 rounded-full">
-                  <User className="w-12 h-12 text-[#F47458]" />
+          <div className="bg-[#F47458] px-4 sm:px-6 py-6 sm:py-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {/* User Profile Section */}
+              <div className="flex items-center min-w-0 flex-1">
+                <div className="bg-white p-2 sm:p-3 rounded-full flex-shrink-0">
+                  <User className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-[#F47458]" />
                 </div>
-                <div className="ml-6 text-white">
-                  <h1 className="text-3xl font-bold">
+                <div className="ml-3 sm:ml-4 md:ml-6 text-white min-w-0 flex-1">
+                  <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold truncate">
                     {userDetails.first_name} {userDetails.last_name}
                   </h1>
-                  <p className="text-blue-100 capitalize text-lg">
+                  <p className="text-blue-100 capitalize text-sm sm:text-base md:text-lg truncate">
                     {userDetails.role}
                   </p>
                 </div>
@@ -188,14 +189,31 @@ const BuyerProfile = () => {
 
               {/* Upgrade to Seller Button - Only show for buyers */}
               {userDetails.role === "buyer" && (
-                <button
-                  onClick={() => setShowUpgradeModal(true)}
-                  className="group relative flex items-center justify-center bg-gradient-to-r from-white to-gray-50 text-[#F47458] px-8 py-4 rounded-xl font-semibold hover:scale-[1.02] active:scale-[0.98] transform transition-all duration-300 ease-out shadow-lg hover:shadow-xl border border-gray-100 hover:border-[#F47458]/20 focus:outline-none focus:ring-4 focus:ring-[#F47458]/20 overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-[#F47458]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-all before:duration-300 before:ease-out"
-                >
-                  <Star className="w-5 h-5 mr-2" />
-                  Become a Seller
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </button>
+                <div className="flex-shrink-0 w-full sm:w-auto">
+                  <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    className="group relative flex items-center justify-center bg-gradient-to-r from-white to-gray-50 text-[#F47458] 
+                       px-3 sm:px-4 md:px-6 lg:px-8 
+                       py-2.5 sm:py-3 md:py-3.5 lg:py-4 
+                       rounded-lg sm:rounded-xl 
+                       text-xs sm:text-sm md:text-base font-semibold 
+                       hover:scale-[1.02] active:scale-[0.98] 
+                       transform transition-all duration-300 ease-out 
+                       shadow-lg hover:shadow-xl 
+                       border border-gray-100 hover:border-[#F47458]/20 
+                       focus:outline-none focus:ring-4 focus:ring-[#F47458]/20 
+                       overflow-hidden 
+                       w-full sm:w-auto
+                       min-h-[40px] sm:min-h-[44px] md:min-h-[48px]
+                       before:absolute before:inset-0 before:bg-gradient-to-r before:from-[#F47458]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-all before:duration-300 before:ease-out"
+                  >
+                    <Star className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mr-1 sm:mr-1.5 md:mr-2 flex-shrink-0" />
+                    <span className="whitespace-nowrap sm:whitespace-normal">
+                      Become a Seller
+                    </span>
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 ml-1 sm:ml-1.5 md:ml-2 flex-shrink-0" />
+                  </button>
+                </div>
               )}
             </div>
           </div>

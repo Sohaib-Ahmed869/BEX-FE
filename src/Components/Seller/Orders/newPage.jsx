@@ -384,7 +384,10 @@ const SellerOrders = () => {
                             </td>
                             <td className="py-3 px-4 border-r border-gray-100 text-gray-600 text-nowrap">
                               <div className="font-regular text-gray-900">
-                                {formatCurrency(order.amounts.orderTotal)}
+                                {formatCurrency(
+                                  order.amounts.itemsTotal +
+                                    order.amounts.retipTotal
+                                )}
                               </div>
                               <div className="text-xs text-gray-500 ">
                                 Items:{" "}

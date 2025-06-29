@@ -1,380 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import {
-//   AlertCircle,
-//   CheckCircle,
-//   Loader2,
-//   CreditCard,
-//   User,
-//   Building,
-// } from "lucide-react";
-// const URL = import.meta.env.VITE_REACT_BACKEND_URL;
-
-// const StripeConnectOnboarding = () => {
-//   const [loading, setLoading] = useState(false);
-//   const [accountStatus, setAccountStatus] = useState(null);
-//   const [accountId, setAccountId] = useState(null);
-//   const [error, setError] = useState("");
-//   const [success, setSuccess] = useState("");
-//   const [onboardingUrl, setOnboardingUrl] = useState("");
-
-//   // Check if seller already has a connected account
-//   useEffect(() => {
-//     checkExistingAccount();
-//   }, []);
-
-//   const checkExistingAccount = async () => {
-//     try {
-//       const response = await fetch(`${URL}/api/stripe-connect/check-account`, {
-//         method: "GET",
-//         headers: {
-//           Authorization: `Bearer ${localStorage.getItem("token")}`,
-//           "Content-Type": "application/json",
-//         },
-//       });
-
-//       if (response.ok) {
-//         const data = await response.json();
-//         if (data.success && data.hasAccount) {
-//           setAccountId(data.accountId);
-//           setAccountStatus(data.status);
-//         }
-//       }
-//     } catch (err) {
-//       console.error("Error checking account:", err);
-//     }
-//   };
-
-//   const createExpressAccount = async () => {
-//     setLoading(true);
-//     setError("");
-//     setSuccess("");
-
-//     try {
-//       const response = await fetch(
-//         `${URL}/api/stripe-connect/create-express-account`,
-//         {
-//           method: "POST",
-//           headers: {
-//             Authorization: `Bearer ${localStorage.getItem("token")}`,
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({
-//             type: "express",
-//             country: "US", // You can make this dynamic based on seller's location
-//           }),
-//         }
-//       );
-
-//       const data = await response.json();
-
-//       if (data.success) {
-//         setAccountId(data.accountId);
-//         setOnboardingUrl(data.onboardingUrl);
-//         setSuccess(
-//           "Express account created successfully! Please complete the onboarding process."
-//         );
-//       } else {
-//         setError(data.error || "Failed to create Express account");
-//       }
-//     } catch (err) {
-//       setError("Network error. Please try again.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const generateOnboardingLink = async () => {
-//     if (!accountId) return;
-
-//     setLoading(true);
-//     setError("");
-
-//     try {
-//       const response = await fetch(
-//         `${URL}/api/stripe-connect/create-onboarding-link`,
-//         {
-//           method: "POST",
-//           headers: {
-//             Authorization: `Bearer ${localStorage.getItem("token")}`,
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({
-//             accountId: accountId,
-//           }),
-//         }
-//       );
-
-//       const data = await response.json();
-
-//       if (data.success) {
-//         setOnboardingUrl(data.url);
-//         // Redirect to Stripe onboarding
-//         window.location.href = data.url;
-//       } else {
-//         setError(data.error || "Failed to generate onboarding link");
-//       }
-//     } catch (err) {
-//       setError("Network error. Please try again.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const refreshAccountStatus = async () => {
-//     if (!accountId) return;
-
-//     setLoading(true);
-//     try {
-//       const response = await fetch(
-//         `${URL}/api/stripe-connect/account-status/${accountId}`,
-//         {
-//           method: "GET",
-//           headers: {
-//             Authorization: `Bearer ${localStorage.getItem("token")}`,
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-
-//       const data = await response.json();
-//       if (data.success) {
-//         setAccountStatus(data.status);
-//         setSuccess("Account status updated successfully!");
-//       }
-//     } catch (err) {
-//       setError("Failed to refresh account status");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case "complete":
-//         return "text-green-600 bg-green-50 border-green-200";
-//       case "pending":
-//         return "text-yellow-600 bg-yellow-50 border-yellow-200";
-//       default:
-//         return "text-gray-600 bg-gray-50 border-gray-200";
-//     }
-//   };
-
-//   const getStatusIcon = (status) => {
-//     switch (status) {
-//       case "complete":
-//         return <CheckCircle className="w-5 h-5" />;
-//       case "pending":
-//         return <Loader2 className="w-5 h-5 animate-spin" />;
-//       default:
-//         return <AlertCircle className="w-5 h-5" />;
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-4xl mx-auto p-6 bg-white">
-//       <div className="mb-8">
-//         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-//           Stripe Connect Setup
-//         </h1>
-//         <p className="text-gray-600">
-//           Set up your seller account to receive payments from customers
-//         </p>
-//       </div>
-
-//       {/* Current Status Card */}
-//       {accountId && (
-//         <div className="mb-6 p-6 border rounded-lg bg-gray-50">
-//           <div className="flex items-center justify-between mb-4">
-//             <h2 className="text-xl font-semibold text-gray-900">
-//               Account Status
-//             </h2>
-//             <button
-//               onClick={refreshAccountStatus}
-//               disabled={loading}
-//               className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-500 disabled:opacity-50"
-//             >
-//               {loading ? "Refreshing..." : "Refresh Status"}
-//             </button>
-//           </div>
-
-//           <div
-//             className={`flex items-center p-3 rounded-lg border ${getStatusColor(
-//               accountStatus
-//             )}`}
-//           >
-//             {getStatusIcon(accountStatus)}
-//             <div className="ml-3">
-//               <p className="font-medium capitalize">
-//                 {accountStatus || "Unknown"}
-//               </p>
-//               <p className="text-sm opacity-75">Account ID: {accountId}</p>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Onboarding Steps */}
-//       <div className="space-y-6">
-//         {/* Step 1: Create Express Account */}
-//         <div className="border rounded-lg p-6">
-//           <div className="flex items-start space-x-4">
-//             <div className="flex-shrink-0">
-//               <div
-//                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-//                   accountId
-//                     ? "bg-green-100 text-green-600"
-//                     : "bg-blue-100 text-blue-600"
-//                 }`}
-//               >
-//                 {accountId ? (
-//                   <CheckCircle className="w-5 h-5" />
-//                 ) : (
-//                   <Building className="w-5 h-5" />
-//                 )}
-//               </div>
-//             </div>
-//             <div className="flex-1">
-//               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-//                 Step 1: Create Express Account
-//               </h3>
-//               <p className="text-gray-600 mb-4">
-//                 Create a Stripe Express account to start receiving payments
-//               </p>
-
-//               {!accountId ? (
-//                 <button
-//                   onClick={createExpressAccount}
-//                   disabled={loading}
-//                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-//                 >
-//                   {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-//                   Create Express Account
-//                 </button>
-//               ) : (
-//                 <div className="flex items-center text-green-600">
-//                   <CheckCircle className="w-4 h-4 mr-2" />
-//                   Express account created
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Step 2: Complete Onboarding */}
-//         <div className="border rounded-lg p-6">
-//           <div className="flex items-start space-x-4">
-//             <div className="flex-shrink-0">
-//               <div
-//                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-//                   accountStatus === "complete"
-//                     ? "bg-green-100 text-green-600"
-//                     : accountId
-//                     ? "bg-blue-100 text-blue-600"
-//                     : "bg-gray-100 text-gray-400"
-//                 }`}
-//               >
-//                 {accountStatus === "complete" ? (
-//                   <CheckCircle className="w-5 h-5" />
-//                 ) : (
-//                   <User className="w-5 h-5" />
-//                 )}
-//               </div>
-//             </div>
-//             <div className="flex-1">
-//               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-//                 Step 2: Complete Onboarding
-//               </h3>
-//               <p className="text-gray-600 mb-4">
-//                 Complete the Stripe onboarding process to verify your identity
-//                 and banking information
-//               </p>
-
-//               {accountId && accountStatus !== "complete" ? (
-//                 <button
-//                   onClick={generateOnboardingLink}
-//                   disabled={loading}
-//                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-//                 >
-//                   {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-//                   Complete Onboarding
-//                 </button>
-//               ) : accountStatus === "complete" ? (
-//                 <div className="flex items-center text-green-600">
-//                   <CheckCircle className="w-4 h-4 mr-2" />
-//                   Onboarding completed
-//                 </div>
-//               ) : (
-//                 <p className="text-gray-500">Complete Step 1 first</p>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Step 3: Ready for Payouts */}
-//         <div className="border rounded-lg p-6">
-//           <div className="flex items-start space-x-4">
-//             <div className="flex-shrink-0">
-//               <div
-//                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
-//                   accountStatus === "complete"
-//                     ? "bg-green-100 text-green-600"
-//                     : "bg-gray-100 text-gray-400"
-//                 }`}
-//               >
-//                 <CreditCard className="w-5 h-5" />
-//               </div>
-//             </div>
-//             <div className="flex-1">
-//               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-//                 Step 3: Ready for Payouts
-//               </h3>
-//               <p className="text-gray-600 mb-4">
-//                 Once onboarding is complete, admin can process payouts to your
-//                 account
-//               </p>
-
-//               {accountStatus === "complete" ? (
-//                 <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-//                   <div className="flex items-center">
-//                     <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
-//                     <p className="text-green-800 font-medium">
-//                       Your account is ready to receive payouts!
-//                     </p>
-//                   </div>
-//                 </div>
-//               ) : (
-//                 <p className="text-gray-500">
-//                   Complete onboarding to enable payouts
-//                 </p>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Error and Success Messages */}
-//       {error && (
-//         <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-//           <div className="flex items-center">
-//             <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
-//             <p className="text-red-800">{error}</p>
-//           </div>
-//         </div>
-//       )}
-
-//       {success && (
-//         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-//           <div className="flex items-center">
-//             <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
-//             <p className="text-green-800">{success}</p>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default StripeConnectOnboarding;
 import React, { useState, useEffect } from "react";
 import {
   AlertCircle,
@@ -388,6 +11,7 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
+import CubeLoader from "../../../utils/cubeLoader";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -399,7 +23,7 @@ const StripeConnectOnboarding = () => {
   const [success, setSuccess] = useState("");
   const [onboardingUrl, setOnboardingUrl] = useState("");
   const [dashboardLoading, setDashboardLoading] = useState(false);
-
+  const [initialLoading, setInitialLoading] = useState(false);
   // Check if seller already has a connected account
   useEffect(() => {
     checkExistingAccount();
@@ -407,6 +31,7 @@ const StripeConnectOnboarding = () => {
 
   const checkExistingAccount = async () => {
     try {
+      setInitialLoading(true);
       const response = await fetch(`${URL}/api/stripe-connect/check-account`, {
         method: "GET",
         headers: {
@@ -421,9 +46,13 @@ const StripeConnectOnboarding = () => {
           setAccountId(data.accountId);
           setAccountStatus(data.status);
         }
+        setInitialLoading(false);
       }
     } catch (err) {
+      setInitialLoading(false);
       console.error("Error checking account:", err);
+    } finally {
+      setInitialLoading(false);
     }
   };
 
@@ -582,7 +211,9 @@ const StripeConnectOnboarding = () => {
         return <AlertCircle className="w-5 h-5" />;
     }
   };
-
+  if (initialLoading) {
+    return <CubeLoader />;
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="max-w-5xl mx-auto px-6 py-12">
