@@ -332,7 +332,7 @@ const ProductInfo = ({
   };
   const handleSendMessage = async () => {
     if (!userId || !product.id) {
-      alert("User ID and Product ID are required");
+      toast.error("User ID and Product ID are required");
       return;
     }
 
@@ -342,7 +342,7 @@ const ProductInfo = ({
       // Navigation happens automatically in the service function
     } catch (error) {
       console.error("Failed to initiate chat:", error.message);
-      alert(`Failed to start chat: ${error.message}`);
+      toast.error(`Failed to start chat: ${error.message}`);
     } finally {
       setMessageIsLoading(false);
     }

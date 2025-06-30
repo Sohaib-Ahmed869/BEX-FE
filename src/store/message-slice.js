@@ -48,7 +48,7 @@ const unreadMessagesSlice = createSlice({
       state.chatUnreadCounts[chatId] = currentCount + 1;
 
       // Update total count
-      state.totalUnreadCount += increment;
+      state.totalUnreadCount = state.totalUnreadCount + 1;
       state.lastUpdated = new Date().toISOString();
       state.error = null;
     },

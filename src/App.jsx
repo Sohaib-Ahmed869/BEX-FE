@@ -8,6 +8,8 @@ import useGlobalSocket from "./hooks/MessageSocketHook";
 import StripeConnectOnboarding from "./Components/Seller/stripeConnectOnboarding/page";
 import AdminPayoutManagement from "./Components/Admin/StripePayout/page";
 import ShippedOrdersTable from "./Components/Admin/ShippedOrders/page";
+import { useDispatch } from "react-redux";
+import { unreadMessagesActions } from "./store/message-slice";
 
 // Loading component for lazy loading fallback
 const LoadingSpinner = () => (
@@ -95,9 +97,63 @@ const LandingPage = lazy(() => import("./Components/LandingPage/page"));
 const NotFound = lazy(() => import("./utils/fallbackroute404"));
 
 const AppWithSocket = () => {
+  const dispatch = useDispatch();
   // Initialize global socket connection
   useGlobalSocket();
 
+  useEffect(() => {
+    const updateUnreadCounts = async () => {
+      const getCurrentUser = () => {
+        const userId = localStorage.getItem("userId");
+        const userName = localStorage.getItem("userName");
+        const userRole = localStorage.getItem("role");
+        return userId && userName
+          ? { id: userId, first_name: userName, role: userRole }
+          : null;
+      };
+
+      const currentUser = getCurrentUser();
+      const token = localStorage.getItem("token");
+      const URL = import.meta.env.VITE_REACT_BACKEND_URL;
+
+      if (!currentUser || !token) return;
+
+      try {
+        const response = await fetch(`${URL}/api/chat/${currentUser.id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Extract unread counts and update Redux store
+          const chatCounts = {};
+          data.chats.forEach((chat) => {
+            chatCounts[chat.id] = chat.unread_count || 0;
+          });
+
+          dispatch(
+            unreadMessagesActions.updateMultipleChatUnreadCounts({
+              chatCounts,
+            })
+          );
+
+          console.log("Updated unread counts:", chatCounts);
+        }
+      } catch (error) {
+        console.error("Error updating unread counts:", error);
+      }
+    };
+
+    // Set up interval to update unread counts every minute
+    const interval = setInterval(updateUnreadCounts, 60000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [dispatch]);
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>

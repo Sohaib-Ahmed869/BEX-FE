@@ -28,3 +28,61 @@ export const initiateChat = async (userId, productId) => {
     );
   }
 };
+export const initiateSellerChat = async (userId, orderItemId) => {
+  try {
+    const response = await axios.post(
+      `${URL}/api/chat/initiateSellerChat/${userId}`,
+      {
+        orderItemId: orderItemId,
+      }
+    );
+
+    if (response.data.success) {
+      // Navigate to /user/chats on success
+      window.location.href = "/seller/chats";
+
+      return {
+        success: true,
+        message: response.data.message,
+        data: response.data.data,
+      };
+    }
+  } catch (error) {
+    if (error.message) {
+      throw error; // Re-throw if it's already our custom error
+    }
+    throw new Error(
+      error.response?.data?.message ||
+        "An error occurred while initiating the chat"
+    );
+  }
+};
+export const initiateBuyerOrderChat = async (userId, orderItemId) => {
+  try {
+    const response = await axios.post(
+      `${URL}/api/chat/initiateBuyerOrderChat/${userId}`,
+      {
+        orderItemId: orderItemId,
+      }
+    );
+
+    if (response.data.success) {
+      // Navigate to /user/chats on success
+      window.location.href = "/user/chats";
+
+      return {
+        success: true,
+        message: response.data.message,
+        data: response.data.data,
+      };
+    }
+  } catch (error) {
+    if (error.message) {
+      throw error; // Re-throw if it's already our custom error
+    }
+    throw new Error(
+      error.response?.data?.message ||
+        "An error occurred while initiating the chat"
+    );
+  }
+};

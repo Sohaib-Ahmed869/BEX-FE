@@ -12,7 +12,7 @@ import WishlistModal from "../wishlist/wishlistModal";
 import useGlobalSocket from "../../../hooks/MessageSocketHook";
 
 const Products = () => {
-  useGlobalSocket();
+  // useGlobalSocket();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(false);

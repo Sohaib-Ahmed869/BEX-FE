@@ -13,11 +13,13 @@ import {
   Truck,
   Check,
   AlertCircle,
+  MessageCircleIcon,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import CubeLoader from "../../../utils/cubeLoader";
 import { confirmOrder, rejectOrder } from "../../../services/OrderServices";
 import { Bounce, toast, ToastContainer } from "react-toastify";
+import { initiateSellerChat } from "../../../services/chatServices";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -25,6 +27,7 @@ export default function SellerOrderItems() {
   const [orderData, setOrderData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMessageLoading, setMessageIsLoading] = useState(false);
 
   // Image handling states
   const [currentImageIndex, setCurrentImageIndex] = useState({});
@@ -218,7 +221,23 @@ export default function SellerOrderItems() {
         };
     }
   };
+  const handleSendMessage = async (orderItemId) => {
+    if (!userId || !orderItemId) {
+      toast.error("User ID and Order Item ID are required");
+      return;
+    }
 
+    setMessageIsLoading(true);
+    try {
+      await initiateSellerChat(userId, orderItemId);
+      // Navigation happens automatically in the service function
+    } catch (error) {
+      console.error("Failed to initiate chat:", error.message);
+      toast.error(`Failed to start chat: ${error.message}`);
+    } finally {
+      setMessageIsLoading(false);
+    }
+  };
   // Get payment status styling
   const getPaymentStatusStyle = (status) => {
     return status
@@ -670,6 +689,15 @@ export default function SellerOrderItems() {
                               >
                                 <Eye className="h-4 w-4" />
                               </Link>
+                              <button
+                                onClick={() =>
+                                  handleSendMessage(item.orderItemId)
+                                }
+                                disabled={isMessageLoading}
+                                className="p-2 border cursor-pointer border-red-200 rounded hover:bg-red-50 text-red-600"
+                              >
+                                <MessageCircleIcon className="h-4 w-4" />
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -845,6 +873,9 @@ export default function SellerOrderItems() {
                       >
                         <Eye className="h-4 w-4" /> View
                       </Link>
+                      <button className="flex-1 mt-4 px-4 py-2 bg-[#f47458] text-white rounded hover:bg-[#ef6f4f] transition-colors flex items-center justify-center gap-2">
+                        <MessageCircleIcon className="h-4 w-4" />
+                      </button>
                     </div>
                   );
                 })}

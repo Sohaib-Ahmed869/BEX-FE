@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import useGlobalSocket from "../../hooks/MessageSocketHook";
 
 export default function SideBar() {
-  useGlobalSocket();
+  // useGlobalSocket();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

@@ -382,7 +382,11 @@ const ChatListItem = ({
             isSelected ? "text-white text-opacity-60" : "text-gray-400"
           }`}
         >
-          {chat.product.title}
+          {chat.chat_type === "product_discussion"
+            ? `${chat.product.title} Product Discussion`
+            : chat.chat_type === "order_discussion"
+            ? `${chat.product.title} Order Discussion`
+            : `${chat.product.title}`}
         </p>
       </div>
     </div>
@@ -928,35 +932,6 @@ const MessagingComponent = () => {
     };
   }, [selectedChat, currentUser.id]);
 
-  // Fetch user's chats
-  // const fetchChats = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const token = localStorage.getItem("token");
-  //     const URL = import.meta.env.VITE_REACT_BACKEND_URL;
-
-  //     const response = await fetch(`${URL}/api/chat/${currentUser.id}`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       console.log("Chats fetched:", data.chats);
-  //       setChats(data.chats);
-  //     } else if (response.status === 401) {
-  //       console.error("Unauthorized access - token may be expired");
-  //     } else {
-  //       console.error("Failed to fetch chats");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching chats:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const sortChats = (chats) => {
     return chats.sort((a, b) => {
       // Get the timestamp to compare for each chat
