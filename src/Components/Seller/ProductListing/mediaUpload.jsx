@@ -18,7 +18,7 @@ import {
 } from "../../../utils/qrCodeGenerator";
 import io from "socket.io-client";
 
-const URL = import.meta.env.VITE_REACT_BACKEND_URL;
+const SERVER_URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 const MediaUploadComponent = ({ formData, setFormData }) => {
   const fileInputRef = useRef(null);
@@ -41,7 +41,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
   // Initialize socket connection with retry logic
   useEffect(() => {
     const connectSocket = () => {
-      const serverUrl = URL || "http://localhost:5000";
+      const serverUrl = SERVER_URL || "http://localhost:5000";
       console.log("Attempting to connect to socket:", serverUrl);
       console.log(
         "Attempting to connect to upload namespace:",
@@ -68,7 +68,6 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
       newSocket.on("connect_error", (error) => {
         console.error("Socket connection error:", error);
         setIsConnected(false);
-
         // Retry connection after delay
         if (connectionAttempts < 3) {
           setTimeout(() => {
@@ -200,7 +199,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
         setTimeRemaining(10 * 60 * 1000);
 
         // Register the token with the backend
-        const serverUrl = URL || "http://localhost:5000";
+        const serverUrl = SERVER_URL || "http://localhost:5000";
         const response = await fetch(
           `${serverUrl}/api/products/register-upload-token`,
           {
@@ -245,19 +244,34 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Desktop file upload handler
+  // Desktop file upload handler - FIXED
   const handleFileUpload = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (isProcessingFile) return;
 
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    console.log("Processing desktop files:", files.length);
     setIsProcessingFile(true);
 
-    if (e.target.files && e.target.files.length > 0) {
-      const files = Array.from(e.target.files);
-      const newImages = files.map((file) => {
-        const previewUrl = URL.createObjectURL(file);
-        return {
+    try {
+      const filesArray = Array.from(files);
+      const newImages = [];
+
+      filesArray.forEach((file) => {
+        // Validate file type
+        if (!file.type.startsWith("image/")) {
+          console.warn("Skipping non-image file:", file.name);
+          return;
+        }
+
+        // Create preview URL using the global URL object
+        const previewUrl = window.URL.createObjectURL(file);
+
+        const imageObject = {
           file: file, // Keep file object for desktop uploads
           preview: previewUrl,
           name: file.name,
@@ -265,20 +279,32 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
           isTemp: false,
           size: file.size,
         };
+
+        newImages.push(imageObject);
+        console.log("Created desktop image object:", {
+          name: imageObject.name,
+          size: imageObject.size,
+          preview: previewUrl.substring(0, 50) + "...",
+        });
       });
 
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        uploadedImages: [...(prevFormData.uploadedImages || []), ...newImages],
-      }));
-
-      setTimeout(() => {
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-          setIsProcessingFile(false);
-        }
-      }, 300);
-    } else {
+      if (newImages.length > 0) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          uploadedImages: [
+            ...(prevFormData.uploadedImages || []),
+            ...newImages,
+          ],
+        }));
+        console.log(`Added ${newImages.length} desktop images to form data`);
+      }
+    } catch (error) {
+      console.error("Error processing desktop files:", error);
+    } finally {
+      // Reset the input and processing state
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
       setIsProcessingFile(false);
     }
   };
@@ -299,7 +325,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
       !imageToRemove?.fromMobile &&
       imageToRemove?.file
     ) {
-      URL.revokeObjectURL(imageToRemove.preview);
+      window.URL.revokeObjectURL(imageToRemove.preview);
     }
 
     updatedImages.splice(index, 1);
@@ -309,19 +335,34 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     }));
   };
 
-  // Handle drag and drop
+  // Handle drag and drop - FIXED
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (isProcessingFile) return;
 
+    const files = e.dataTransfer.files;
+    if (!files || files.length === 0) return;
+
+    console.log("Processing dropped files:", files.length);
     setIsProcessingFile(true);
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const files = Array.from(e.dataTransfer.files);
-      const newImages = files.map((file) => {
-        const previewUrl = URL.createObjectURL(file);
-        return {
+    try {
+      const filesArray = Array.from(files);
+      const newImages = [];
+
+      filesArray.forEach((file) => {
+        // Validate file type
+        if (!file.type.startsWith("image/")) {
+          console.warn("Skipping non-image file:", file.name);
+          return;
+        }
+
+        // Create preview URL using the global URL object
+        const previewUrl = window.URL.createObjectURL(file);
+
+        const imageObject = {
           file: file,
           preview: previewUrl,
           name: file.name,
@@ -329,17 +370,30 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
           isTemp: false,
           size: file.size,
         };
+
+        newImages.push(imageObject);
+        console.log("Created dropped image object:", {
+          name: imageObject.name,
+          size: imageObject.size,
+          preview: previewUrl.substring(0, 50) + "...",
+        });
       });
 
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        uploadedImages: [...(prevFormData.uploadedImages || []), ...newImages],
-      }));
-    }
-
-    setTimeout(() => {
+      if (newImages.length > 0) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          uploadedImages: [
+            ...(prevFormData.uploadedImages || []),
+            ...newImages,
+          ],
+        }));
+        console.log(`Added ${newImages.length} dropped images to form data`);
+      }
+    } catch (error) {
+      console.error("Error processing dropped files:", error);
+    } finally {
       setIsProcessingFile(false);
-    }, 300);
+    }
   };
 
   // Open/close image modal
@@ -396,6 +450,20 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
       <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
         Media upload
       </h2>
+
+      {/* Debug info for development */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
+          <p>
+            Desktop Images:{" "}
+            {formData.uploadedImages?.filter((img) => !img.fromMobile).length ||
+              0}
+          </p>
+          <p>Mobile Images: {mobileUploadsCount}</p>
+          <p>Total Images: {formData.uploadedImages?.length || 0}</p>
+          <p>Processing: {isProcessingFile ? "Yes" : "No"}</p>
+        </div>
+      )}
 
       {/* QR Code Upload Section */}
       <div className="mb-4 sm:mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
