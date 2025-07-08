@@ -43,8 +43,12 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     const connectSocket = () => {
       const serverUrl = URL || "http://localhost:5000";
       console.log("Attempting to connect to socket:", serverUrl);
+      console.log(
+        "Attempting to connect to upload namespace:",
+        serverUrl + "/uploads"
+      );
 
-      const newSocket = io(serverUrl, {
+      const newSocket = io(serverUrl + "/uploads", {
         transports: ["websocket", "polling"],
         timeout: 20000,
         forceNew: true,
