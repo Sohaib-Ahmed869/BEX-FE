@@ -1,15 +1,14 @@
 "use client";
-
 import { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Camera, Upload, Check, AlertCircle, Loader2 } from "lucide-react";
+
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
 const MobileUpload = () => {
   const { token } = useParams();
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
-
   const [isValidToken, setIsValidToken] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -25,9 +24,7 @@ const MobileUpload = () => {
           `${serverUrl}/api/products/validate-upload-token/${token}`
         );
         const data = await response.json();
-
         setIsValidToken(data.valid);
-
         if (!data.valid) {
           setUploadStatus(
             data.message || "This upload link has expired or is invalid."
@@ -235,6 +232,9 @@ const MobileUpload = () => {
                       src={image.url || "/placeholder.svg"}
                       alt={image.name}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "/placeholder.svg";
+                      }}
                     />
                   </div>
                   <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full p-1 shadow-md">
@@ -263,7 +263,7 @@ const MobileUpload = () => {
               Take clear, well-lit photos of your product
             </li>
             <li className="flex items-start">
-              <span class="text-blue-600 mr-2">2.</span>
+              <span className="text-blue-600 mr-2">2.</span>
               Include multiple angles and important details
             </li>
             <li className="flex items-start">
@@ -301,7 +301,6 @@ const MobileUpload = () => {
         className="hidden"
         onChange={handleCameraCapture}
       />
-
       <input
         ref={fileInputRef}
         type="file"

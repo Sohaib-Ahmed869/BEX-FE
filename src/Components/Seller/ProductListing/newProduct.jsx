@@ -399,6 +399,138 @@ export default function NewProduct() {
     }
   };
 
+  // const handleSubmit = async () => {
+  //   setCompletedTabs({ ...completedTabs, media: true });
+  //   if (!completedTabs.description || !completedTabs.general) {
+  //     toast.error("Please complete all the sections ");
+  //     return;
+  //   }
+
+  //   const id = localStorage.getItem("userId");
+  //   console.log(formData);
+  //   try {
+  //     // Validate required fields
+  //     if (
+  //       !formData.productName ||
+  //       !formData.price ||
+  //       !formData.productCondition ||
+  //       !formData.category ||
+  //       !formData.weight ||
+  //       !formData.length ||
+  //       !formData.width ||
+  //       !formData.height
+  //     ) {
+  //       toast.error(
+  //         "Please fill in all required fields in the General info tab"
+  //       );
+  //       return;
+  //     }
+
+  //     // Validate images
+  //     if (!formData.uploadedImages || formData.uploadedImages.length === 0) {
+  //       toast.error("Please upload at least one image of the product");
+  //       return;
+  //     }
+
+  //     const userId = id;
+  //     // Prepare data for backend submission
+  //     const formDataForSubmission = new FormData();
+
+  //     // Map frontend field names to backend expected field names
+  //     formDataForSubmission.append("listing_id", listingId);
+  //     formDataForSubmission.append("title", formData.productName);
+  //     formDataForSubmission.append("price", formData.price);
+  //     formDataForSubmission.append("condition", formData.productCondition);
+  //     formDataForSubmission.append("category", formData.category);
+  //     formDataForSubmission.append("description", formData.description || "");
+  //     formDataForSubmission.append("quantity", formData.stockQuantity || "1");
+  //     formDataForSubmission.append("weight", formData.weight || "1");
+  //     formDataForSubmission.append("length", formData.length || "1");
+  //     formDataForSubmission.append("width", formData.width || "1");
+  //     formDataForSubmission.append("height", formData.height || "1");
+  //     formDataForSubmission.append("subtype", formData.subtype || "");
+  //     formDataForSubmission.append("location", formData.specs?.location || "");
+  //     formDataForSubmission.append(
+  //       "list_for_selling",
+  //       formData.listForSelling === "Yes" ? "true" : "false"
+  //     );
+
+  //     // Handle attributes object - must be converted to JSON for FormData
+  //     if (formData.specs) {
+  //       formDataForSubmission.append(
+  //         "attributes",
+  //         JSON.stringify(formData.specs)
+  //       );
+  //     }
+
+  //     // Handle retipping object for Core Drill Bits
+  //     if (formData.category === "Core Drill Bits" && formData.retipping) {
+  //       formDataForSubmission.append(
+  //         "retipping",
+  //         JSON.stringify({
+  //           diameter: formData.retipping.diameter,
+  //           enable_diy: formData.retipping.enableDIY,
+  //           per_segment_price: formData.retipping.perSegmentPrice,
+  //           segments: formData.retipping.segments,
+  //           total_price: formData.retipping.totalPrice,
+  //         })
+  //       );
+  //     }
+
+  //     // Add image files - ensure they're added with the correct field name
+  //     // if (formData.uploadedImages && formData.uploadedImages.length > 0) {
+  //     //   formData.uploadedImages.forEach((image) => {
+  //     //     if (image.file) {
+  //     //       formDataForSubmission.append("files", image.file);
+  //     //     }
+  //     //   });
+  //     // }
+  //     const desktopImages =
+  //       formData.uploadedImages?.filter((img) => !img.fromMobile && img.file) ||
+  //       [];
+  //     desktopImages.forEach((image) => {
+  //       formDataToSend.append("files", image.file);
+  //     });
+
+  //     // Handle mobile uploaded images (send temp URLs)
+  //     const mobileImages =
+  //       formData.uploadedImages?.filter((img) => img.fromMobile) || [];
+  //     if (mobileImages.length > 0) {
+  //       formDataToSend.append(
+  //         "mobileImages",
+  //         JSON.stringify(
+  //           mobileImages.map((img) => ({
+  //             id: img.mobileUploadId,
+  //             url: img.tempUrl || img.preview,
+  //             name: img.name,
+  //             uploadedAt: img.uploadedAt,
+  //           }))
+  //         )
+  //       );
+  //     }
+  //     setIsLoading(true);
+
+  //     const response = await addProduct(userId, formDataForSubmission);
+
+  //     if (response.success) {
+  //       toast.success("Product successfully added!");
+  //       setIsLoading(false);
+  //       navigate("/seller/product-list");
+  //       // navigate("/products");
+  //     } else {
+  //       toast.error(response.error?.message || "Failed to add product");
+  //     }
+  //   } catch (error) {
+  //     setIsLoading(false);
+  //     console.error("Error submitting product:", error);
+  //     toast.error("An unexpected error occurred");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // Render the appropriate specification component based on category
+
   const handleSubmit = async () => {
     setCompletedTabs({ ...completedTabs, media: true });
     if (!completedTabs.description || !completedTabs.general) {
@@ -407,7 +539,8 @@ export default function NewProduct() {
     }
 
     const id = localStorage.getItem("userId");
-    console.log(formData);
+    console.log("Submitting form data:", formData);
+
     try {
       // Validate required fields
       if (
@@ -433,6 +566,7 @@ export default function NewProduct() {
       }
 
       const userId = id;
+
       // Prepare data for backend submission
       const formDataForSubmission = new FormData();
 
@@ -477,26 +611,24 @@ export default function NewProduct() {
         );
       }
 
-      // Add image files - ensure they're added with the correct field name
-      // if (formData.uploadedImages && formData.uploadedImages.length > 0) {
-      //   formData.uploadedImages.forEach((image) => {
-      //     if (image.file) {
-      //       formDataForSubmission.append("files", image.file);
-      //     }
-      //   });
-      // }
+      // Separate desktop and mobile images
       const desktopImages =
         formData.uploadedImages?.filter((img) => !img.fromMobile && img.file) ||
         [];
+      const mobileImages =
+        formData.uploadedImages?.filter((img) => img.fromMobile) || [];
+
+      console.log("Desktop images:", desktopImages.length);
+      console.log("Mobile images:", mobileImages.length);
+
+      // Add desktop image files
       desktopImages.forEach((image) => {
-        formDataToSend.append("files", image.file);
+        formDataForSubmission.append("files", image.file);
       });
 
       // Handle mobile uploaded images (send temp URLs)
-      const mobileImages =
-        formData.uploadedImages?.filter((img) => img.fromMobile) || [];
       if (mobileImages.length > 0) {
-        formDataToSend.append(
+        formDataForSubmission.append(
           "mobileImages",
           JSON.stringify(
             mobileImages.map((img) => ({
@@ -504,19 +636,19 @@ export default function NewProduct() {
               url: img.tempUrl || img.preview,
               name: img.name,
               uploadedAt: img.uploadedAt,
+              size: img.size || 0,
             }))
           )
         );
       }
-      setIsLoading(true);
 
+      setIsLoading(true);
       const response = await addProduct(userId, formDataForSubmission);
 
       if (response.success) {
         toast.success("Product successfully added!");
         setIsLoading(false);
         navigate("/seller/product-list");
-        // navigate("/products");
       } else {
         toast.error(response.error?.message || "Failed to add product");
       }
@@ -528,8 +660,6 @@ export default function NewProduct() {
       setIsLoading(false);
     }
   };
-
-  // Render the appropriate specification component based on category
   const renderSpecsComponent = () => {
     switch (formData.category) {
       case "Core Drill Bits":
