@@ -10,6 +10,7 @@ import AdminPayoutManagement from "./Components/Admin/StripePayout/page";
 import ShippedOrdersTable from "./Components/Admin/ShippedOrders/page";
 import { useDispatch } from "react-redux";
 import { unreadMessagesActions } from "./store/message-slice";
+import MobileUpload from "./Components/Seller/ProductListing/mobileUpload";
 
 // Loading component for lazy loading fallback
 const LoadingSpinner = () => (
@@ -308,6 +309,7 @@ const AppWithSocket = () => {
         </Route>
 
         <Route path="*" element={<NotFound />} />
+        <Route path="/mobile-upload/:token" element={<MobileUpload />} />
       </Routes>
     </Suspense>
   );

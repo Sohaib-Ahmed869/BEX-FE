@@ -478,14 +478,36 @@ export default function NewProduct() {
       }
 
       // Add image files - ensure they're added with the correct field name
-      if (formData.uploadedImages && formData.uploadedImages.length > 0) {
-        formData.uploadedImages.forEach((image) => {
-          if (image.file) {
-            formDataForSubmission.append("files", image.file);
-          }
-        });
-      }
+      // if (formData.uploadedImages && formData.uploadedImages.length > 0) {
+      //   formData.uploadedImages.forEach((image) => {
+      //     if (image.file) {
+      //       formDataForSubmission.append("files", image.file);
+      //     }
+      //   });
+      // }
+      const desktopImages =
+        formData.uploadedImages?.filter((img) => !img.fromMobile && img.file) ||
+        [];
+      desktopImages.forEach((image) => {
+        formDataToSend.append("files", image.file);
+      });
 
+      // Handle mobile uploaded images (send temp URLs)
+      const mobileImages =
+        formData.uploadedImages?.filter((img) => img.fromMobile) || [];
+      if (mobileImages.length > 0) {
+        formDataToSend.append(
+          "mobileImages",
+          JSON.stringify(
+            mobileImages.map((img) => ({
+              id: img.mobileUploadId,
+              url: img.tempUrl || img.preview,
+              name: img.name,
+              uploadedAt: img.uploadedAt,
+            }))
+          )
+        );
+      }
       setIsLoading(true);
 
       const response = await addProduct(userId, formDataForSubmission);
