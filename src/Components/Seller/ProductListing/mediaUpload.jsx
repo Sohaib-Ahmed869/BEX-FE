@@ -10,6 +10,7 @@ import {
   QrCode,
   Wifi,
   WifiOff,
+  RefreshCw,
 } from "lucide-react";
 import {
   generateUploadToken,
@@ -35,46 +36,52 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
   // Socket states
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [connectionAttempts, setConnectionAttempts] = useState(0);
 
-  // Initialize socket connection to upload namespace
+  // Initialize socket connection with retry logic
   useEffect(() => {
-    const serverUrl = URL || "http://localhost:5000";
-    console.log("Connecting to upload socket:", `${serverUrl}/uploads`);
+    const connectSocket = () => {
+      const serverUrl = URL || "http://localhost:5000";
+      console.log("Attempting to connect to socket:", serverUrl);
 
-    // Connect to the uploads namespace
-    const newSocket = io(`${serverUrl}/uploads`, {
-      transports: ["websocket", "polling"],
-      timeout: 20000,
-      autoConnect: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-    });
+      const newSocket = io(serverUrl, {
+        transports: ["websocket", "polling"],
+        timeout: 20000,
+        forceNew: true,
+      });
 
-    newSocket.on("connect", () => {
-      setIsConnected(true);
-      console.log("Upload socket connected:", newSocket.id);
-    });
+      newSocket.on("connect", () => {
+        setIsConnected(true);
+        setConnectionAttempts(0);
+        console.log("Socket connected successfully for uploads");
+      });
 
-    newSocket.on("disconnect", (reason) => {
-      setIsConnected(false);
-      console.log("Upload socket disconnected:", reason);
-    });
+      newSocket.on("disconnect", (reason) => {
+        setIsConnected(false);
+        console.log("Socket disconnected:", reason);
+      });
 
-    newSocket.on("connect_error", (error) => {
-      console.error("Upload socket connection error:", error);
-      setIsConnected(false);
-    });
+      newSocket.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
+        setIsConnected(false);
 
-    newSocket.on("connection-confirmed", (data) => {
-      console.log("Upload connection confirmed:", data);
-    });
+        // Retry connection after delay
+        if (connectionAttempts < 3) {
+          setTimeout(() => {
+            setConnectionAttempts((prev) => prev + 1);
+            connectSocket();
+          }, 2000 * (connectionAttempts + 1));
+        }
+      });
 
-    setSocket(newSocket);
+      setSocket(newSocket);
+    };
+
+    connectSocket();
 
     return () => {
-      if (newSocket) {
-        newSocket.disconnect();
+      if (socket) {
+        socket.disconnect();
       }
     };
   }, []);
@@ -105,15 +112,27 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
           size: imageData.size || 0,
         };
 
+        console.log("Adding new mobile image:", newImage);
+
         setFormData((prevFormData) => ({
           ...prevFormData,
           uploadedImages: [...(prevFormData.uploadedImages || []), newImage],
         }));
 
-        setMobileUploadsCount((prev) => prev + 1);
+        setMobileUploadsCount((prev) => {
+          const newCount = prev + 1;
+          console.log("Updated mobile uploads count:", newCount);
+          return newCount;
+        });
       };
 
+      // Listen for the upload event
       socket.on(eventName, handleMobileUpload);
+
+      // Also listen for summary events for debugging
+      socket.on(`mobile-upload-summary-${uploadToken}`, (summaryData) => {
+        console.log("Received upload summary:", summaryData);
+      });
 
       // Register token with socket
       socket.emit("register-upload-token", {
@@ -121,14 +140,18 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
         userId: localStorage.getItem("userId") || "anonymous",
       });
 
+      console.log("Socket listeners registered for token:", uploadToken);
+
       return () => {
+        console.log("Cleaning up socket listeners for token:", uploadToken);
         socket.off(eventName, handleMobileUpload);
+        socket.off(`mobile-upload-summary-${uploadToken}`);
         socket.emit("cleanup-upload-token", { token: uploadToken });
       };
     }
   }, [socket, uploadToken, isConnected, setFormData]);
 
-  // QR code expiry timer
+  // Timer for QR code expiry
   useEffect(() => {
     let interval;
     if (qrCodeExpiry && showQRCode) {
@@ -142,14 +165,19 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
       }, 1000);
     }
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval) {
+        clearInterval(interval);
+      }
     };
   }, [qrCodeExpiry, showQRCode]);
 
+  // Generate QR code for mobile upload
   const handleGenerateQRCode = async () => {
     try {
       if (!isConnected) {
-        alert("Socket connection not established. Please wait and try again.");
+        alert(
+          "Socket connection not established. Please try again in a moment."
+        );
         return;
       }
 
@@ -162,17 +190,20 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
         setShowQRCode(true);
         setMobileUploadsCount(0);
 
+        // Set expiry to 10 minutes from now
         const expiry = new Date().getTime() + 10 * 60 * 1000;
         setQRCodeExpiry(expiry);
         setTimeRemaining(10 * 60 * 1000);
 
-        // Register token with backend
+        // Register the token with the backend
         const serverUrl = URL || "http://localhost:5000";
         const response = await fetch(
           `${serverUrl}/api/products/register-upload-token`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify({
               token,
               expiresAt: new Date(expiry).toISOString(),
@@ -182,7 +213,9 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
 
         const result = await response.json();
         if (result.success) {
-          console.log("Token registered successfully:", token);
+          console.log(`QR code generated and registered with token: ${token}`);
+        } else {
+          console.error("Failed to register token:", result.message);
         }
       }
     } catch (error) {
@@ -191,10 +224,8 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     }
   };
 
+  // Close QR code modal
   const handleCloseQRCode = () => {
-    if (socket && uploadToken) {
-      socket.emit("cleanup-upload-token", { token: uploadToken });
-    }
     setShowQRCode(false);
     setQRCodeData(null);
     setUploadToken(null);
@@ -203,13 +234,14 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     setMobileUploadsCount(0);
   };
 
+  // Format time remaining
   const formatTimeRemaining = (milliseconds) => {
     const minutes = Math.floor(milliseconds / 60000);
     const seconds = Math.floor((milliseconds % 60000) / 1000);
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Desktop file upload
+  // Desktop file upload handler
   const handleFileUpload = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -219,14 +251,17 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
 
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
-      const newImages = files.map((file) => ({
-        file: file,
-        preview: URL.createObjectURL(file),
-        name: file.name,
-        fromMobile: false,
-        isTemp: false,
-        size: file.size,
-      }));
+      const newImages = files.map((file) => {
+        const previewUrl = URL.createObjectURL(file);
+        return {
+          file: file, // Keep file object for desktop uploads
+          preview: previewUrl,
+          name: file.name,
+          fromMobile: false,
+          isTemp: false,
+          size: file.size,
+        };
+      });
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -236,14 +271,15 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
       setTimeout(() => {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
+          setIsProcessingFile(false);
         }
-        setIsProcessingFile(false);
       }, 300);
     } else {
       setIsProcessingFile(false);
     }
   };
 
+  // Remove uploaded image
   const removeImage = (index, e) => {
     if (e) {
       e.preventDefault();
@@ -253,6 +289,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     const updatedImages = [...formData.uploadedImages];
     const imageToRemove = updatedImages[index];
 
+    // Clean up preview URL for desktop uploads
     if (
       imageToRemove?.preview &&
       !imageToRemove?.fromMobile &&
@@ -268,6 +305,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     }));
   };
 
+  // Handle drag and drop
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -277,14 +315,17 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const files = Array.from(e.dataTransfer.files);
-      const newImages = files.map((file) => ({
-        file: file,
-        preview: URL.createObjectURL(file),
-        name: file.name,
-        fromMobile: false,
-        isTemp: false,
-        size: file.size,
-      }));
+      const newImages = files.map((file) => {
+        const previewUrl = URL.createObjectURL(file);
+        return {
+          file: file,
+          preview: previewUrl,
+          name: file.name,
+          fromMobile: false,
+          isTemp: false,
+          size: file.size,
+        };
+      });
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -297,6 +338,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     }, 300);
   };
 
+  // Open/close image modal
   const openImageModal = (image, e) => {
     if (e) {
       e.preventDefault();
@@ -317,21 +359,39 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
     setFormData({ ...formData, [field]: value });
   };
 
+  const handleBrowseClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isProcessingFile) return;
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleDropZoneClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isProcessingFile) return;
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Retry socket connection
+  const retryConnection = () => {
+    if (socket) {
+      socket.disconnect();
+    }
+    setConnectionAttempts(0);
+    // Trigger reconnection
+    window.location.reload();
+  };
+
   return (
     <div className="bg-white border border-gray-100 rounded-lg p-3 sm:p-4 md:p-6 w-full max-w-full overflow-hidden">
       <h2 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
         Media upload
       </h2>
-
-      {/* Debug info for development */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="mb-4 p-2 bg-gray-100 rounded text-xs">
-          <p>Upload Socket Connected: {isConnected ? "✅" : "❌"}</p>
-          <p>Socket ID: {socket?.id || "N/A"}</p>
-          <p>Upload Token: {uploadToken || "N/A"}</p>
-          <p>Mobile Uploads: {mobileUploadsCount}</p>
-        </div>
-      )}
 
       {/* QR Code Upload Section */}
       <div className="mb-4 sm:mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -348,14 +408,24 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
             </div>
           </div>
           <div className="flex items-center space-x-2">
+            {/* Connection Status */}
             <div className="flex items-center">
               {isConnected ? (
                 <Wifi className="h-4 w-4 text-green-500" title="Connected" />
               ) : (
-                <WifiOff
-                  className="h-4 w-4 text-red-500"
-                  title="Disconnected"
-                />
+                <div className="flex items-center">
+                  <WifiOff
+                    className="h-4 w-4 text-red-500"
+                    title="Disconnected"
+                  />
+                  <button
+                    onClick={retryConnection}
+                    className="ml-1 p-1 hover:bg-gray-200 rounded"
+                    title="Retry connection"
+                  >
+                    <RefreshCw className="h-3 w-3 text-gray-500" />
+                  </button>
+                </div>
               )}
             </div>
             {!showQRCode && (
@@ -363,7 +433,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
                 type="button"
                 onClick={handleGenerateQRCode}
                 disabled={!isConnected}
-                className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-xs font-medium hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
+                className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-xs font-medium hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <QrCode className="h-4 w-4 mr-1" />
                 Show QR Code
@@ -374,8 +444,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
 
         {!isConnected && (
           <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
-            ⚠️ Upload socket connection issue. Mobile uploads may not work
-            properly.
+            ⚠️ Connection issue detected. Mobile uploads may not work properly.
           </div>
         )}
 
@@ -403,6 +472,19 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
                 </div>
               </div>
             </div>
+            <div className="mt-3 text-xs text-gray-500 space-y-1">
+              <p className="font-medium">How to use:</p>
+              <div className="text-left max-w-xs mx-auto">
+                <p>1. Open your phone's camera app</p>
+                <p>2. Point it at the QR code above</p>
+                <p>3. Tap the notification to open upload page</p>
+                <p>4. Take photos or select from gallery</p>
+                <p>5. Images will appear here automatically</p>
+                <p className="text-orange-600 font-medium">
+                  6. Submit the form to save everything
+                </p>
+              </div>
+            </div>
             <button
               type="button"
               onClick={handleCloseQRCode}
@@ -414,7 +496,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
         )}
       </div>
 
-      {/* Rest of your component - desktop upload, image gallery, etc. */}
+      {/* Traditional Upload Section */}
       <div className="mb-4 sm:mb-6">
         <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 flex items-center">
           Upload from Computer
@@ -423,8 +505,8 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
           </div>
         </label>
         <div
-          className="border-2 border-dashed border-gray-300 rounded-md p-4 sm:p-6 mb-3 sm:mb-4 cursor-pointer hover:border-orange-300 transition-colors"
-          onClick={() => fileInputRef.current?.click()}
+          className="border-2 border-dashed border-gray-300 rounded-md p-4 sm:p-6 mb-3 sm:mb-4 cursor-pointer touch-manipulation hover:border-orange-300 transition-colors"
+          onClick={handleDropZoneClick}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
         >
@@ -438,7 +520,8 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
             </p>
             <button
               type="button"
-              className="bg-orange-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-md hover:bg-orange-600 text-xs sm:text-sm font-medium transition-colors"
+              className="bg-orange-500 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-md cursor-pointer hover:bg-orange-600 text-xs sm:text-sm font-medium touch-manipulation active:bg-orange-700 transition-colors"
+              onClick={handleBrowseClick}
               disabled={isProcessingFile}
             >
               {isProcessingFile ? "Processing..." : "Browse"}
@@ -450,6 +533,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
               accept="image/*"
               className="hidden"
               onChange={handleFileUpload}
+              onClick={(e) => e.stopPropagation()}
             />
           </div>
         </div>
@@ -469,18 +553,21 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 w-full">
               {formData.uploadedImages.map((image, index) => (
                 <div
-                  key={`img-${index}-${image.name}`}
+                  key={`img-${index}-${image.name}-${
+                    image.fromMobile ? "mobile" : "desktop"
+                  }`}
                   className="relative group w-full"
                 >
                   <div
-                    className="aspect-square rounded-md shadow-md overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                    className="aspect-square rounded-md shadow-md overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity touch-manipulation active:opacity-80"
                     onClick={(e) => openImageModal(image, e)}
                   >
                     <img
                       src={image.preview || "/placeholder.svg"}
-                      alt={image.name}
+                      alt={image.name || `Uploaded ${index + 1}`}
                       className="w-full h-full object-cover"
                       onError={(e) => {
+                        console.error("Image load error:", image);
                         e.target.src = "/placeholder.svg";
                       }}
                     />
@@ -490,16 +577,22 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
                         Mobile
                       </div>
                     )}
+                    {image.isTemp && (
+                      <div className="absolute bottom-1 left-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded">
+                        Temp
+                      </div>
+                    )}
                   </div>
                   <button
                     type="button"
                     onClick={(e) => removeImage(index, e)}
-                    className="absolute -top-1 -right-1 bg-white rounded-full p-1 shadow-md text-red-500 hover:text-red-600 group-hover:opacity-100 opacity-70 sm:opacity-0 transition-opacity"
+                    className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-white rounded-full p-1 shadow-md text-red-500 hover:text-red-600 group-hover:opacity-100 opacity-70 sm:opacity-0 transition-opacity touch-manipulation"
+                    title="Remove image"
                   >
-                    <XCircle className="h-4 w-4" />
+                    <XCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                   </button>
                   <p
-                    className="text-xs mt-1 text-gray-500 truncate"
+                    className="text-xs mt-1 text-gray-500 truncate leading-tight"
                     title={image.name}
                   >
                     {image.name}
@@ -515,7 +608,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
       {selectedImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4"
-          onClick={closeImageModal}
+          onClick={(e) => closeImageModal(e)}
         >
           <div
             className="relative bg-white rounded-lg w-full h-full sm:w-auto sm:h-auto sm:max-w-4xl sm:max-h-[90vh] overflow-auto"
@@ -529,12 +622,17 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
                     Mobile Upload
                   </span>
                 )}
+                {selectedImage.isTemp && (
+                  <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                    Temporary
+                  </span>
+                )}
               </h3>
               <button
-                onClick={closeImageModal}
-                className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                onClick={(e) => closeImageModal(e)}
+                className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 touch-manipulation flex-shrink-0"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
               </button>
             </div>
             <div className="p-3 sm:p-4 flex items-center justify-center min-h-0">
@@ -542,6 +640,9 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
                 src={selectedImage.preview || "/placeholder.svg"}
                 alt={selectedImage.name}
                 className="max-w-full max-h-full w-auto h-auto object-contain"
+                onError={(e) => {
+                  e.target.src = "/placeholder.svg";
+                }}
               />
             </div>
           </div>
@@ -555,7 +656,7 @@ const MediaUploadComponent = ({ formData, setFormData }) => {
         </label>
         <div className="relative w-full sm:w-auto sm:max-w-xs">
           <select
-            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md appearance-none text-sm bg-white"
+            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md appearance-none text-sm bg-white touch-manipulation"
             value={formData.listForSelling || "Yes"}
             onChange={(e) =>
               handleInputChange("listForSelling", e.target.value)
