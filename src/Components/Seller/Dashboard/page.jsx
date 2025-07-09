@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import DateFilter from "./DateFilter";
 import StatsCards from "./StatsCards";
 import RecentOrders from "./RecentOrders";
-import SalesChart from "./SalesChart";
+import WeeklySalesChart from "./SalesChart";
 import TopSellingProducts from "./topSellingProducts";
 import InventoryDetails from "./InventoryDetails";
 import CubeLoader from "../../../utils/cubeLoader";
@@ -22,6 +22,7 @@ const Dashboard = () => {
   const [dateRange, setDateRange] = useState({
     startDate: "",
     endDate: "",
+    dateFilter: null,
   });
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -29,8 +30,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [userId, dateRange.endDate]);
-
+  }, [userId, dateRange.endDate, dateRange.dateFilter]);
   // Trigger animations after data loads
   useEffect(() => {
     if (!loading && dashboardData) {
@@ -41,14 +41,46 @@ const Dashboard = () => {
     }
   }, [loading, dashboardData]);
 
+  // const fetchDashboardData = async () => {
+  //   try {
+  //     setLoading(true);
+  //     setIsVisible(false); // Hide content during reload
+  //     const queryParams = new URLSearchParams();
+  //     if (dateRange.startDate)
+  //       queryParams.append("startDate", dateRange.startDate);
+  //     if (dateRange.endDate) queryParams.append("endDate", dateRange.endDate);
+
+  //     const response = await fetch(
+  //       `${URL}/api/sellerdashboard/stats/${userId}?${queryParams}`
+  //     );
+  //     const result = await response.json();
+  //     console.log("Dashboard data:", result);
+
+  //     if (result.success) {
+  //       setDashboardData(result.data);
+  //     } else {
+  //       console.error("Error fetching dashboard data:", result.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching dashboard data:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      setIsVisible(false); // Hide content during reload
+      setIsVisible(false);
       const queryParams = new URLSearchParams();
-      if (dateRange.startDate)
-        queryParams.append("startDate", dateRange.startDate);
-      if (dateRange.endDate) queryParams.append("endDate", dateRange.endDate);
+
+      // Handle predefined filters vs custom dates
+      if (dateRange.dateFilter) {
+        queryParams.append("dateFilter", dateRange.dateFilter);
+      } else {
+        if (dateRange.startDate)
+          queryParams.append("startDate", dateRange.startDate);
+        if (dateRange.endDate) queryParams.append("endDate", dateRange.endDate);
+      }
 
       const response = await fetch(
         `${URL}/api/sellerdashboard/stats/${userId}?${queryParams}`
@@ -67,7 +99,6 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
   const handleDateRangeChange = (newDateRange) => {
     setDateRange(newDateRange);
   };
@@ -173,12 +204,42 @@ const Dashboard = () => {
             }`}
             style={{ transitionDelay: "300ms" }}
           >
-            <SalesChart data={dashboardData.salesData} />
+            <WeeklySalesChart
+              data={dashboardData.salesData}
+              salesDataMeta={dashboardData.salesDataMeta}
+            />
+          </div>
+          <div
+            className={`transform transition-all duration-700 ease-out ${
+              isVisible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-4 opacity-0"
+            }`}
+            style={{ transitionDelay: "600ms" }}
+          >
+            <InventoryDetails dateRange={dateRange} />
           </div>
 
           {/* Top Selling Products */}
+        </div>
+
+        {/* Bottom Section */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Recent Orders - 70% */}
           <div
-            className={`transform transition-all duration-700 ease-out ${
+            className={`lg:w-[68%] transform transition-all duration-700 ease-out ${
+              isVisible
+                ? "translate-y-0 opacity-100"
+                : "translate-y-4 opacity-0"
+            }`}
+            style={{ transitionDelay: "500ms" }}
+          >
+            <RecentOrders orders={dashboardData.recentOrders} />
+          </div>
+
+          {/* Inventory Details - 30% */}
+          <div
+            className={`lg:w-[32%] transform transition-all duration-700 ease-out ${
               isVisible
                 ? "translate-y-0 opacity-100"
                 : "translate-y-4 opacity-0"
@@ -189,33 +250,6 @@ const Dashboard = () => {
               products={dashboardData.topSellingProducts}
               onProductSelect={handleProductSelect}
             />
-          </div>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Orders */}
-          <div
-            className={`transform transition-all duration-700 ease-out ${
-              isVisible
-                ? "translate-y-0 opacity-100"
-                : "translate-y-4 opacity-0"
-            }`}
-            style={{ transitionDelay: "500ms" }}
-          >
-            <RecentOrders orders={dashboardData.recentOrders} />
-          </div>
-
-          {/* Inventory Details */}
-          <div
-            className={`transform transition-all duration-700 ease-out ${
-              isVisible
-                ? "translate-y-0 opacity-100"
-                : "translate-y-4 opacity-0"
-            }`}
-            style={{ transitionDelay: "600ms" }}
-          >
-            <InventoryDetails dateRange={dateRange} />
           </div>
         </div>
       </div>

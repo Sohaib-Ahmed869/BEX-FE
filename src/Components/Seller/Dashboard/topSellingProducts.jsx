@@ -26,7 +26,11 @@ const TopSellingProducts = ({ products, onProductSelect }) => {
         </button> */}
       </div>
 
-      <div className="space-y-4">
+      <div
+        className={`space-y-4 ${
+          products.length > 5 ? "max-h-96 overflow-y-auto" : ""
+        }`}
+      >
         {products.map((product, index) => (
           <div
             key={product.id}

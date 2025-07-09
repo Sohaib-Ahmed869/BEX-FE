@@ -117,7 +117,7 @@ const RecentOrders = ({ orders }) => {
 
       <div
         className={`overflow-x-auto ${
-          flattenedItems.length > 10 ? "max-h-96 overflow-y-auto" : "min-h-96"
+          flattenedItems.length > 10 ? "max-h-106 overflow-y-auto" : "min-h-96"
         } transition-all duration-300`}
       >
         <div className="min-w-full">
