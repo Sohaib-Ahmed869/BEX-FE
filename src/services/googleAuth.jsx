@@ -53,8 +53,7 @@ const useGoogleAuth = () => {
       localStorage.setItem("role", userData.role);
       localStorage.setItem("userId", userData.id);
       localStorage.setItem("userName", userData.first_name);
-      localStorage.setItem("UserEmail", response.data.user.email);
-
+      localStorage.setItem("UserEmail", userData.email);
       if (userData.role === "buyer") {
         navigate("/products");
       } else if (userData.role === "seller") {
@@ -123,8 +122,7 @@ const useGoogleAuth = () => {
         localStorage.setItem("role", result.user.role);
         localStorage.setItem("userId", result.user.id);
         localStorage.setItem("userName", result.user.first_name);
-        localStorage.setItem("UserEmail", response.data.user.email);
-
+        localStorage.setItem("UserEmail", result.user.email);
         sessionStorage.removeItem("tempGoogleToken");
 
         toast.success("Registration successful!");
@@ -188,7 +186,7 @@ const useGoogleAuth = () => {
         localStorage.setItem("role", result.user.role);
         localStorage.setItem("userId", result.user.id);
         localStorage.setItem("userName", result.user.first_name);
-        localStorage.setItem("UserEmail", response.data.user.email);
+        localStorage.setItem("UserEmail", result.user.email);
         sessionStorage.removeItem("tempGoogleToken");
 
         toast.success("Registration successful!");
