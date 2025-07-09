@@ -39,7 +39,7 @@ const ViewProduct = () => {
     list_for_selling: false,
     requires_retipping: false,
     is_featured: false,
-    is_active: true,
+    is_active: false,
     specs: {},
     flaggingDetails: {},
   });
@@ -88,7 +88,7 @@ const ViewProduct = () => {
           list_for_selling: data.list_for_selling || false,
           requires_retipping: data.requires_retipping || false,
           is_featured: data.is_featured || false,
-          is_active: data.is_active || true,
+          is_active: data.is_active || false,
           specifications: data.specifications || {},
           is_flagged: data.is_flagged,
           expiration_date: data.expiration_date,

@@ -161,7 +161,7 @@ export const updateProduct = async (productId, productData, newFiles = []) => {
     formData.append("length", productData.length);
     formData.append("location", productData.location || "");
     formData.append("list_for_selling", productData.list_for_selling);
-    formData.append("is_active", productData.is_active);
+    // formData.append("is_active", productData.is_active);
 
     if (productData.subtype) {
       formData.append("subtype", productData.subtype);

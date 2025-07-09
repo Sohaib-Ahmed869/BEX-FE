@@ -120,7 +120,7 @@ const EditProduct = () => {
     list_for_selling: false,
     requires_retipping: false,
     is_featured: false,
-    is_active: true,
+    is_active: false,
     specs: {},
   });
   useEffect(() => {
@@ -168,7 +168,7 @@ const EditProduct = () => {
           list_for_selling: data.list_for_selling || false,
           requires_retipping: data.requires_retipping || false,
           is_featured: data.is_featured || false,
-          is_active: data.is_active || true,
+          is_active: data.is_active || false,
           specifications: data.specifications || {},
           expiration_date: data.expiration_date,
           created_at: data.created_at,
@@ -856,22 +856,23 @@ const EditProduct = () => {
                   Product ID : {formData.id?.substring(0, 8)}
                 </p>
               </div>
-
-              <div className="flex items-center">
-                <label className="mr-2 text-gray-700">Add to listing</label>
-                <div
-                  className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${
-                    addedToListing ? "bg-orange-500" : "bg-gray-300"
-                  }`}
-                  onClick={toggleAddToListing}
-                >
+              {formData.is_active && (
+                <div className="flex items-center">
+                  <label className="mr-2 text-gray-700">Add to listing</label>
                   <div
-                    className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-                      addedToListing ? "translate-x-6" : ""
+                    className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer ${
+                      addedToListing ? "bg-orange-500" : "bg-gray-300"
                     }`}
-                  />
+                    onClick={toggleAddToListing}
+                  >
+                    <div
+                      className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+                        addedToListing ? "translate-x-6" : ""
+                      }`}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
