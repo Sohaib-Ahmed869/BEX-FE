@@ -122,12 +122,12 @@ export default function SideBar() {
       icon: <BiMoneyWithdraw size={24} />,
       path: "/seller/onboarding",
     },
-    // {
-    //   id: "support",
-    //   label: "Support",
-    //   icon: <BsExclamationCircleFill size={23} />,
-    //   path: "/seller/support",
-    // },
+    {
+      id: "help-and-support",
+      label: "Help & Support",
+      icon: <BsExclamationCircleFill size={23} />,
+      path: "/seller/help-and-support",
+    },
   ];
 
   // Helper function to check if a path is active

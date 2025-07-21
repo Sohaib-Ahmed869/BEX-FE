@@ -11,6 +11,7 @@ import ShippedOrdersTable from "./Components/Admin/ShippedOrders/page";
 import { useDispatch } from "react-redux";
 import { unreadMessagesActions } from "./store/message-slice";
 import MobileUpload from "./Components/Seller/ProductListing/mobileUpload";
+import HelpAndSupport from "./Components/Seller/HelpAndSupport/helpAndSupport";
 
 // Loading component for lazy loading fallback
 const LoadingSpinner = () => (
@@ -219,6 +220,7 @@ const AppWithSocket = () => {
           <Route path="onboarding" element={<StripeConnectOnboarding />} />
           <Route path="settings" element={<Settings />} />
           <Route path="support" element={<Support />} />
+          <Route path="help-and-support" element={<HelpAndSupport />} />
         </Route>
 
         {/* Buyer routes */}
