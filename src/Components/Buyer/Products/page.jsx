@@ -280,6 +280,7 @@ const Products = () => {
                 <h1 className="text-3xl font-semibold mb-6">Products</h1>
               </div>
               <button
+                title="View Cart"
                 onClick={toggleCart}
                 data-cart-trigger="true"
                 className="text-[#e06449] cursor-pointer p-4 border-2 border-[#e06449] rounded-full hover:bg-[#e06449] hover:text-white transition duration-300"

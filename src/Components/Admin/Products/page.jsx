@@ -17,7 +17,7 @@ import CubeLoader from "../../../utils/cubeLoader";
 import { Link } from "react-router-dom";
 import FlagProductModal from "./FlagProductModal";
 import UnflagProductModal from "./unFlagProductModal";
-import { toast } from "react-toastify";
+import { toast , ToastContainer  ,Bounce} from "react-toastify";
 import FeatureProductModal from "./featureProductModal";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
@@ -513,6 +513,19 @@ function AdminProductsTable() {
 
   return (
     <div className="bg-gray-100 p-4 sm:p-6 lg:p-10 min-h-screen z-50">
+        <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <div className="mt-10">
         {/* Header */}
         <h1 className="text-2xl sm:text-3xl font-regular mb-4">All Products</h1>
