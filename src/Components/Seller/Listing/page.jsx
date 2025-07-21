@@ -407,18 +407,21 @@ export default function Listing() {
                             <td className="py-3 px-4 flex justify-end">
                               <div className="flex justify-center gap-2">
                                 <button
-                                  className="p-2 border border-gray-200 rounded hover:bg-gray-100"
+                                  title="Edit Listing"
+                                  className="p-2 border border-gray-200 cursor-pointer rounded hover:bg-gray-100"
                                   onClick={() => openEditModal(listing)}
                                 >
                                   <Pencil className="h-4 w-4" />
                                 </button>
                                 <Link
+                                  title="View Inventory"
                                   to={`/seller/listing/inventory/${listing.id}`}
                                   className="p-2 border border-gray-200 rounded hover:bg-gray-100"
                                 >
                                   <Eye className="h-4 w-4" />
                                 </Link>
                                 <Link
+                                  title="Add Inventory"
                                   to={`/seller/listing/addInventory/${listing.id}`}
                                   className={`p-2 border border-gray-200 rounded hover:bg-gray-100 ${
                                     !listing.Product_Name
@@ -542,18 +545,21 @@ export default function Listing() {
                           </span>
                           <div className="flex gap-2">
                             <button
-                              className="p-2 border border-gray-200 rounded hover:bg-gray-100"
+                              title="Edit Listing"
+                              className="p-2 border border-gray-200 pointer-cursor rounded hover:bg-gray-100"
                               onClick={() => openEditModal(listing)}
                             >
                               <Pencil className="h-4 w-4" />
                             </button>
                             <Link
+                              title="View Inventory"
                               to={`/seller/listing/inventory/${listing.id}`}
                               className="p-2 border border-gray-200 rounded hover:bg-gray-100"
                             >
                               <Eye className="h-4 w-4" />
                             </Link>
                             <Link
+                              title="Add Inventory"
                               to={`/seller/listing/addInventory/${listing.id}`}
                               className={`p-2 border border-gray-200 rounded hover:bg-gray-100 ${
                                 !listing.Product_Name

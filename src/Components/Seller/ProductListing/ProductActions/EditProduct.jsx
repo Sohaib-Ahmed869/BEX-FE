@@ -382,12 +382,14 @@ const EditProduct = () => {
       toast.success("Product updated successfully");
       console.log("Product updated:", result.data);
       setIsEditing(false);
+      setTimeout(() => {
+        navigate("/seller/product-list");
+      }, 1000);
       setLoading(false);
-      navigate("/seller/product-list");
     } else {
       // Handle error
-      toast.error("Failed to update product");
       setLoading(false);
+      toast.error("Failed to update product");
       console.error("Failed to update product:", result.error);
     }
   };
@@ -1084,6 +1086,10 @@ const EditProduct = () => {
         autoClose={4000}
         transition={Bounce}
         newestOnTop={true}
+        closeOnClick={true}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
       />
       {/* Error message */}
       {error && (

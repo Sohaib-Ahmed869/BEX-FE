@@ -14,7 +14,7 @@ import axios from "axios";
 import CubeLoader from "../../../utils/cubeLoader";
 import { calculateDaysUntilExpiration } from "../../../utils/calculateDaysLeft";
 import RemoveProductModal from "./ProductActions/DeleteProduct";
-import { toast } from "react-toastify";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 import PricingGuidanceModal from "./ProductActions/pricingGuidanceModal";
 import {
   deleteProduct,
@@ -204,6 +204,16 @@ export default function ProductList() {
 
   return (
     <div className="bg-gray-100 p-4 sm:p-6 lg:p-10 min-h-screen">
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        transition={Bounce}
+        newestOnTop={true}
+        closeOnClick={true}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
+      />
       {/* Header */}
       <SellerHeader />
       {loading && <CubeLoader />}
