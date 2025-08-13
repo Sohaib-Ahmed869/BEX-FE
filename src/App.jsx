@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { unreadMessagesActions } from "./store/message-slice";
 import MobileUpload from "./Components/Seller/ProductListing/mobileUpload";
 import HelpAndSupport from "./Components/Seller/HelpAndSupport/helpAndSupport";
+import ShipmentManagement from "./Components/Seller/shipment/shipment";
 
 // Loading component for lazy loading fallback
 const LoadingSpinner = () => (

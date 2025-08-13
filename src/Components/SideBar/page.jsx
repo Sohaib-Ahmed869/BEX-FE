@@ -1,4 +1,11 @@
-import { ShoppingCart, MessageSquare, LogOut, Menu, X } from "lucide-react";
+import {
+  ShoppingCart,
+  MessageSquare,
+  LogOut,
+  Menu,
+  X,
+  Truck,
+} from "lucide-react";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { BiMoneyWithdraw, BiPieChartAlt } from "react-icons/bi";
 import { RiHome7Fill } from "react-icons/ri";

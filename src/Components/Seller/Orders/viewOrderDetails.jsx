@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import {
   ChevronLeft,
@@ -8,18 +10,22 @@ import {
   User,
   Calendar,
   DollarSign,
-  MapPin,
   CreditCard,
   Truck,
   Check,
   AlertCircle,
   MessageCircleIcon,
+  Ship,
+  Package2,
+  Clock,
+  CheckCircle,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import CubeLoader from "../../../utils/cubeLoader";
 import { confirmOrder, rejectOrder } from "../../../services/OrderServices";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import { initiateSellerChat } from "../../../services/chatServices";
+import ShipmentManagement from "../shipment/shipment";
 
 const URL = import.meta.env.VITE_REACT_BACKEND_URL;
 
@@ -28,6 +34,7 @@ export default function SellerOrderItems() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMessageLoading, setMessageIsLoading] = useState(false);
+  const [showShipmentManagement, setShowShipmentManagement] = useState(false);
 
   // Image handling states
   const [currentImageIndex, setCurrentImageIndex] = useState({});
@@ -40,10 +47,11 @@ export default function SellerOrderItems() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedOrderItem, setSelectedOrderItem] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
+
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
   const { orderId } = useParams();
-  const [isShipmentLoading, setIsShipmentLoading] = useState(false);
+
   // Fetch order data from API
   const fetchOrderData = async () => {
     setLoading(true);
@@ -52,10 +60,8 @@ export default function SellerOrderItems() {
         `${URL}/api/orders/${orderId}/sellers/${userId}/items`
       );
       const data = await response.json();
-
       if (data.success) {
         setOrderData(data.data);
-
         // Initialize current image index for each order item
         const initialImageIndex = {};
         data.data.orderItems.forEach((item) => {
@@ -80,46 +86,34 @@ export default function SellerOrderItems() {
       fetchOrderData();
     }
   }, [orderId]);
-  const createShipment = async () => {
-    setIsShipmentLoading(true);
-    try {
-      const response = await fetch(`${URL}/api/shipstation/create-shipment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          orderId,
-          sellerId: userId,
-          carrierCode: "UPS",
-          serviceCode: "ups_ground",
-        }),
-      });
 
-      const data = await response.json();
+  // Handle shipment modal
+  const handleShipmentModal = () => {
+    // Check if there are approved items
+    const approvedItems = orderData?.orderItems?.filter(
+      (item) =>
+        item.orderStatus.toLowerCase() === "approved" ||
+        item.orderStatus.toLowerCase() === "shipped"
+    );
 
-      if (data.success) {
-        toast.success(`Shipment created! `);
-        setIsShipmentLoading(false);
-        // Update UI with tracking information
-      } else {
-        toast.error(`Error: ${data.message}`);
-        setIsShipmentLoading(false);
-      }
-    } catch (error) {
-      toast.error("Failed to create shipment");
-      setIsShipmentLoading(false);
+    if (!approvedItems || approvedItems.length === 0) {
+      toast.error("No approved items found for shipment");
+      return;
     }
+
+    setShowShipmentManagement(true);
   };
+
+  const closeShipmentManagement = () => {
+    setShowShipmentManagement(false);
+  };
+
   // Handle order confirmation
   const handleConfirmOrder = async (itemId) => {
     if (!selectedOrderItem) return;
-
     setModalLoading(true);
     try {
       const response = await confirmOrder(itemId);
-
       if (response.success) {
         // Update the order status in state
         setOrderData((prevData) => ({
@@ -130,10 +124,8 @@ export default function SellerOrderItems() {
               : item
           ),
         }));
-
         setShowConfirmModal(false);
         setSelectedOrderItem(null);
-
         console.log(response.message || "Order confirmed successfully");
         toast.success("Order confirmed successfully");
       } else {
@@ -141,12 +133,10 @@ export default function SellerOrderItems() {
       }
     } catch (error) {
       console.error("Error confirming order:", error);
-
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
         "Error confirming order";
-
       toast.error(errorMessage);
     } finally {
       setModalLoading(false);
@@ -156,11 +146,9 @@ export default function SellerOrderItems() {
   // Handle order rejection
   const handleRejectOrder = async (itemId) => {
     if (!selectedOrderItem) return;
-
     setModalLoading(true);
     try {
       const response = await rejectOrder(itemId);
-
       if (response.success) {
         // Update the order status in state
         setOrderData((prevData) => ({
@@ -171,10 +159,8 @@ export default function SellerOrderItems() {
               : item
           ),
         }));
-
         setShowRejectModal(false);
         setSelectedOrderItem(null);
-
         console.log(response.message || "Order rejected successfully");
         toast.success("Order rejected successfully");
       } else {
@@ -221,12 +207,12 @@ export default function SellerOrderItems() {
         };
     }
   };
+
   const handleSendMessage = async (orderItemId) => {
     if (!userId || !orderItemId) {
       toast.error("User ID and Order Item ID are required");
       return;
     }
-
     setMessageIsLoading(true);
     try {
       await initiateSellerChat(userId, orderItemId);
@@ -238,6 +224,7 @@ export default function SellerOrderItems() {
       setMessageIsLoading(false);
     }
   };
+
   // Get payment status styling
   const getPaymentStatusStyle = (status) => {
     return status
@@ -250,13 +237,11 @@ export default function SellerOrderItems() {
     setCurrentImageIndex((prev) => {
       const currentIndex = prev[itemId] || 0;
       let newIndex;
-
       if (direction === "next") {
         newIndex = currentIndex + 1 >= images.length ? 0 : currentIndex + 1;
       } else {
         newIndex = currentIndex - 1 < 0 ? images.length - 1 : currentIndex - 1;
       }
-
       return { ...prev, [itemId]: newIndex };
     });
   };
@@ -287,7 +272,9 @@ export default function SellerOrderItems() {
       );
     }
   };
+
   const role = localStorage.getItem("role");
+
   // Modal Component
   const Modal = ({
     isOpen,
@@ -312,9 +299,7 @@ export default function SellerOrderItems() {
             />
             <h3 className="text-lg font-semibold">{title}</h3>
           </div>
-
           <p className="text-gray-600 mb-6">{message}</p>
-
           <div className="flex justify-end gap-3">
             <button
               onClick={onCancel}
@@ -370,7 +355,22 @@ export default function SellerOrderItems() {
     );
   }
 
+  // Show shipment management if active
+  if (showShipmentManagement) {
+    return (
+      <ShipmentManagement
+        orderId={orderId}
+        orderData={orderData}
+        onClose={closeShipmentManagement}
+        onRefresh={fetchOrderData}
+      />
+    );
+  }
+
   const { orderInfo, orderItems, summary } = orderData;
+  const hasApprovedItems = orderItems.some(
+    (item) => item.orderStatus.toLowerCase() === "approved"
+  );
 
   return (
     <div className="bg-gray-100 p-4 sm:p-6 lg:p-10 min-h-screen">
@@ -380,7 +380,6 @@ export default function SellerOrderItems() {
         transition={Bounce}
         newestOnTop={true}
       />
-
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-medium mb-2">Order Details</h1>
@@ -397,7 +396,6 @@ export default function SellerOrderItems() {
           Order ID: {orderInfo.orderId.slice(0, 8)}
         </p>
       </div>
-
       {/* Order Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -411,7 +409,6 @@ export default function SellerOrderItems() {
             </div>
           </div>
         </div>
-
         <div className="bg-white p-4 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <DollarSign className="h-8 w-8 text-[#F47458]" />
@@ -421,7 +418,6 @@ export default function SellerOrderItems() {
             </div>
           </div>
         </div>
-
         <div className="bg-white p-4 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <CreditCard className="h-8 w-8 text-[#F47458]" />
@@ -439,7 +435,6 @@ export default function SellerOrderItems() {
             </div>
           </div>
         </div>
-
         <div className="bg-white p-4 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <Package className="h-8 w-8 text-[#F47458]" />
@@ -450,7 +445,6 @@ export default function SellerOrderItems() {
           </div>
         </div>
       </div>
-
       {/* Buyer Information */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
         <h2 className="text-lg font-medium mb-4 flex items-center gap-2">
@@ -468,7 +462,6 @@ export default function SellerOrderItems() {
           </div>
         </div>
       </div>
-
       {/* Order Items Table */}
       <div className="bg-white rounded-lg shadow-sm">
         <div className="p-6">
@@ -476,7 +469,6 @@ export default function SellerOrderItems() {
             <Package className="h-5 w-5 text-[#F47458]" />
             Order Items ({orderItems.length})
           </h2>
-
           {orderItems.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-gray-500">No items found in this order</p>
@@ -570,12 +562,14 @@ export default function SellerOrderItems() {
                                     }
                                   >
                                     <img
-                                      src={item.product.images[currentIndex]}
+                                      src={
+                                        item.product.images[currentIndex] ||
+                                        "/placeholder.svg"
+                                      }
                                       alt="Product"
                                       className="w-full h-full object-cover"
                                     />
                                   </div>
-
                                   {hasMultipleImages && (
                                     <>
                                       <button
@@ -669,7 +663,6 @@ export default function SellerOrderItems() {
                                   >
                                     <Check className="h-4 w-4" />
                                   </button>
-
                                   <button
                                     onClick={() => {
                                       setSelectedOrderItem(item);
@@ -742,7 +735,6 @@ export default function SellerOrderItems() {
                           </span>
                         </div>
                       </div>
-
                       {hasImages && (
                         <div className="flex gap-2 mb-3">
                           <div className="relative group">
@@ -756,12 +748,14 @@ export default function SellerOrderItems() {
                               }
                             >
                               <img
-                                src={item.product.images[currentIndex]}
+                                src={
+                                  item.product.images[currentIndex] ||
+                                  "/placeholder.svg"
+                                }
                                 alt="Product"
                                 className="w-full h-full object-cover"
                               />
                             </div>
-
                             {hasMultipleImages && (
                               <>
                                 <button
@@ -804,7 +798,6 @@ export default function SellerOrderItems() {
                           )}
                         </div>
                       )}
-
                       <div className="grid grid-cols-2 gap-2 text-sm mb-3">
                         <div>
                           <span className="text-gray-500">Quantity:</span>
@@ -831,14 +824,12 @@ export default function SellerOrderItems() {
                           </span>
                         </div>
                       </div>
-
                       <div className="text-sm mb-3">
                         <span className="text-gray-500">Seller:</span>
                         <p className="text-gray-900">
                           {item.product.seller.fullName}
                         </p>
                       </div>
-
                       {/* Mobile Action Buttons */}
                       {item.orderStatus.toLowerCase() ===
                         "pending approval" && (
@@ -853,7 +844,6 @@ export default function SellerOrderItems() {
                             <Check className="h-4 w-4" />
                             Confirm
                           </button>
-
                           <button
                             onClick={() => {
                               setSelectedOrderItem(item);
@@ -884,7 +874,6 @@ export default function SellerOrderItems() {
           )}
         </div>
       </div>
-
       {/* Order Summary */}
       <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
         <h2 className="text-lg font-medium mb-4">Order Summary</h2>
@@ -895,24 +884,22 @@ export default function SellerOrderItems() {
               ${summary.totalAmount.toFixed(2)}
             </span>
           </div>
-          {/* <div className="flex justify-between">
-            <span className="text-gray-600">Platform Fee:</span>
-            <span className="font-medium">
-              ${orderInfo.platformFee.toFixed(2)}
-            </span>
-          </div> */}
           <div className="flex justify-between border-t border-gray-300 pt-2">
             <span className="text-gray-900 font-medium">Total:</span>
             <span className="font-bold text-lg">${summary.totalAmount}</span>
           </div>
         </div>
       </div>
-      <button
-        onClick={createShipment}
-        className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors mt-4"
-      >
-        {isShipmentLoading ? "Creating Shipment..." : "Ship Order"}
-      </button>
+      {/* Shipment Button */}
+      <div className="mt-6">
+        <button
+          onClick={handleShipmentModal}
+          className="w-full bg-[#F47458] text-white py-3 px-6 rounded-lg hover:bg-[#e0634a] transition-colors flex items-center justify-center gap-2 font-medium transform hover:scale-102 transition-transform duration-200"
+        >
+          <Ship className="h-5 w-5" />
+          Manage Shipments
+        </button>
+      </div>
 
       {/* Image Modal */}
       {showImageModal && (
@@ -924,14 +911,12 @@ export default function SellerOrderItems() {
             >
               <X className="h-6 w-6" />
             </button>
-
             <div className="relative">
               <img
-                src={modalImages[modalCurrentIndex]}
+                src={modalImages[modalCurrentIndex] || "/placeholder.svg"}
                 alt="Product"
                 className="max-w-full max-h-[80vh] object-contain"
               />
-
               {modalImages.length > 1 && (
                 <>
                   <button
@@ -955,7 +940,6 @@ export default function SellerOrderItems() {
           </div>
         </div>
       )}
-
       {/* Confirmation Modal */}
       <Modal
         isOpen={showConfirmModal}
@@ -970,7 +954,6 @@ export default function SellerOrderItems() {
         cancelText="Cancel"
         type="confirm"
       />
-
       {/* Rejection Modal */}
       <Modal
         isOpen={showRejectModal}
